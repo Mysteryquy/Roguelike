@@ -58,6 +58,12 @@ class obj_Actor:
 			self.x += dx
 			self.y += dy	
 
+	#method is used to check if a move is allowed to be performed
+	def checkMove(self,dx,dy):
+		if self.x + dx >= constants.MAP_WIDTH or self.y + dy >= constants.MAP_HEIGHT:
+			return False
+		else:
+			return True
 
 #                                                         __          
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
@@ -89,10 +95,10 @@ class com_Creature:
 class ai_Test:
 
 	def take_turn(self):
-		#this is not valid
 		dx = libtcodpy.random_get_int(None,-1,1)
 		dy = libtcodpy.random_get_int(None,-1,1)
-		self.owner.move(dx,dy)
+		if self.owner.checkMove(dx,dy):
+			self.owner.move(dx,dy)
 		#self.owner.move(libtcodpy.random_new(0,-1, 1, 0), libtcodpy.random_new(0, -1, 1))
 
 
