@@ -88,8 +88,12 @@ class com_Creature:
 
 class ai_Test:
 
-	def take_turn(self):		
-		self.owner.move(libtcodpy.random_new(0,-1, 1, 0), libtcodpy.random_new(0, -1, 1))
+	def take_turn(self):
+		#this is not valid
+		dx = libtcodpy.random_get_int(None,-1,1)
+		dy = libtcodpy.random_get_int(None,-1,1)
+		self.owner.move(dx,dy)
+		#self.owner.move(libtcodpy.random_new(0,-1, 1, 0), libtcodpy.random_new(0, -1, 1))
 
 
 
