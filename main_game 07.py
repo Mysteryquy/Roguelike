@@ -68,7 +68,10 @@ class obj_Actor:
 				break
 
 		if target:
-			print (self.creature.name_instance + " attacks " + target.creature.name_instance)	
+			#im Tuturial ist das print unten rot aber anscheined geht es trotzdem
+			print (self.creature.name_instance + " attacks " + target.creature.name_instance + " for 5 damage!")
+			target.creature.take_damage(5)
+
 
 		if not tile_is_wall and target is None:
 			
@@ -89,10 +92,20 @@ class obj_Actor:
 
 class com_Creature:
 
-	def __init__(self, name_instance, hp = 10):
+	def __init__(self, name_instance, hp = 10, death_function = None):
 		self.name_instance = name_instance
+		self.maxhp = hp
 		self.hp = hp
+		self.death_function = death_function
 
+	def take_damage(self, damage):
+		self.hp -= damage
+		print (self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp))
+
+		if self.hp <= 0:
+
+			if self.death_function is not None:
+				self.death_function(self.owner)
 
 #class com_item:
 
@@ -110,7 +123,14 @@ class ai_Test:
 
 	def take_turn(self):
 		self.owner.move(libtcodpy.random_get_int(None,-1,1), libtcodpy.random_get_int(None,-1,1))
-		#self.owner.move(libtcodpy.random_new(0,-1, 1, 0), libtcodpy.random_new(0, -1, 1))
+
+def death_monster(monster):
+	#On death, most monsters stop moving tho
+	print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+
+	monster.creature = None
+	monster.ai = None		
+		
 
 
 
@@ -238,7 +258,7 @@ def game_initialize():
 	creature_com1 = com_Creature("greg")
 	PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature = creature_com1)
 
-	creature_com2 = com_Creature("crabby")
+	creature_com2 = com_Creature("crabby", death_function = death_monster)
 	ai_com = ai_Test()
 	ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, creature = creature_com2, ai = ai_com)
 
@@ -270,6 +290,38 @@ def game_handle_keys():
 			if event.key == pygame.K_RIGHT:
 					PLAYER.move(1, 0)
 					return "player moved"
+
+			if event.key == pygame.K_KP1:
+					PLAYER.move(-1, 1)
+					return "player moved"
+
+			if event.key == pygame.K_KP2:
+					PLAYER.move(0, 1)
+					return "player moved"		
+							
+			if event.key == pygame.K_KP3:
+					PLAYER.move(1, 1)
+					return "player moved"
+
+			if event.key == pygame.K_KP4:
+					PLAYER.move(-1, 0)
+					return "player moved"		
+
+			if event.key == pygame.K_KP6:
+					PLAYER.move(1, 0)
+					return "player moved"		
+
+			if event.key == pygame.K_KP7:
+					PLAYER.move(-1, -1)
+					return "player moved"		
+
+			if event.key == pygame.K_KP8:
+					PLAYER.move(0, -1)
+					return "player moved"		
+
+			if event.key == pygame.K_KP9:
+					PLAYER.move(1, -1)
+					return "player moved"			
 
 	return "no-action"			
 
@@ -313,6 +365,31 @@ if __name__ == '__main__':
 #                         "-.__""\_|"-.__.-"./      \ l
 #                          ".__""">G>-.__.-">       .--,_
 #                              ""  G
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
