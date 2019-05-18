@@ -9,7 +9,7 @@ import tcod as libtcodpy
 #gamefiles
 import constants
 
-
+#WENN DAS GRÜN IST HAT ES GEKLAPPT
 
 #     _______.___________..______       __    __    ______ .___________.
 #    /       |           ||   _  \     |  |  |  |  /      ||           |
@@ -305,7 +305,11 @@ def game_handle_keys():
 
 			if event.key == pygame.K_KP4:
 					PLAYER.move(-1, 0)
-					return "player moved"		
+					return "player moved"
+
+			if event.key == pygame.K_KP5:
+					PLAYER.move(0, 0)
+					return "player moved"				
 
 			if event.key == pygame.K_KP6:
 					PLAYER.move(1, 0)
