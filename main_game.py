@@ -153,6 +153,8 @@ def map_create():
 		new_map[0][y].block_path = True
 		new_map[constants.MAP_WIDTH-1][y].block_path = True	
 
+	map_mape_fov(new_map)	
+
 	return new_map
 
 def map_check_for_creature(x, y, exclude_object = None):
@@ -185,6 +187,28 @@ def map_check_for_creature(x, y, exclude_object = None):
 
 			if target:
 				return target				
+
+def map_make_fov(incoming_map):
+	global FOV_MAP
+
+	FOV_MAP = libtcodpy.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+
+	for y in range(constants.MAP_HEIGHT):
+		for x in range(constants.MAP_WIDTH):
+			libtcodpy.map_set_properties(FOV_MAP, x, y
+				not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+
+
+
+def map_calculate_fov():
+	global FOV_CALCULATE	
+
+	if FOV_CALCULATE:
+		FOV_CALCULATE = False
+		libtcodpy.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
+			constants.FOV_ALGO)
+
+
 
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______ 
 #|       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
@@ -247,6 +271,8 @@ def game_main_loop():
 
 		player_action = game_handle_keys()
 
+		map_calculate_fov()
+
 		if player_action == "QUIT":
 			game_quit = True
 
@@ -270,7 +296,7 @@ def game_initialize():
 
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS
+	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE
 
 	#initialize Pygame
 	pygame.init()
@@ -279,6 +305,8 @@ def game_initialize():
 
 
 	GAME_MAP = map_create()
+
+	FOV_CALCULATE = True
 
 	creature_com1 = com_Creature("greg")
 	PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature = creature_com1)
