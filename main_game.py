@@ -1,4 +1,4 @@
-#3rd party modules
+#3rd party modules#3rd party modules
 import pygame
 import tcod as libtcodpy
 
@@ -9,7 +9,7 @@ import tcod as libtcodpy
 #gamefiles
 import constants
 
-
+#WENN DAS GRÜN IST HAT ES GEKLAPPT
 
 #     _______.___________..______       __    __    ______ .___________.
 #    /       |           ||   _  \     |  |  |  |  /      ||           |
@@ -53,17 +53,10 @@ class obj_Actor:
 	def draw(self):
 		SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
 
-	def move(self, dx, dy):
-		if GAME_MAP[self.x + dx][self.y + dy].block_path == False:
-			self.x += dx
-			self.y += dy	
 
-	#method is used to check if a move is allowed to be performed
-	def checkMove(self,dx,dy):
-		if self.x + dx >= constants.MAP_WIDTH or self.y + dy >= constants.MAP_HEIGHT:
-			return False
-		else:
-			return True
+
+
+
 
 #                                                         __          
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
@@ -75,10 +68,40 @@ class obj_Actor:
 
 class com_Creature:
 
-	def __init__(self, name_instance, hp = 10):
+	def __init__(self, name_instance, hp = 10, death_function = None):
 		self.name_instance = name_instance
+		self.maxhp = hp
 		self.hp = hp
+		self.death_function = death_function
 
+	def move(self, dx, dy):
+
+		tile_is_wall = (GAME_MAP[self.owner.x + dx][self.owner.y + dy].block_path == True)
+
+		target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
+
+		if target:
+			#im Tuturial ist das print unten rot aber anscheined geht es trotzdem
+			self.attack(target, 3)
+
+		if not tile_is_wall and target is None:
+			self.owner.x += dx
+			self.owner.y += dy		
+
+	def attack(self, target, damage):
+		print (self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!")
+
+		target.creature.take_damage(damage)
+			
+
+	def take_damage(self, damage):
+		self.hp -= damage
+		print (self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp))
+
+		if self.hp <= 0:
+
+			if self.death_function is not None:
+				self.death_function(self.owner)
 
 #class com_item:
 
@@ -95,11 +118,15 @@ class com_Creature:
 class ai_Test:
 
 	def take_turn(self):
-		dx = libtcodpy.random_get_int(None,-1,1)
-		dy = libtcodpy.random_get_int(None,-1,1)
-		if self.owner.checkMove(dx,dy):
-			self.owner.move(dx,dy)
-		#self.owner.move(libtcodpy.random_new(0,-1, 1, 0), libtcodpy.random_new(0, -1, 1))
+		self.owner.creature.move(libtcodpy.random_get_int(None,-1,1), libtcodpy.random_get_int(None,-1,1))
+
+def death_monster(monster):
+	#On death, most monsters stop moving tho
+	print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+
+	monster.creature = None
+	monster.ai = None		
+		
 
 
 
@@ -118,15 +145,52 @@ def map_create():
 	new_map[10][10].block_path = True
 	new_map[10][15].block_path = True
 
+	for x in range(constants.MAP_WIDTH):
+		new_map[x][0].block_path = True
+		new_map[x][constants.MAP_HEIGHT-1].block_path = True
+
+	for y in range(constants.MAP_HEIGHT):
+		new_map[0][y].block_path = True
+		new_map[constants.MAP_WIDTH-1][y].block_path = True	
+
 	return new_map
 
+def map_check_for_creature(x, y, exclude_object = None):
+	
+	target = None
 
+	if exclude_object:
+		#ceck objectlist to find creature at that location that isnt excluded
+		for object in GAME_OBJECTS:
+			if (object is not exclude_object and 
+				object.x == x and 
+				object.y == y and 
+				object.creature):
 
-#_______  .______          ___   ____    __    ____  __  .__   __.   _______ 
+				target = object
+				
+
+			if target:
+				return target	
+
+	else: 
+		#ceck objectlist to find any creature at that location 
+		for object in GAME_OBJECTS:
+			if (object.x == x and 
+				object.y == y and 
+				object.creature):
+
+				target = object
+				
+
+			if target:
+				return target				
+
+# _______  .______          ___   ____    __    ____  __  .__   __.   _______ 
 #|       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
 #|  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __  
 #|  |  |  ||      /      /  /_\  \  \            /   |  | |  . `  | |  | |_ | 
-#|  '--'  ||  |\  \----./  _____  \  \    /\    /    |  | |  |\   | |  |__| | 
+#|  '--'  ||  |\  \----./  _____  \  \    /\    /    |  | |  |\   | |  |__| |  
 #|_______/ | _| `._____/__/     \__\  \__/  \__/     |__| |__| \__|  \______|
 
 def draw_game():
@@ -186,7 +250,7 @@ def game_main_loop():
 		if player_action == "QUIT":
 			game_quit = True
 
-		elif player_action != "no  action":
+		elif player_action != "no-action":
 			for obj in GAME_OBJECTS:
 				if obj.ai:
 					obj.ai.take_turn()
@@ -211,17 +275,17 @@ def game_initialize():
 	#initialize Pygame
 	pygame.init()
 
-	SURFACE_MAIN = pygame.display.set_mode( (constants.GAME_WIDTH, constants.GAME_HEIGHT) )
+	SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT) )
 
 
 	GAME_MAP = map_create()
 
 	creature_com1 = com_Creature("greg")
-	PLAYER = obj_Actor(0, 0, "python", constants.S_PLAYER, creature = creature_com1)
+	PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature = creature_com1)
 
-	creature_com2 = com_Creature("crabby")
+	creature_com2 = com_Creature("crabby", death_function = death_monster)
 	ai_com = ai_Test()
-	ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, ai = ai_com)
+	ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, creature = creature_com2, ai = ai_com)
 
 	GAME_OBJECTS = [PLAYER, ENEMY]
 
@@ -237,22 +301,58 @@ def game_handle_keys():
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_UP:
-					PLAYER.move(0, -1)
+					PLAYER.creature.move(0, -1)
 					return "player moved"
 
 			if event.key == pygame.K_DOWN:
-					PLAYER.move(0, 1)	
+					PLAYER.creature.move(0, 1)	
 					return "player moved"
 
 			if event.key == pygame.K_LEFT:
-					PLAYER.move(-1, 0)
+					PLAYER.creature.move(-1, 0)
 					return "player moved"
 
 			if event.key == pygame.K_RIGHT:
-					PLAYER.move(1, 0)
+					PLAYER.creature.move(1, 0)
 					return "player moved"
 
-	return "no action"			
+			if event.key == pygame.K_KP1:
+					PLAYER.creature.move(-1, 1)
+					return "player moved"
+
+			if event.key == pygame.K_KP2:
+					PLAYER.creature.move(0, 1)
+					return "player moved"		
+							
+			if event.key == pygame.K_KP3:
+					PLAYER.creature.move(1, 1)
+					return "player moved"
+
+			if event.key == pygame.K_KP4:
+					PLAYER.creature.move(-1, 0)
+					return "player moved"
+
+			if event.key == pygame.K_KP5:
+					PLAYER.creature.move(0, 0)
+					return "player moved"				
+
+			if event.key == pygame.K_KP6:
+					PLAYER.creature.move(1, 0)
+					return "player moved"		
+
+			if event.key == pygame.K_KP7:
+					PLAYER.creature.move(-1, -1)
+					return "player moved"		
+
+			if event.key == pygame.K_KP8:
+					PLAYER.creature.move(0, -1)
+					return "player moved"		
+
+			if event.key == pygame.K_KP9:
+					PLAYER.creature.move(1, -1)
+					return "player moved"			
+
+	return "no-action"			
 
 
 
@@ -294,8 +394,6 @@ if __name__ == '__main__':
 #                         "-.__""\_|"-.__.-"./      \ l
 #                          ".__""">G>-.__.-">       .--,_
 #                              ""  G
-
-
 
 
 
