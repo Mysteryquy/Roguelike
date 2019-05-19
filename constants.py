@@ -1,4 +1,5 @@
 import pygame
+import tcod as libtcodpy
 
 pygame.init()
 
@@ -26,6 +27,11 @@ COLOR_DEFAULT_BG = COLOR_GREY
 
 #SPRITES
 S_PLAYER = pygame.image.load("data/python.png")
-S_WALL = pygame.image.load("data/wall1.png")
+S_WALL = pygame.image.load("data/wall2.jpg")
 S_FLOOR = pygame.image.load("data/floor.jpg")
 S_ENEMY = pygame.image.load("data/enemy1.png")
+
+#FOV SETTINGS Er hat anstelle der Null "libcod.FOV_BASIC" da stehen
+FOV_ALGO = 0
+FOV_LIGHT_WALLS = True
+TORCH_RADIUS = 10
