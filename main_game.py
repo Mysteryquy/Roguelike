@@ -21,6 +21,7 @@ import constants
 class struc_Tile:
 	def __init__(self, block_path):
 		self.block_path = block_path
+		self.explored = False
 
 
 
@@ -51,7 +52,10 @@ class obj_Actor:
 
 	
 	def draw(self):
-		SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
+		is_visible = libtcodpy.map_is_in_fov(FOV_MAP, self.x, self.y)
+
+		if is_visible:
+			SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
 
 
 
@@ -103,9 +107,9 @@ class com_Creature:
 			if self.death_function is not None:
 				self.death_function(self.owner)
 
-#class com_item:
+#TODO class com_item:
 
-#class com_container:
+#TODO class com_container:
 
 
 #   _____  .___ 
@@ -153,6 +157,8 @@ def map_create():
 		new_map[0][y].block_path = True
 		new_map[constants.MAP_WIDTH-1][y].block_path = True	
 
+	map_make_fov(new_map)	
+
 	return new_map
 
 def map_check_for_creature(x, y, exclude_object = None):
@@ -186,6 +192,27 @@ def map_check_for_creature(x, y, exclude_object = None):
 			if target:
 				return target				
 
+def map_make_fov(incoming_map):
+	global FOV_MAP
+
+	FOV_MAP = libtcodpy.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+
+	for y in range(constants.MAP_HEIGHT):
+		for x in range(constants.MAP_WIDTH):
+			libtcodpy.map_set_properties(FOV_MAP, x, y,not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+
+
+
+def map_calculate_fov():
+	global FOV_CALCULATE	
+
+	if FOV_CALCULATE:
+		FOV_CALCULATE = False
+		libtcodpy.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
+			constants.FOV_ALGO)
+
+
+
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______ 
 #|       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
 #|  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __  
@@ -217,10 +244,27 @@ def draw_map(map_to_draw):
 
 	for x in range(0, constants.MAP_WIDTH):
 		for y in range(0, constants.MAP_HEIGHT):
-			if map_to_draw[x][y].block_path == True:
-				SURFACE_MAIN.blit(constants.S_WALL, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
-			else:
-				SURFACE_MAIN.blit(constants.S_FLOOR, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+			is_visible = libtcodpy.map_is_in_fov(FOV_MAP, x, y)
+
+			if is_visible:
+
+				map_to_draw[x][y].explored = True
+
+				if map_to_draw[x][y].block_path == True:
+
+					SURFACE_MAIN.blit(constants.S_WALL, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
+				else:
+					SURFACE_MAIN.blit(constants.S_FLOOR, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+			elif map_to_draw[x][y].explored:
+
+				if map_to_draw[x][y].block_path == True:
+
+					SURFACE_MAIN.blit(constants.S_WALLEXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
+				else:
+					SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
 
 
 
@@ -247,6 +291,8 @@ def game_main_loop():
 
 		player_action = game_handle_keys()
 
+		map_calculate_fov()
+
 		if player_action == "QUIT":
 			game_quit = True
 
@@ -270,7 +316,7 @@ def game_initialize():
 
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS
+	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE
 
 	#initialize Pygame
 	pygame.init()
@@ -279,6 +325,8 @@ def game_initialize():
 
 
 	GAME_MAP = map_create()
+
+	FOV_CALCULATE = True
 
 	creature_com1 = com_Creature("greg")
 	PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature = creature_com1)
@@ -290,6 +338,7 @@ def game_initialize():
 	GAME_OBJECTS = [PLAYER, ENEMY]
 
 def game_handle_keys():
+	global FOV_CALCULATE
 
 	#get player input
 	events_list = pygame.event.get()
@@ -302,54 +351,67 @@ def game_handle_keys():
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_UP:
 					PLAYER.creature.move(0, -1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_DOWN:
-					PLAYER.creature.move(0, 1)	
+					PLAYER.creature.move(0, 1)
+					FOV_CALCULATE = True	
 					return "player moved"
 
 			if event.key == pygame.K_LEFT:
 					PLAYER.creature.move(-1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_RIGHT:
 					PLAYER.creature.move(1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP1:
 					PLAYER.creature.move(-1, 1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP2:
 					PLAYER.creature.move(0, 1)
+					FOV_CALCULATE = True
 					return "player moved"		
 							
 			if event.key == pygame.K_KP3:
 					PLAYER.creature.move(1, 1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP4:
 					PLAYER.creature.move(-1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP5:
 					PLAYER.creature.move(0, 0)
+					FOV_CALCULATE = True
 					return "player moved"				
 
 			if event.key == pygame.K_KP6:
 					PLAYER.creature.move(1, 0)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP7:
 					PLAYER.creature.move(-1, -1)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP8:
 					PLAYER.creature.move(0, -1)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP9:
 					PLAYER.creature.move(1, -1)
+					FOV_CALCULATE = True
 					return "player moved"			
 
 	return "no-action"			
