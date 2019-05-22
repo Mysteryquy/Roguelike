@@ -12,13 +12,15 @@ CELL_HEIGHT = 32
 MAP_WIDTH = 30
 MAP_HEIGHT = 30
 
-
+#FPS LIMIT
+GAME_FPS = 60
 
 
 #Color definitions
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_GREY = (100, 100, 100)
+COLOR_RED = (255, 0, 0)
 
 
 #game colors
@@ -40,3 +42,6 @@ S_FLOOREXPLORED = pygame.image.load("data/floorunseen.png")
 FOV_ALGO = 0
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 10
+
+#FONT SETTINGS
+FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)

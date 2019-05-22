@@ -235,7 +235,7 @@ def draw_game():
 	for obj in GAME_OBJECTS:
 		obj.draw()
 	
-
+	draw_debug()	
 
 	#update the display
 	pygame.display.flip()
@@ -264,6 +264,39 @@ def draw_map(map_to_draw):
 					SURFACE_MAIN.blit(constants.S_WALLEXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
 				else:
 					SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+def draw_debug():
+
+	draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0,0), constants.COLOR_RED)
+
+def draw_text(display_surface, text_to_display, T_coords, text_color):
+	#This function takes in some text and displays it on the refered surface
+
+	text_surf, text_rect = helper_text_objects(text_to_display, text_color)
+
+	text_rect.topleft = T_coords
+
+	display_surface.blit(text_surf, text_rect)
+
+
+
+#          _______  _        _______  _______  _______  _______ 
+#|\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
+#| )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
+#| (___) || (__    | |      | (____)|| (__    | (____)|| (_____ 
+#|  ___  ||  __)   | |      |  _____)|  __)   |     __)(_____  )
+#| (   ) || (      | |      | (      | (      | (\ (         ) |
+#| )   ( || (____/\| (____/\| )      | (____/\| ) \ \__/\____) |
+#|/     \|(_______/(_______/|/       (_______/|/   \__/\_______)
+
+def helper_text_objects(incoming_text, incoming_color):
+
+	Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
+
+	return Text_surface, Text_surface.get_rect()
+
+
+
 
 
 
@@ -306,6 +339,8 @@ def game_main_loop():
 		#draw the game
 		draw_game()
 
+		CLOCK.tick(constants.GAME_FPS)
+
 	#quit the game
 	pygame.quit()
 	exit()
@@ -316,10 +351,12 @@ def game_initialize():
 
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE
+	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK
 
 	#initialize Pygame
 	pygame.init()
+
+	CLOCK = pygame.time.Clock()
 
 	SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT) )
 
