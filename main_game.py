@@ -267,12 +267,30 @@ def draw_map(map_to_draw):
 
 def draw_debug():
 
-	draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0,0), constants.COLOR_RED)
+	draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0,0), constants.COLOR_WHITE, constants.COLOR_BLACK)
 
-def draw_text(display_surface, text_to_display, T_coords, text_color):
+def draw_messages():
+
+	to_draw = GAME_MESSAGES	
+
+	text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
+
+	start_y = constants.MAP_HEIGHT*constants.CELL_HEIGHT - (constants.NUM_MESSAGES * text_height)
+
+	i = 0
+
+	for message, color in to_draw:
+
+		draw_text(SURFACE_MAIN, message, (start_y + (0, i*text_height)), color, constants.COLOR_BLACK)
+
+		i += 1
+
+
+
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color = None):
 	#This function takes in some text and displays it on the refered surface
 
-	text_surf, text_rect = helper_text_objects(text_to_display, text_color)
+	text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
 
 	text_rect.topleft = T_coords
 
@@ -289,14 +307,22 @@ def draw_text(display_surface, text_to_display, T_coords, text_color):
 #| )   ( || (____/\| (____/\| )      | (____/\| ) \ \__/\____) |
 #|/     \|(_______/(_______/|/       (_______/|/   \__/\_______)
 
-def helper_text_objects(incoming_text, incoming_color):
+def helper_text_objects(incoming_text, incoming_color, incoming_bg):
 
-	Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
+	if incoming_bg:
+		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
+	else:	
+		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
 
 	return Text_surface, Text_surface.get_rect()
 
 
+def helper_text_height(font):
 
+	font_object = font.rander("a", False, (0,0,0))
+	font_rect = font_object.get_rect
+
+	return font_rect.height
 
 
 
@@ -345,13 +371,12 @@ def game_main_loop():
 	pygame.quit()
 	exit()
 
-
-
 def game_initialize():
 
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK
+	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK, GAME_MESSAGES
+
 
 	#initialize Pygame
 	pygame.init()
@@ -362,6 +387,10 @@ def game_initialize():
 
 
 	GAME_MAP = map_create()
+
+	GAME_MESSAGES = []
+
+	game_message('test message', constants.COLOR_WHITE)
 
 	FOV_CALCULATE = True
 
@@ -453,6 +482,9 @@ def game_handle_keys():
 
 	return "no-action"			
 
+def game_message(game_msg, msg_color):
+
+	GAME_MESSAGES.append((game_msg, msg_color))
 
 
 
