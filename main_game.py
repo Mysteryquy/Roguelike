@@ -21,6 +21,7 @@ import constants
 class struc_Tile:
 	def __init__(self, block_path):
 		self.block_path = block_path
+		self.explored = False
 
 
 
@@ -51,7 +52,10 @@ class obj_Actor:
 
 	
 	def draw(self):
-		SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
+		is_visible = libtcodpy.map_is_in_fov(FOV_MAP, self.x, self.y)
+
+		if is_visible:
+			SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
 
 
 
@@ -103,9 +107,9 @@ class com_Creature:
 			if self.death_function is not None:
 				self.death_function(self.owner)
 
-#class com_item:
+#TODO class com_item:
 
-#class com_container:
+#TODO class com_container:
 
 
 #   _____  .___ 
@@ -153,7 +157,7 @@ def map_create():
 		new_map[0][y].block_path = True
 		new_map[constants.MAP_WIDTH-1][y].block_path = True	
 
-	map_mape_fov(new_map)	
+	map_make_fov(new_map)	
 
 	return new_map
 
@@ -195,8 +199,7 @@ def map_make_fov(incoming_map):
 
 	for y in range(constants.MAP_HEIGHT):
 		for x in range(constants.MAP_WIDTH):
-			libtcodpy.map_set_properties(FOV_MAP, x, y
-				not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+			libtcodpy.map_set_properties(FOV_MAP, x, y,not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
 
 
 
@@ -232,7 +235,7 @@ def draw_game():
 	for obj in GAME_OBJECTS:
 		obj.draw()
 	
-
+	draw_debug()	
 
 	#update the display
 	pygame.display.flip()
@@ -241,10 +244,86 @@ def draw_map(map_to_draw):
 
 	for x in range(0, constants.MAP_WIDTH):
 		for y in range(0, constants.MAP_HEIGHT):
-			if map_to_draw[x][y].block_path == True:
-				SURFACE_MAIN.blit(constants.S_WALL, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
-			else:
-				SURFACE_MAIN.blit(constants.S_FLOOR, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+			is_visible = libtcodpy.map_is_in_fov(FOV_MAP, x, y)
+
+			if is_visible:
+
+				map_to_draw[x][y].explored = True
+
+				if map_to_draw[x][y].block_path == True:
+
+					SURFACE_MAIN.blit(constants.S_WALL, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
+				else:
+					SURFACE_MAIN.blit(constants.S_FLOOR, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+			elif map_to_draw[x][y].explored:
+
+				if map_to_draw[x][y].block_path == True:
+
+					SURFACE_MAIN.blit(constants.S_WALLEXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
+				else:
+					SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+
+def draw_debug():
+
+	draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0,0), constants.COLOR_WHITE, constants.COLOR_BLACK)
+
+def draw_messages():
+
+	to_draw = GAME_MESSAGES	
+
+	text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
+
+	start_y = constants.MAP_HEIGHT*constants.CELL_HEIGHT - (constants.NUM_MESSAGES * text_height)
+
+	i = 0
+
+	for message, color in to_draw:
+
+		draw_text(SURFACE_MAIN, message, (start_y + (0, i*text_height)), color, constants.COLOR_BLACK)
+
+		i += 1
+
+
+
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color = None):
+	#This function takes in some text and displays it on the refered surface
+
+	text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
+
+	text_rect.topleft = T_coords
+
+	display_surface.blit(text_surf, text_rect)
+
+
+
+#          _______  _        _______  _______  _______  _______ 
+#|\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
+#| )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
+#| (___) || (__    | |      | (____)|| (__    | (____)|| (_____ 
+#|  ___  ||  __)   | |      |  _____)|  __)   |     __)(_____  )
+#| (   ) || (      | |      | (      | (      | (\ (         ) |
+#| )   ( || (____/\| (____/\| )      | (____/\| ) \ \__/\____) |
+#|/     \|(_______/(_______/|/       (_______/|/   \__/\_______)
+
+def helper_text_objects(incoming_text, incoming_color, incoming_bg):
+
+	if incoming_bg:
+		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
+	else:	
+		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
+
+	return Text_surface, Text_surface.get_rect()
+
+
+def helper_text_height(font):
+
+	font_object = font.rander("a", False, (0,0,0))
+	font_rect = font_object.get_rect
+
+	return font_rect.height
+
 
 
 
@@ -286,25 +365,32 @@ def game_main_loop():
 		#draw the game
 		draw_game()
 
+		CLOCK.tick(constants.GAME_FPS)
+
 	#quit the game
 	pygame.quit()
 	exit()
-
-
 
 def game_initialize():
 
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE
+	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK, GAME_MESSAGES
+
 
 	#initialize Pygame
 	pygame.init()
+
+	CLOCK = pygame.time.Clock()
 
 	SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT) )
 
 
 	GAME_MAP = map_create()
+
+	GAME_MESSAGES = []
+
+	game_message('test message', constants.COLOR_WHITE)
 
 	FOV_CALCULATE = True
 
@@ -318,6 +404,7 @@ def game_initialize():
 	GAME_OBJECTS = [PLAYER, ENEMY]
 
 def game_handle_keys():
+	global FOV_CALCULATE
 
 	#get player input
 	events_list = pygame.event.get()
@@ -330,58 +417,74 @@ def game_handle_keys():
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_UP:
 					PLAYER.creature.move(0, -1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_DOWN:
-					PLAYER.creature.move(0, 1)	
+					PLAYER.creature.move(0, 1)
+					FOV_CALCULATE = True	
 					return "player moved"
 
 			if event.key == pygame.K_LEFT:
 					PLAYER.creature.move(-1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_RIGHT:
 					PLAYER.creature.move(1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP1:
 					PLAYER.creature.move(-1, 1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP2:
 					PLAYER.creature.move(0, 1)
+					FOV_CALCULATE = True
 					return "player moved"		
 							
 			if event.key == pygame.K_KP3:
 					PLAYER.creature.move(1, 1)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP4:
 					PLAYER.creature.move(-1, 0)
+					FOV_CALCULATE = True
 					return "player moved"
 
 			if event.key == pygame.K_KP5:
 					PLAYER.creature.move(0, 0)
+					FOV_CALCULATE = True
 					return "player moved"				
 
 			if event.key == pygame.K_KP6:
 					PLAYER.creature.move(1, 0)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP7:
 					PLAYER.creature.move(-1, -1)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP8:
 					PLAYER.creature.move(0, -1)
+					FOV_CALCULATE = True
 					return "player moved"		
 
 			if event.key == pygame.K_KP9:
 					PLAYER.creature.move(1, -1)
+					FOV_CALCULATE = True
 					return "player moved"			
 
 	return "no-action"			
 
+def game_message(game_msg, msg_color):
+
+	GAME_MESSAGES.append((game_msg, msg_color))
 
 
 
