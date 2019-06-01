@@ -93,14 +93,16 @@ class com_Creature:
 			self.owner.y += dy		
 
 	def attack(self, target, damage):
-		print (self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!")
 
+		#print (self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!")
+		game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!", constants.COLOR_WHITE)
 		target.creature.take_damage(damage)
 			
 
 	def take_damage(self, damage):
 		self.hp -= damage
-		print (self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp))
+		game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_WHITE)
+		#print (self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp))
 
 		if self.hp <= 0:
 
@@ -126,7 +128,8 @@ class ai_Test:
 
 def death_monster(monster):
 	#On death, most monsters stop moving tho
-	print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+	game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",constants.COLOR_WHITE)
+	#print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
 
 	monster.creature = None
 	monster.ai = None		
@@ -235,7 +238,8 @@ def draw_game():
 	for obj in GAME_OBJECTS:
 		obj.draw()
 	
-	draw_debug()	
+	draw_debug()
+	draw_messages()
 
 	#update the display
 	pygame.display.flip()
@@ -281,7 +285,7 @@ def draw_messages():
 
 	for message, color in to_draw:
 
-		draw_text(SURFACE_MAIN, message, (start_y + (0, i*text_height)), color, constants.COLOR_BLACK)
+		draw_text(SURFACE_MAIN, message, (20, start_y - 500 + i*text_height), color, constants.COLOR_BLACK)
 
 		i += 1
 
@@ -298,7 +302,7 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
 
 
 
-#          _______  _        _______  _______  _______  _______ 
+#          _______  _        _______  _______  _______  _______
 #|\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
 #| )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
 #| (___) || (__    | |      | (____)|| (__    | (____)|| (_____ 
@@ -318,11 +322,12 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg):
 
 
 def helper_text_height(font):
+	(width, height) = font.size("a")
+	#font_object = font.render("a", False, (0,0,0))
+	#font_rect = font_object.get_rect
 
-	font_object = font.rander("a", False, (0,0,0))
-	font_rect = font_object.get_rect
 
-	return font_rect.height
+	return height
 
 
 
