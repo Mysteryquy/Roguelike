@@ -1,517 +1,477 @@
-#3rd party modules#3rd party modules
+# 3rd party modules#3rd party modules
 import pygame
-import tcod as libtcodpy
+import tcod
+import tcod.map
 import os
 import ctypes
 
-
-
-
-
-#gamefiles
+# gamefiles
 import constants
 
-#WENN DAS GRÜN IST HAT ES GEKLAPPT
+
+# WENN DAS GRÜN IST HAT ES GEKLAPPT
 
 #     _______.___________..______       __    __    ______ .___________.
 #    /       |           ||   _  \     |  |  |  |  /      ||           |
 #   |   (----`---|  |----`|  |_)  |    |  |  |  | |  ,----'`---|  |----`
 #    \   \       |  |     |      /     |  |  |  | |  |         |  |     
-#.----)   |      |  |     |  |\  \----.|  `--'  | |  `----.    |  |     
-#|_______/       |__|     | _| `._____| \______/   \______|    |__|   
+# .----)   |      |  |     |  |\  \----.|  `--'  | |  `----.    |  |
+# |_______/       |__|     | _| `._____| \______/   \______|    |__|
 
 class struc_Tile:
-	def __init__(self, block_path):
-		self.block_path = block_path
-		self.explored = False
-
-
-
-
+    def __init__(self, block_path):
+        self.block_path = block_path
+        self.explored = False
 
 
 #  ______   .______          __   _______   ______ .___________.    _______.
 # /  __  \  |   _  \        |  | |   ____| /      ||           |   /       |
-#|  |  |  | |  |_)  |       |  | |  |__   |  ,----'`---|  |----`  |   (----`
-#|  |  |  | |   _  <  .--.  |  | |   __|  |  |         |  |        \   \    
-#|  `--'  | |  |_)  | |  `--'  | |  |____ |  `----.    |  |    .----)   |   
+# |  |  |  | |  |_)  |       |  | |  |__   |  ,----'`---|  |----`  |   (----`
+# |  |  |  | |   _  <  .--.  |  | |   __|  |  |         |  |        \   \
+# |  `--'  | |  |_)  | |  `--'  | |  |____ |  `----.    |  |    .----)   |
 # \______/  |______/   \______/  |_______| \______|    |__|    |_______/  
 
 
 class obj_Actor:
-	def __init__(self, x, y, name_object, sprite, creature = None, ai = None):
-		self.x = x
-		self.y = y
-		self.sprite = sprite
+    def __init__(self, x, y, name_object, sprite, creature=None, ai=None):
+        self.x = x
+        self.y = y
+        self.sprite = sprite
 
-		self.creature = creature
-		if creature: 
-			creature.owner = self
+        self.creature = creature
+        if creature:
+            creature.owner = self
 
-		self.ai = ai	
-		if ai:
-			ai.owner = self
+        self.ai = ai
+        if ai:
+            ai.owner = self
 
-	
-	def draw(self):
-		is_visible = libtcodpy.map_is_in_fov(FOV_MAP, self.x, self.y)
+    def draw(self):
+        is_visible = FOV_MAP.fov[self.y, self.x]
 
-		if is_visible:
-			SURFACE_MAIN.blit(self.sprite, (self.x*constants.CELL_WIDTH, self.y*constants.CELL_HEIGHT))
-
+        if is_visible:
+            SURFACE_MAIN.blit(self.sprite, (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
 
 
-
-
-
-#                                                         __          
+#                                                         __
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
-#_/ ___\/  _ \ /     \\____ \ /  _ \ /    \_/ __ \ /    \   __\/  ___/
-#\  \__(  <_> )  Y Y  \  |_> >  <_> )   |  \  ___/|   |  \  |  \___ \ 
+# _/ ___\/  _ \ /     \\____ \ /  _ \ /    \_/ __ \ /    \   __\/  ___/
+# \  \__(  <_> )  Y Y  \  |_> >  <_> )   |  \  ___/|   |  \  |  \___ \
 # \___  >____/|__|_|  /   __/ \____/|___|  /\___  >___|  /__| /____  >
 #     \/            \/|__|               \/     \/     \/          \/ 
 
 
 class com_Creature:
 
-	def __init__(self, name_instance, hp = 10, death_function = None):
-		self.name_instance = name_instance
-		self.maxhp = hp
-		self.hp = hp
-		self.death_function = death_function
+    def __init__(self, name_instance, hp=10, death_function=None):
+        self.name_instance = name_instance
+        self.maxhp = hp
+        self.hp = hp
+        self.death_function = death_function
 
-	def move(self, dx, dy):
+    def move(self, dx, dy):
 
-		tile_is_wall = (GAME_MAP[self.owner.x + dx][self.owner.y + dy].block_path == True)
+        tile_is_wall = (GAME_MAP[self.owner.x + dx][self.owner.y + dy].block_path == True)
 
-		target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
+        target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
-		if target:
-			#im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-			self.attack(target, 3)
+        if target:
+            # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
+            self.attack(target, 3)
 
-		if not tile_is_wall and target is None:
-			self.owner.x += dx
-			self.owner.y += dy		
+        if not tile_is_wall and target is None:
+            self.owner.x += dx
+            self.owner.y += dy
 
-	def attack(self, target, damage):
+    def attack(self, target, damage):
+
+        game_message(
+            self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!",
+            constants.COLOR_WHITE)
+        target.creature.take_damage(damage)
+
+    def take_damage(self, damage):
+        self.hp -= damage
+        game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_RED)
+
+        if self.hp <= 0:
+
+            if self.death_function is not None:
+                self.death_function(self.owner)
 
 
-		game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!", constants.COLOR_WHITE)
-		target.creature.take_damage(damage)
-			
+# TODO class com_item:
 
-	def take_damage(self, damage):
-		self.hp -= damage
-		game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_RED)
-
-
-		if self.hp <= 0:
-
-			if self.death_function is not None:
-				self.death_function(self.owner)
-
-#TODO class com_item:
-
-#TODO class com_container:
+# TODO class com_container:
 
 
 #   _____  .___ 
 #  /  _  \ |   |
 # /  /_\  \|   |
-#/    |    \   |
-#\____|__  /___|
+# /    |    \   |
+# \____|__  /___|
 #        \/ 
 
 class ai_Test:
 
-	def take_turn(self):
-		self.owner.creature.move(libtcodpy.random_get_int(None,-1,1), libtcodpy.random_get_int(None,-1,1))
+    def take_turn(self):
+        self.owner.creature.move(tcod.random_get_int(None, -1, 1), tcod.random_get_int(None, -1, 1))
+
 
 def death_monster(monster):
-	#On death, most monsters stop moving tho
-	game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",constants.COLOR_GREY)
-	#print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+    # On death, most monsters stop moving tho
+    game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!", constants.COLOR_GREY)
+    # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
 
-	monster.creature = None
-	monster.ai = None		
-		
-
+    monster.creature = None
+    monster.ai = None
 
 
-
-#.___  ___.      ___      .______   
-#|   \/   |     /   \     |   _  \  
-#|  \  /  |    /  ^  \    |  |_)  | 
-#|  |\/|  |   /  /_\  \   |   ___/  
-#|  |  |  |  /  _____  \  |  |      
-#|__|  |__| /__/     \__\ | _|
+# .___  ___.      ___      .______
+# |   \/   |     /   \     |   _  \
+# |  \  /  |    /  ^  \    |  |_)  |
+# |  |\/|  |   /  /_\  \   |   ___/
+# |  |  |  |  /  _____  \  |  |
+# |__|  |__| /__/     \__\ | _|
 
 def map_create():
-	new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+
+    new_map[10][10].block_path = True
+    new_map[10][15].block_path = True
+
+    for x in range(constants.MAP_WIDTH):
+        new_map[x][0].block_path = True
+        new_map[x][constants.MAP_HEIGHT - 1].block_path = True
+
+    for y in range(constants.MAP_HEIGHT):
+        new_map[0][y].block_path = True
+        new_map[constants.MAP_WIDTH - 1][y].block_path = True
+
+    map_make_fov(new_map)
+
+    return new_map
 
 
-	new_map[10][10].block_path = True
-	new_map[10][15].block_path = True
+def map_check_for_creature(x, y, exclude_object=None):
+    target = None
 
-	for x in range(constants.MAP_WIDTH):
-		new_map[x][0].block_path = True
-		new_map[x][constants.MAP_HEIGHT-1].block_path = True
+    if exclude_object:
+        # ceck objectlist to find creature at that location that isnt excluded
+        for object in GAME_OBJECTS:
+            if (object is not exclude_object and
+                    object.x == x and
+                    object.y == y and
+                    object.creature):
+                target = object
 
-	for y in range(constants.MAP_HEIGHT):
-		new_map[0][y].block_path = True
-		new_map[constants.MAP_WIDTH-1][y].block_path = True	
+            if target:
+                return target
 
-	map_make_fov(new_map)	
+    else:
+        # ceck objectlist to find any creature at that location
+        for object in GAME_OBJECTS:
+            if (object.x == x and
+                    object.y == y and
+                    object.creature):
+                target = object
 
-	return new_map
+            if target:
+                return target
 
-def map_check_for_creature(x, y, exclude_object = None):
-	
-	target = None
-
-	if exclude_object:
-		#ceck objectlist to find creature at that location that isnt excluded
-		for object in GAME_OBJECTS:
-			if (object is not exclude_object and 
-				object.x == x and 
-				object.y == y and 
-				object.creature):
-
-				target = object
-				
-
-			if target:
-				return target	
-
-	else: 
-		#ceck objectlist to find any creature at that location 
-		for object in GAME_OBJECTS:
-			if (object.x == x and 
-				object.y == y and 
-				object.creature):
-
-				target = object
-				
-
-			if target:
-				return target				
 
 def map_make_fov(incoming_map):
-	global FOV_MAP
+    global FOV_MAP
 
-	FOV_MAP = libtcodpy.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+    FOV_MAP = tcod.map.Map(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
-	for y in range(constants.MAP_HEIGHT):
-		for x in range(constants.MAP_WIDTH):
-			libtcodpy.map_set_properties(FOV_MAP, x, y,not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
-
+    for y in range(constants.MAP_HEIGHT):
+        for x in range(constants.MAP_WIDTH):
+            # same as before, but now we have array for walkable and transparent
+            FOV_MAP.walkable[x][y] = not incoming_map[x][y].block_path
+            FOV_MAP.transparent[x][y] = not incoming_map[x][y].block_path
 
 
 def map_calculate_fov():
-	global FOV_CALCULATE	
+    global FOV_CALCULATE
 
-	if FOV_CALCULATE:
-		FOV_CALCULATE = False
-		libtcodpy.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
-			constants.FOV_ALGO)
+    if FOV_CALCULATE:
+        FOV_CALCULATE = False
+        FOV_MAP.compute_fov(PLAYER.x, PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
+                            constants.FOV_ALGO)
 
 
-
-# _______  .______          ___   ____    __    ____  __  .__   __.   _______ 
-#|       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
-#|  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __  
-#|  |  |  ||      /      /  /_\  \  \            /   |  | |  . `  | |  | |_ | 
-#|  '--'  ||  |\  \----./  _____  \  \    /\    /    |  | |  |\   | |  |__| |  
-#|_______/ | _| `._____/__/     \__\  \__/  \__/     |__| |__| \__|  \______|
+# _______  .______          ___   ____    __    ____  __  .__   __.   _______
+# |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
+# |  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __
+# |  |  |  ||      /      /  /_\  \  \            /   |  | |  . `  | |  | |_ |
+# |  '--'  ||  |\  \----./  _____  \  \    /\    /    |  | |  |\   | |  |__| |
+# |_______/ | _| `._____/__/     \__\  \__/  \__/     |__| |__| \__|  \______|
 
 def draw_game():
+    global SURFACE_MAIN
 
-	global SURFACE_MAIN
+    # clear the surface
+    SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
 
-	#clear the surface
-	SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
+    # draw the map
+    draw_map(GAME_MAP)
 
+    for obj in GAME_OBJECTS:
+        obj.draw()
 
-	#draw the map
-	draw_map(GAME_MAP)
+    draw_debug()
+    draw_messages()
 
-	
-	for obj in GAME_OBJECTS:
-		obj.draw()
-	
-	draw_debug()
-	draw_messages()
+    # update the display
+    pygame.display.flip()
 
-	#update the display
-	pygame.display.flip()
 
 def draw_map(map_to_draw):
+    for x in range(0, constants.MAP_WIDTH):
+        for y in range(0, constants.MAP_HEIGHT):
 
-	for x in range(0, constants.MAP_WIDTH):
-		for y in range(0, constants.MAP_HEIGHT):
+            is_visible = FOV_MAP.fov[y, x]
 
-			is_visible = libtcodpy.map_is_in_fov(FOV_MAP, x, y)
+            if is_visible:
 
-			if is_visible:
+                map_to_draw[x][y].explored = True
 
-				map_to_draw[x][y].explored = True
+                if map_to_draw[x][y].block_path:
 
-				if map_to_draw[x][y].block_path == True:
+                    SURFACE_MAIN.blit(constants.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                else:
+                    SURFACE_MAIN.blit(constants.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
-					SURFACE_MAIN.blit(constants.S_WALL, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
-				else:
-					SURFACE_MAIN.blit(constants.S_FLOOR, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
+            elif map_to_draw[x][y].explored:
 
-			elif map_to_draw[x][y].explored:
+                if map_to_draw[x][y].block_path:
 
-				if map_to_draw[x][y].block_path == True:
+                    SURFACE_MAIN.blit(constants.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                else:
+                    SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
-					SURFACE_MAIN.blit(constants.S_WALLEXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) )
-				else:
-					SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, ( x*constants.CELL_WIDTH, y*constants.CELL_HEIGHT) ) 
 
 def draw_debug():
+    draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE, constants.COLOR_BLACK)
 
-	draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0,0), constants.COLOR_WHITE, constants.COLOR_BLACK)
 
 def draw_messages():
+    if len(GAME_MESSAGES) <= constants.NUM_MESSAGES:
+        to_draw = GAME_MESSAGES
+    else:
+        to_draw = GAME_MESSAGES[-constants.NUM_MESSAGES:]
 
-	if len(GAME_MESSAGES) <= constants.NUM_MESSAGES:
-		to_draw = GAME_MESSAGES	
-	else:
-		to_draw = GAME_MESSAGES[-(constants.NUM_MESSAGES):]
+    text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
 
-	text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
+    start_y = (constants.MAP_HEIGHT * constants.CELL_HEIGHT) - (constants.NUM_MESSAGES * text_height) - 20
 
-	start_y = (constants.MAP_HEIGHT*constants.CELL_HEIGHT) - (constants.NUM_MESSAGES * text_height) - 20
+    i = 0
 
-	i = 0
+    for message, color in to_draw:
+        draw_text(SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
 
-	for message, color in to_draw:
-
-		draw_text(SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
-
-		i += 1
+        i += 1
 
 
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None):
+    # This function takes in some text and displays it on the refered surface
 
-def draw_text(display_surface, text_to_display, T_coords, text_color, back_color = None):
-	#This function takes in some text and displays it on the refered surface
+    text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
 
-	text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
+    text_rect.topleft = T_coords
 
-	text_rect.topleft = T_coords
-
-	display_surface.blit(text_surf, text_rect)
-
+    display_surface.blit(text_surf, text_rect)
 
 
 #          _______  _        _______  _______  _______  _______
-#|\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
-#| )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
-#| (___) || (__    | |      | (____)|| (__    | (____)|| (_____ 
-#|  ___  ||  __)   | |      |  _____)|  __)   |     __)(_____  )
-#| (   ) || (      | |      | (      | (      | (\ (         ) |
-#| )   ( || (____/\| (____/\| )      | (____/\| ) \ \__/\____) |
-#|/     \|(_______/(_______/|/       (_______/|/   \__/\_______)
+# |\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
+# | )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
+# | (___) || (__    | |      | (____)|| (__    | (____)|| (_____
+# |  ___  ||  __)   | |      |  _____)|  __)   |     __)(_____  )
+# | (   ) || (      | |      | (      | (      | (\ (         ) |
+# | )   ( || (____/\| (____/\| )      | (____/\| ) \ \__/\____) |
+# |/     \|(_______/(_______/|/       (_______/|/   \__/\_______)
 
 def helper_text_objects(incoming_text, incoming_color, incoming_bg):
+    if incoming_bg:
+        Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
+    else:
+        Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
 
-	if incoming_bg:
-		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
-	else:	
-		Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
-
-	return Text_surface, Text_surface.get_rect()
+    return Text_surface, Text_surface.get_rect()
 
 
 def helper_text_height(font):
-	(width, height) = font.size("A")
-	#font_object = font.render("a", False, (0,0,0))
-	#font_rect = font_object.get_rect
+    (width, height) = font.size("A")
+    # font_object = font.render("a", False, (0,0,0))
+    # font_rect = font_object.get_rect
+
+    return height
 
 
-	return height
-
-
-
-
-
-
-                                                                                        
-
-#  _______      ___      .___  ___.  _______ 
+#  _______      ___      .___  ___.  _______
 # /  _____|    /   \     |   \/   | |   ____|
-#|  |  __     /  ^  \    |  \  /  | |  |__   
-#|  | |_ |   /  /_\  \   |  |\/|  | |   __|  
-#|  |__| |  /  _____  \  |  |  |  | |  |____ 
+# |  |  __     /  ^  \    |  \  /  | |  |__
+# |  | |_ |   /  /_\  \   |  |\/|  | |   __|
+# |  |__| |  /  _____  \  |  |  |  | |  |____
 # \______| /__/     \__\ |__|  |__| |_______|
-                                            
+
 def game_main_loop():
+    game_quit = False
 
-	game_quit = False
+    player_action = "no-action"
 
-	player_action = "no-action"
-	
-	while not game_quit:
+    while not game_quit:
 
+        player_action = game_handle_keys()
 
+        map_calculate_fov()
 
-		player_action = game_handle_keys()
+        if player_action == "QUIT":
+            game_quit = True
 
-		map_calculate_fov()
+        elif player_action != "no-action":
+            for obj in GAME_OBJECTS:
+                if obj.ai:
+                    obj.ai.take_turn()
 
-		if player_action == "QUIT":
-			game_quit = True
+        # draw the game
+        draw_game()
 
-		elif player_action != "no-action":
-			for obj in GAME_OBJECTS:
-				if obj.ai:
-					obj.ai.take_turn()
+        CLOCK.tick(constants.GAME_FPS)
 
-		
+    # quit the game
+    pygame.quit()
+    exit()
 
-		#draw the game
-		draw_game()
-
-		CLOCK.tick(constants.GAME_FPS)
-
-	#quit the game
-	pygame.quit()
-	exit()
 
 def game_initialize():
+    '''Das hier startet Pygame und das Hauptfenster'''
 
+    global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK, GAME_MESSAGES
+    # makes window start at top left corner
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+    # disable scaling of windows
+    ctypes.windll.user32.SetProcessDPIAware()
 
-	'''Das hier startet Pygame und das Hauptfenster'''	
+    # initialize Pygame
+    pygame.init()
 
-	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK, GAME_MESSAGES
-	#makes window start at top left corner
-	os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-	#disable scaling of windows
-	ctypes.windll.user32.SetProcessDPIAware()
+    CLOCK = pygame.time.Clock()
 
+    # looks for resolution of the display of the user
+    info = pygame.display.Info()
+    screen_width, screen_height = info.current_w, info.current_h
 
-	#initialize Pygame
-	pygame.init()
+    SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height),
+                                           pygame.NOFRAME)
 
-	CLOCK = pygame.time.Clock()
+    GAME_MAP = map_create()
 
-	#looks for resolution of the display of the user
-	info = pygame.display.Info()
-	screen_width, screen_height = info.current_w, info.current_h
+    GAME_MESSAGES = []
 
-	#SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT),
-	#										pygame.NOFRAME)
-	SURFACE_MAIN = pygame.display.set_mode( (screen_width, screen_height),
-											pygame.NOFRAME)
+    FOV_CALCULATE = True
 
+    creature_com1 = com_Creature("greg")
+    PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature=creature_com1)
 
-	GAME_MAP = map_create()
+    creature_com2 = com_Creature("crabby", death_function=death_monster)
+    ai_com = ai_Test()
+    ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, creature=creature_com2, ai=ai_com)
 
-	GAME_MESSAGES = []
+    GAME_OBJECTS = [PLAYER, ENEMY]
 
-	FOV_CALCULATE = True
-
-	creature_com1 = com_Creature("greg")
-	PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature = creature_com1)
-
-	creature_com2 = com_Creature("crabby", death_function = death_monster)
-	ai_com = ai_Test()
-	ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, creature = creature_com2, ai = ai_com)
-
-	GAME_OBJECTS = [PLAYER, ENEMY]
 
 def game_handle_keys():
-	global FOV_CALCULATE
+    global FOV_CALCULATE
 
-	#get player input
-	events_list = pygame.event.get()
+    # get player input
+    events_list = pygame.event.get()
 
-	#process input
-	for event in events_list:
-		if event.type == pygame.QUIT:
-			return "QUIT"
+    # process input
+    for event in events_list:
+        if event.type == pygame.QUIT:
+            return "QUIT"
 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_UP:
-					PLAYER.creature.move(0, -1)
-					FOV_CALCULATE = True
-					return "player moved"
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return "QUIT"
+            if event.key == pygame.K_UP:
+                PLAYER.creature.move(0, -1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_DOWN:
-					PLAYER.creature.move(0, 1)
-					FOV_CALCULATE = True	
-					return "player moved"
+            if event.key == pygame.K_DOWN:
+                PLAYER.creature.move(0, 1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_LEFT:
-					PLAYER.creature.move(-1, 0)
-					FOV_CALCULATE = True
-					return "player moved"
+            if event.key == pygame.K_LEFT:
+                PLAYER.creature.move(-1, 0)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_RIGHT:
-					PLAYER.creature.move(1, 0)
-					FOV_CALCULATE = True
-					return "player moved"
+            if event.key == pygame.K_RIGHT:
+                PLAYER.creature.move(1, 0)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP1:
-					PLAYER.creature.move(-1, 1)
-					FOV_CALCULATE = True
-					return "player moved"
+            if event.key == pygame.K_KP1:
+                PLAYER.creature.move(-1, 1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP2:
-					PLAYER.creature.move(0, 1)
-					FOV_CALCULATE = True
-					return "player moved"		
-							
-			if event.key == pygame.K_KP3:
-					PLAYER.creature.move(1, 1)
-					FOV_CALCULATE = True
-					return "player moved"
+            if event.key == pygame.K_KP2:
+                PLAYER.creature.move(0, 1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP4:
-					PLAYER.creature.move(-1, 0)
-					FOV_CALCULATE = True
-					return "player moved"
+            if event.key == pygame.K_KP3:
+                PLAYER.creature.move(1, 1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP5:
-					PLAYER.creature.move(0, 0)
-					FOV_CALCULATE = True
-					return "player moved"				
+            if event.key == pygame.K_KP4:
+                PLAYER.creature.move(-1, 0)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP6:
-					PLAYER.creature.move(1, 0)
-					FOV_CALCULATE = True
-					return "player moved"		
+            if event.key == pygame.K_KP5:
+                PLAYER.creature.move(0, 0)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP7:
-					PLAYER.creature.move(-1, -1)
-					FOV_CALCULATE = True
-					return "player moved"		
+            if event.key == pygame.K_KP6:
+                PLAYER.creature.move(1, 0)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP8:
-					PLAYER.creature.move(0, -1)
-					FOV_CALCULATE = True
-					return "player moved"		
+            if event.key == pygame.K_KP7:
+                PLAYER.creature.move(-1, -1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-			if event.key == pygame.K_KP9:
-					PLAYER.creature.move(1, -1)
-					FOV_CALCULATE = True
-					return "player moved"			
+            if event.key == pygame.K_KP8:
+                PLAYER.creature.move(0, -1)
+                FOV_CALCULATE = True
+                return "player moved"
 
-	return "no-action"			
+            if event.key == pygame.K_KP9:
+                PLAYER.creature.move(1, -1)
+                FOV_CALCULATE = True
+                return "player moved"
+
+    return "no-action"
+
 
 def game_message(game_msg, msg_color):
-
-	GAME_MESSAGES.append((game_msg, msg_color))
-
+    GAME_MESSAGES.append((game_msg, msg_color))
 
 
 if __name__ == '__main__':
-	game_initialize()
-	game_main_loop ()
-
+    game_initialize()
+    game_main_loop()
 
 #              .7
 #            .'/
@@ -524,9 +484,9 @@ if __name__ == '__main__':
 #     / /         
 #    / /          
 #  __|/
-#,-\__\
-#|f-"Y\|
-#\()7L/
+# ,-\__\
+# |f-"Y\|
+# \()7L/
 # cgD                            __ _
 # |\(                          .'  Y '>,
 #  \ \                        / _   _   \

@@ -1,5 +1,5 @@
 import pygame
-import tcod as libtcodpy
+#import tcod as libtcodpy
 
 pygame.init()
 
