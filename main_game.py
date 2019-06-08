@@ -1,6 +1,8 @@
 #3rd party modules#3rd party modules
 import pygame
 import tcod as libtcodpy
+import os
+import ctypes
 
 
 
@@ -325,7 +327,7 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg):
 
 
 def helper_text_height(font):
-	(width, height) = font.size("a")
+	(width, height) = font.size("A")
 	#font_object = font.render("a", False, (0,0,0))
 	#font_rect = font_object.get_rect
 
@@ -381,9 +383,14 @@ def game_main_loop():
 
 def game_initialize():
 
+
 	'''Das hier startet Pygame und das Hauptfenster'''	
 
 	global SURFACE_MAIN, GAME_MAP, PLAYER, ENEMY, GAME_OBJECTS, FOV_CALCULATE, CLOCK, GAME_MESSAGES
+	#makes window start at top left corner
+	os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+	#disable scaling of windows
+	ctypes.windll.user32.SetProcessDPIAware()
 
 
 	#initialize Pygame
@@ -391,7 +398,14 @@ def game_initialize():
 
 	CLOCK = pygame.time.Clock()
 
-	SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT) )
+	#looks for resolution of the display of the user
+	info = pygame.display.Info()
+	screen_width, screen_height = info.current_w, info.current_h
+
+	#SURFACE_MAIN = pygame.display.set_mode( (constants.MAP_WIDTH*constants.CELL_WIDTH, constants.MAP_HEIGHT*constants.CELL_HEIGHT),
+	#										pygame.NOFRAME)
+	SURFACE_MAIN = pygame.display.set_mode( (screen_width, screen_height),
+											pygame.NOFRAME)
 
 
 	GAME_MAP = map_create()
