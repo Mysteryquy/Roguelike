@@ -94,15 +94,15 @@ class com_Creature:
 
 	def attack(self, target, damage):
 
-		#print (self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!")
+
 		game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) +" damage!", constants.COLOR_WHITE)
 		target.creature.take_damage(damage)
 			
 
 	def take_damage(self, damage):
 		self.hp -= damage
-		game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_WHITE)
-		#print (self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp))
+		game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_RED)
+
 
 		if self.hp <= 0:
 
@@ -128,7 +128,7 @@ class ai_Test:
 
 def death_monster(monster):
 	#On death, most monsters stop moving tho
-	game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",constants.COLOR_WHITE)
+	game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",constants.COLOR_GREY)
 	#print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
 
 	monster.creature = None
@@ -275,17 +275,20 @@ def draw_debug():
 
 def draw_messages():
 
-	to_draw = GAME_MESSAGES	
+	if len(GAME_MESSAGES) <= constants.NUM_MESSAGES:
+		to_draw = GAME_MESSAGES	
+	else:
+		to_draw = GAME_MESSAGES[-(constants.NUM_MESSAGES):]
 
 	text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
 
-	start_y = constants.MAP_HEIGHT*constants.CELL_HEIGHT - (constants.NUM_MESSAGES * text_height)
+	start_y = (constants.MAP_HEIGHT*constants.CELL_HEIGHT) - (constants.NUM_MESSAGES * text_height) - 20
 
 	i = 0
 
 	for message, color in to_draw:
 
-		draw_text(SURFACE_MAIN, message, (20, start_y - 500 + i*text_height), color, constants.COLOR_BLACK)
+		draw_text(SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
 
 		i += 1
 
@@ -394,8 +397,6 @@ def game_initialize():
 	GAME_MAP = map_create()
 
 	GAME_MESSAGES = []
-
-	game_message('test message', constants.COLOR_WHITE)
 
 	FOV_CALCULATE = True
 
@@ -530,28 +531,3 @@ if __name__ == '__main__':
 #                         "-.__""\_|"-.__.-"./      \ l
 #                          ".__""">G>-.__.-">       .--,_
 #                              ""  G
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
