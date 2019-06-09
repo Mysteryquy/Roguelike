@@ -368,18 +368,21 @@ def game_initialize():
     # initialize Pygame
     pygame.init()
 
+    GAME = obj_Game()
+
+    CLOCK = pygame.time.Clock()
+
+
+    # looks for resolution of the display of the user
+    info = pygame.display.Info()
+    screen_width, screen_height = info.current_w, info.current_h
+
     SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height),
                                            pygame.NOFRAME)
 
 
 
-	GAME = obj_Game()
 
-    CLOCK = pygame.time.Clock()
-
-    # looks for resolution of the display of the user
-    info = pygame.display.Info()
-    screen_width, screen_height = info.current_w, info.current_h
 
     
     FOV_CALCULATE = True
