@@ -298,7 +298,10 @@ def draw_messages():
 
     text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
 
-    start_y = (constants.MAP_HEIGHT * constants.CELL_HEIGHT) - (constants.NUM_MESSAGES * text_height) - 20
+    info = pygame.display.Info()
+    screen_height = info.current_h
+
+    start_y = screen_height - (constants.NUM_MESSAGES * text_height)
 
     i = 0
 
