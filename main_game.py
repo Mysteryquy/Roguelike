@@ -60,6 +60,30 @@ class obj_Game:
 
 		self.current_objects = []
 
+class obj_Spritesheet: #Bilder von Spritesheets holen
+	
+	def __init__(self, file_name):
+		#Den Sheet laden.
+		self.sprite_sheet = pygame.image.load(file_name).convert()
+		self.tiledict = {"a" : 1 , "b" : 2 , "c" : 3 , "d" : 4 , "e" : 5 , "f" : 6 , "g" : 7 , "h" : 8 , "i" : 9 , "j" : 10 , "k" : 11 , "l" : 12 , "m" : 13 , "n" : 14 , "o" : 15, "p" : 16}
+
+	###############
+
+	def get_image(self, column, row, width = constants.CELL_WIDTH, height = constants.CELL_HEIGHT, scale = None):
+
+		image = pygame.Surface([width, height]).convert()
+
+		image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column]*width, row*height, width, height))
+
+		image.set_colorkey(constants.COLOR_BLACK)
+
+		if scale:
+			(new_w, new_h) = scale
+			image = pygame.transform.scale(image, (new_w, new_h))
+
+		return image
+
+
 
 
 
@@ -387,8 +411,13 @@ def game_initialize():
     
     FOV_CALCULATE = True
 
+    ## Temp sprites#
+
+    ROFL = obj_Spritesheet("data/ROFL.png")
+    S_PLAYER = ROFL.get_image("a", 2, 16 , 16, (32,32))
+
     creature_com1 = com_Creature("greg")
-    PLAYER = obj_Actor(1, 1, "python", constants.S_PLAYER, creature=creature_com1)
+    PLAYER = obj_Actor(1, 1, "python", S_PLAYER, creature=creature_com1)
 
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com = ai_Test()
