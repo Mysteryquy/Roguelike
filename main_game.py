@@ -33,7 +33,7 @@ class struc_Tile:
 
 
 class obj_Actor:
-    #test
+    #test LOLOLOLOLOLO
     def __init__(self, x, y, name_object, animation, creature=None, ai=None):
         self.x = x
         self.y = y
