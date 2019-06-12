@@ -33,11 +33,15 @@ class struc_Tile:
 
 
 class obj_Actor:
-    #test LOLOLOLOLOLO
+    #test LOLOLOLOLOLOom
     def __init__(self, x, y, name_object, animation, creature=None, ai=None):
         self.x = x
         self.y = y
         self.animation = animation
+        self.animation_speed = .5 #in seconds
+
+        #animation flicker speed
+        self.flicker_timer = 0
 
         self.creature = creature
         if creature:
@@ -51,47 +55,76 @@ class obj_Actor:
         is_visible = FOV_MAP.fov[self.y, self.x]
 
         if is_visible:
-        	if len(self.animation) == 1:
-        		SURFACE_MAIN.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
-				
+            if len(self.animation) == 1:
+                SURFACE_MAIN.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+
+            elif len(self.animation) > 1:
+                if CLOCK.get_fps() > 0.0:
+                    self.flicker_timer += 1 / CLOCK.get_fps()
+
+                if self.flicker_timer >= self.animation_speed:
+
+
+
 
 
 
 class obj_Game:
-	def __init__(self):
+    def __init__(self):
 
-		self.current_map = map_create()
-		self.message_history = []
+        self.current_map = map_create()
+        self.message_history = []
 
-		self.current_objects = []
+        self.current_objects = []
 
 class obj_Spritesheet: #Bilder von Spritesheets holen
-	
-	def __init__(self, file_name):
-		#Den Sheet laden.
-		self.sprite_sheet = pygame.image.load(file_name).convert()
-		self.tiledict = {"a" : 1 , "b" : 2 , "c" : 3 , "d" : 4 , "e" : 5 , "f" : 6 , "g" : 7 , "h" : 8 , "i" : 9 , "j" : 10 , "k" : 11 , "l" : 12 , "m" : 13 , "n" : 14 , "o" : 15, "p" : 16}
 
-	###############
+    def __init__(self, file_name):
+        #Den Sheet laden.
+        self.sprite_sheet = pygame.image.load(file_name).convert()
+        self.tiledict = {"a" : 1 , "b" : 2 , "c" : 3 , "d" : 4 , "e" : 5 , "f" : 6 , "g" : 7 , "h" : 8 , "i" : 9 , "j" : 10 , "k" : 11 , "l" : 12 , "m" : 13 , "n" : 14 , "o" : 15, "p" : 16}
 
-	def get_image(self, column, row, width = constants.CELL_WIDTH, height = constants.CELL_HEIGHT, scale = None):
+        ###############
 
-		image_list = []
+    def get_image(self, column, row, width = constants.CELL_WIDTH, height = constants.CELL_HEIGHT, scale = None):
 
-		image = pygame.Surface([width, height]).convert()
+        image_list = []
 
-		image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column]*width, row*height, width, height))
+        image = pygame.Surface([width, height]).convert()
 
-		image.set_colorkey(constants.COLOR_BLACK)
+        image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column]*width, row*height, width, height))
 
-		if scale:
-			(new_w, new_h) = scale
-			image = pygame.transform.scale(image, (new_w, new_h))
+        image.set_colorkey(constants.COLOR_BLACK)
 
-		image_list.append(image)			
+        if scale:
+            (new_w, new_h) = scale
+            image = pygame.transform.scale(image, (new_w, new_h))
 
-		return image_list
+        image_list.append(image)
 
+        return image_list
+
+    def get_animation(self, column, row, width = constants.CELL_WIDTH, height = constants.CELL_HEIGHT, num_sprites = 1, scale = None):
+
+        image_list = []
+
+        for i in range(num_sprites):
+            #Create blank image
+            image = pygame.Surface([width, height]).convert()
+
+            #copy image from sheet onto blank
+            image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column]*width+(width*i), row*height, width, height))
+
+            #set transparency to black
+            image.set_colorkey(constants.COLOR_BLACK)
+
+            if scale:
+                (new_w, new_h) = scale
+                image = pygame.transform.scale(image, (new_w, new_h))
+
+            image_list.append(image)
+
+        return image_list
 
 
 
@@ -130,7 +163,7 @@ class com_Creature:
 
         game_message(
             self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!",
-            constants.COLOR_WHITE)
+              constants.COLOR_WHITE)
         target.creature.take_damage(damage)
 
     def take_damage(self, damage):
@@ -275,7 +308,6 @@ def draw_map(map_to_draw):
         for y in range(0, constants.MAP_HEIGHT):
 
             is_visible = FOV_MAP.fov[y, x]
-
             if is_visible:
 
                 map_to_draw[x][y].explored = True
@@ -288,11 +320,11 @@ def draw_map(map_to_draw):
 
             elif map_to_draw[x][y].explored:
 
-                if map_to_draw[x][y].block_path:
+                    if map_to_draw[x][y].block_path: #Bruh was will der von mir
 
-                    SURFACE_MAIN.blit(constants.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
-                else:
-                    SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                        SURFACE_MAIN.blit(constants.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    else:
+                        SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
 def draw_debug():
@@ -321,7 +353,7 @@ def draw_messages():
 
 
 def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None):
-    # This function takes in some text and displays it on the refered surface
+    # This function takes in some text and displ#wtfays it on the refered surface#community version LUL jo is das schlimm ne aber wollte dir gerade den performance analyzer zeigen
 
     text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
 
@@ -330,6 +362,7 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
     display_surface.blit(text_surf, text_rect)
 
 
+#bruh das auto einruecken aht iwe alles kaputt gemacht Ich merksvergleich das mal pls mit github und aender die da wo das broken ist BRUH oder mom
 #          _______  _        _______  _______  _______  _______
 # |\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
 # | )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
@@ -352,7 +385,6 @@ def helper_text_height(font):
     (width, height) = font.size("A")
     # font_object = font.render("a", False, (0,0,0))
     # font_rect = font_object.get_rect
-
     return height
 
 
@@ -420,16 +452,16 @@ def game_initialize():
 
 
 
-    
+
     FOV_CALCULATE = True
 
     ## Temp sprites#
 
     charspritesheet = obj_Spritesheet("data/Reptiles.png")
-    enemyspritesheet = obj_Spritesheet("data/ROFL.png") 
+    enemyspritesheet = obj_Spritesheet("data/ROFL.png")
 
 
-    A_PLAYER = charspritesheet.get_image("m", 5, 16 , 16, (32,32))
+    A_PLAYER = charspritesheet.get_animation("m", 5, 16 , 16, 2, (32,32))
     A_ENEMY = enemyspritesheet.get_image("k", 1, 16 , 16, (32,32))
 
     creature_com1 = com_Creature("greg")
