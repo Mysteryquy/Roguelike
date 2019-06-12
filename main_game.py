@@ -33,10 +33,10 @@ class struc_Tile:
 
 
 class obj_Actor:
-    def __init__(self, x, y, name_object, sprite, creature=None, ai=None):
+    def __init__(self, x, y, name_object, animation, creature=None, ai=None):
         self.x = x
         self.y = y
-        self.sprite = sprite
+        self.animation = animation
 
         self.creature = creature
         if creature:
@@ -50,7 +50,11 @@ class obj_Actor:
         is_visible = FOV_MAP.fov[self.y, self.x]
 
         if is_visible:
-            SURFACE_MAIN.blit(self.sprite, (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+        	if len(self.animation) == 1:
+        		SURFACE_MAIN.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+				
+
+
 
 class obj_Game:
 	def __init__(self):
@@ -71,6 +75,8 @@ class obj_Spritesheet: #Bilder von Spritesheets holen
 
 	def get_image(self, column, row, width = constants.CELL_WIDTH, height = constants.CELL_HEIGHT, scale = None):
 
+		image_list = []
+
 		image = pygame.Surface([width, height]).convert()
 
 		image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column]*width, row*height, width, height))
@@ -81,7 +87,9 @@ class obj_Spritesheet: #Bilder von Spritesheets holen
 			(new_w, new_h) = scale
 			image = pygame.transform.scale(image, (new_w, new_h))
 
-		return image
+		image_list.append(image)			
+
+		return image_list
 
 
 
@@ -416,15 +424,19 @@ def game_initialize():
 
     ## Temp sprites#
 
-    ROFL = obj_Spritesheet("data/ROFL.png")
-    S_PLAYER = ROFL.get_image("a", 2, 16 , 16, (32,32))
+    charspritesheet = obj_Spritesheet("data/Reptiles.png")
+    enemyspritesheet = obj_Spritesheet("data/ROFL.png") 
+
+
+    A_PLAYER = charspritesheet.get_image("m", 5, 16 , 16, (32,32))
+    A_ENEMY = enemyspritesheet.get_image("k", 1, 16 , 16, (32,32))
 
     creature_com1 = com_Creature("greg")
-    PLAYER = obj_Actor(1, 1, "python", S_PLAYER, creature=creature_com1)
+    PLAYER = obj_Actor(1, 1, "python", A_PLAYER, creature=creature_com1)
 
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com = ai_Test()
-    ENEMY = obj_Actor(20, 15, "crab", constants.S_ENEMY, creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(20, 15, "crab", A_ENEMY, creature=creature_com2, ai=ai_com)
 
     GAME.current_objects = [PLAYER, ENEMY]
 
