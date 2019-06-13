@@ -33,15 +33,17 @@ class struc_Tile:
 
 
 class obj_Actor:
-    #test LOLOLOLOLOLOom
-    def __init__(self, x, y, name_object, animation, creature=None, ai=None):
+
+    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None):
         self.x = x
         self.y = y
-        self.animation = animation
-        self.animation_speed = .5 #in seconds
+        self.animation = animation  #number of images
+        self.animation_speed = animation_speed / 1.0 #in seconds
 
         #animation flicker speed
-        self.flicker_timer = 0
+        self.flicker_speed = self.animation_speed / len(self.animation)
+        self.flicker_timer = 0.0
+        self.sprite_image = 0
 
         self.creature = creature
         if creature:
@@ -62,7 +64,18 @@ class obj_Actor:
                 if CLOCK.get_fps() > 0.0:
                     self.flicker_timer += 1 / CLOCK.get_fps()
 
-                if self.flicker_timer >= self.animation_speed:
+                if self.flicker_timer >= self.flicker_speed:
+                    self.flicker_timer = 0.0
+
+                    if self.sprite_image >= len(self.animation) - 1:
+                        self.sprite_image = 0
+
+                    else:
+                        self.sprite_image += 1
+
+                SURFACE_MAIN.blit(self.animation[self.sprite_image], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+
+
 
 
 
@@ -461,11 +474,11 @@ def game_initialize():
     enemyspritesheet = obj_Spritesheet("data/ROFL.png")
 
 
-    A_PLAYER = charspritesheet.get_animation("m", 5, 16 , 16, 2, (32,32))
+    A_PLAYER = charspritesheet.get_animation("m", 5, 16 , 16, 4, (32,32))
     A_ENEMY = enemyspritesheet.get_image("k", 1, 16 , 16, (32,32))
 
     creature_com1 = com_Creature("greg")
-    PLAYER = obj_Actor(1, 1, "python", A_PLAYER, creature=creature_com1)
+    PLAYER = obj_Actor(1, 1, "python", A_PLAYER, animation_speed = 0.5, creature=creature_com1)
 
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com = ai_Test()
