@@ -43,7 +43,7 @@ class obj_Actor:
         #animation flicker speed
         self.flicker_speed = self.animation_speed / len(self.animation)
         self.flicker_timer = 0.0
-        self.sprite_image = 0
+        self.sprite_image = 0 #s
 
         self.creature = creature
         if creature:
