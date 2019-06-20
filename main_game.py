@@ -23,6 +23,30 @@ class struc_Tile:
         self.block_path = block_path
         self.explored = False
 
+class struc_Assets:
+    def __init__(self):
+
+        #Sprite sheets#
+        self.charspritesheet = obj_Spritesheet("data/Reptiles.png")
+        self.enemyspritesheet = obj_Spritesheet("data/ROFL.png")
+
+
+        #ANIMATIONS#
+        self.A_PLAYER = self.charspritesheet.get_animation("m", 5, 16, 16, 4, (32, 32))
+        self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
+
+
+        #SPRITES#
+        self.S_WALL = pygame.image.load("data/wall2.jpg")
+        self.S_WALLEXPLORED = pygame.image.load("data/wallunseen2.png")
+
+        self.S_FLOOR = pygame.image.load("data/floor.jpg")
+        self.S_FLOOREXPLORED = pygame.image.load("data/floorunseen2.png")
+
+        #FONTS#
+        self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
+        self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
+
 
 #  ______   .______          __   _______   ______ .___________.    _______.
 # /  __  \  |   _  \        |  | |   ____| /      ||           |   /       |
@@ -327,17 +351,17 @@ def draw_map(map_to_draw):
 
                 if map_to_draw[x][y].block_path:
 
-                    SURFACE_MAIN.blit(constants.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    SURFACE_MAIN.blit(ASSETS.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:
-                    SURFACE_MAIN.blit(constants.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    SURFACE_MAIN.blit(ASSETS.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
             elif map_to_draw[x][y].explored:
 
                     if map_to_draw[x][y].block_path: #Bruh was will der von mir
 
-                        SURFACE_MAIN.blit(constants.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                        SURFACE_MAIN.blit(ASSETS.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     else:
-                        SURFACE_MAIN.blit(constants.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                        SURFACE_MAIN.blit(ASSETS.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
 def draw_debug():
@@ -350,7 +374,7 @@ def draw_messages():
     else:
         to_draw = GAME.message_history[-constants.NUM_MESSAGES:]
 
-    text_height = helper_text_height(constants.FONT_MESSAGE_TEXT)
+    text_height = helper_text_height(ASSETS.FONT_MESSAGE_TEXT)
 
     info = pygame.display.Info()
     screen_height = info.current_h
@@ -387,9 +411,9 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
 
 def helper_text_objects(incoming_text, incoming_color, incoming_bg):
     if incoming_bg:
-        Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
+        Text_surface = ASSETS.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
     else:
-        Text_surface = constants.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
+        Text_surface = ASSETS.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
 
     return Text_surface, Text_surface.get_rect()
 
@@ -440,7 +464,7 @@ def game_main_loop():
 def game_initialize():
     '''Das hier startet Pygame und das Hauptfenster'''
 
-    global SURFACE_MAIN, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK
+    global SURFACE_MAIN, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS
     # makes window start at top left corner
     os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
     # disable scaling of windows
@@ -468,21 +492,16 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
-    ## Temp sprites#
-
-    charspritesheet = obj_Spritesheet("data/Reptiles.png")
-    enemyspritesheet = obj_Spritesheet("data/ROFL.png")
+    ASSETS = struc_Assets()
 
 
-    A_PLAYER = charspritesheet.get_animation("m", 5, 16 , 16, 4, (32,32))
-    A_ENEMY = enemyspritesheet.get_image("k", 1, 16 , 16, (32,32))
 
     creature_com1 = com_Creature("greg")
-    PLAYER = obj_Actor(1, 1, "python", A_PLAYER, animation_speed = 0.5, creature=creature_com1)
+    PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1)
 
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com = ai_Test()
-    ENEMY = obj_Actor(20, 15, "crab", A_ENEMY, creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(20, 15, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com)
 
     GAME.current_objects = [PLAYER, ENEMY]
 
