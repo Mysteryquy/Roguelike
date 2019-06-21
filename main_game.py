@@ -58,7 +58,7 @@ class struc_Assets:
 
 class obj_Actor:
 
-    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None):
+    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None):
         self.x = x
         self.y = y
         self.animation = animation  #number of images
@@ -70,12 +70,16 @@ class obj_Actor:
         self.sprite_image = 0 #s
 
         self.creature = creature
-        if creature:
-            creature.owner = self
+        if self.creature:
+            self.creature.owner = self
 
         self.ai = ai
-        if ai:
-            ai.owner = self
+        if self.ai:
+            self.ai.owner = self
+
+        self.container = container
+        if self.container:
+            self.container.owner = self
 
     def draw(self):
         is_visible = FOV_MAP.fov[self.y, self.x]
@@ -213,9 +217,46 @@ class com_Creature:
                 self.death_function(self.owner)
 
 
+
 # TODO class com_item:
 
-# TODO class com_container:
+class com_Container:
+    def __init__(self, volume = 10.0, inventory = []):
+        self.inventory = inventory
+        self.max_volume = volume
+
+    ## TODO Get Names of everything in inventory
+
+    ## TODO Get volume within container
+
+    ## TODO Get weight of everything in cointainer
+
+class com_Item:
+    def __init__(self, weight = 0.0, volume = 0.0):
+        self.weight = weight
+        self.volume = volume
+
+    ## TODO Pick up this item
+    def pick_up(self, actor):
+
+        if actor.container:
+            if actor.container.volume + self.volume > actor.container.max_volume:
+                game_message("Not enough room to pick up")
+
+            else:
+                game_message("Picked up")
+                actor.container.inentory.append(self.owner)
+                GAME.current_objects.remove(self.owner)
+                self.current_container = actor.container
+
+    ## TODO Drop Item
+    def drop(self):
+        GAME.current_objects.append(self.owner)
+        self.current_container.inventory.remove(self.owner)
+        game_message("Item dropped")
+
+
+    ## TODO Use item
 
 
 #   _____  .___ 
