@@ -58,7 +58,7 @@ class struc_Assets:
 
 class obj_Actor:
 
-    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None):
+    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None, item = None):
         self.x = x
         self.y = y
         self.animation = animation  #number of images
@@ -80,6 +80,10 @@ class obj_Actor:
         self.container = container
         if self.container:
             self.container.owner = self
+
+        self.item = item
+        if self.item:
+            self.item.owner = self
 
     def draw(self):
         is_visible = FOV_MAP.fov[self.y, self.x]
@@ -194,7 +198,7 @@ class com_Creature:
 
         if target:
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-            self.attack(target, 3)
+            self.attack(target, 10)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx
@@ -224,10 +228,15 @@ class com_Container:
     def __init__(self, volume = 10.0, inventory = []):
         self.inventory = inventory
         self.max_volume = volume
+        self.volume = 0.0
 
     ## TODO Get Names of everything in inventory
 
     ## TODO Get volume within container
+    @property
+    def volume(self):
+        return 0.0
+
 
     ## TODO Get weight of everything in cointainer
 
@@ -247,12 +256,12 @@ class com_Item:
                 game_message("Picked up")
                 actor.container.inentory.append(self.owner)
                 GAME.current_objects.remove(self.owner)
-                self.current_container = actor.container
+                self.container = actor.container
 
     ## TODO Drop Item
     def drop(self):
         GAME.current_objects.append(self.owner)
-        self.current_container.inventory.remove(self.owner)
+        self.container.inventory.remove(self.owner)
         game_message("Item dropped")
 
 
@@ -354,6 +363,12 @@ def map_calculate_fov():
         FOV_MAP.compute_fov(PLAYER.x, PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
                             constants.FOV_ALGO)
 
+def map_objects_at_coords(coords_x, coords_y):
+
+    object_options = [obj for obj in GAME.current_objects
+                        if obj.x == coords_x and obj.y == coords_y]
+
+    return object_options
 
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
@@ -527,22 +542,19 @@ def game_initialize():
                                            pygame.NOFRAME)
 
 
-
-
-
-
     FOV_CALCULATE = True
 
     ASSETS = struc_Assets()
 
 
-
+    container_com1 = com_Container
     creature_com1 = com_Creature("greg")
-    PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1)
+    PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1, container = container_com1)
 
+    item_com1 = com_Item()
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com = ai_Test()
-    ENEMY = obj_Actor(20, 15, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com, item = item_com1)
 
     GAME.current_objects = [PLAYER, ENEMY]
 
@@ -626,10 +638,17 @@ def game_handle_keys():
                 FOV_CALCULATE = True
                 return "player moved"
 
+            if event.key == pygame.K_g:
+                objects_at_player = map_objects_at_coords(PLAYER.x, PLAYER.y)
+
+                for obj in objects_at_player:
+                    if obj.item:
+                        obj.item.pick_up(PLAYER)
+
     return "no-action"
 
 
-def game_message(game_msg, msg_color):
+def game_message(game_msg, msg_color = constants.COLOR_GREY):
     GAME.message_history.append((game_msg, msg_color))
 
 
