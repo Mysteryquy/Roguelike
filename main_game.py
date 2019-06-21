@@ -1,4 +1,6 @@
 # 3rd party modules#3rd party modules
+from typing import Any
+
 import pygame
 import tcod
 import tcod.map
@@ -224,18 +226,21 @@ class com_Creature:
 
 # TODO class com_item:
 
-class com_Container:
+class com_Container(object):
+
     def __init__(self, volume = 10.0, inventory = []):
         self.inventory = inventory
         self.max_volume = volume
-        self.volume = 0.0
+        self._volume = 0.0
+
+
+    @property
+    def volume(self):
+        return self._volume
 
     ## TODO Get Names of everything in inventory
 
-    ## TODO Get volume within container
-    @property
-    def volume(self):
-        return 0.0
+
 
 
     ## TODO Get weight of everything in cointainer
@@ -254,7 +259,7 @@ class com_Item:
 
             else:
                 game_message("Picked up")
-                actor.container.inentory.append(self.owner)
+                actor.container.inventory.append(self.owner)
                 GAME.current_objects.remove(self.owner)
                 self.container = actor.container
 
@@ -547,7 +552,7 @@ def game_initialize():
     ASSETS = struc_Assets()
 
 
-    container_com1 = com_Container
+    container_com1 = com_Container()
     creature_com1 = com_Creature("greg")
     PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1, container = container_com1)
 
