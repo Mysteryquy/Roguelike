@@ -264,9 +264,11 @@ class com_Item:
                 self.container = actor.container
 
     ## TODO Drop Item
-    def drop(self):
+    def drop(self, new_x, new_y):
         GAME.current_objects.append(self.owner)
         self.container.inventory.remove(self.owner)
+        self.owner.x = new_x
+        self.owner.y = new_y
         game_message("Item dropped")
 
 
@@ -649,6 +651,12 @@ def game_handle_keys():
                 for obj in objects_at_player:
                     if obj.item:
                         obj.item.pick_up(PLAYER)
+
+            if event.key == pygame.K_d:
+                if len(PLAYER.container.inventory) > 0:
+                    PLAYER.container.inventory[-1].item.drop(PLAYER.x, PLAYER.y)
+
+
 
     return "no-action"
 
