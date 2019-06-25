@@ -11,7 +11,23 @@ import ctypes
 import constants
 
 
-# WENN DAS GRÜN IST HAT ES GEKLAPPT
+# a88888b. dP     dP   .d888888  888888ba   .88888.   88888888b dP         .88888.   .88888.
+#d8'   `88 88     88  d8'    88  88    `8b d8'   `88  88        88        d8'   `8b d8'   `88
+#88        88aaaaa88a 88aaaaa88a 88     88 88        a88aaaa    88        88     88 88
+#88        88     88  88     88  88     88 88   YP88  88        88        88     88 88   YP88
+#Y8.   .88 88     88  88     88  88     88 Y8.   .88  88        88        Y8.   .8P Y8.   .88
+# Y88888P' dP     dP  88     88  dP     dP  `88888'   88888888P 88888888P  `8888P'   `88888'
+#ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+
+
+# Wir haben jetzt eine Funktion für Menüs
+# Ein Pause Menü (wenn man p drückt)
+# Zum Testen noch einen zweiten Gegner erstellt
+# Ein Inventar ( wenn man i drückt) ---> BUGGY: Es wird immer nur ein "Item" angezeigt
+
+
+
+
 
 #     _______.___________..______       __    __    ______ .___________.
 #    /       |           ||   _  \     |  |  |  |  /      ||           |
@@ -63,6 +79,7 @@ class obj_Actor:
     def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None, item = None):
         self.x = x
         self.y = y
+        self.name_object = name_object
         self.animation = animation  #number of images
         self.animation_speed = animation_speed / 1.0 #in seconds
 
@@ -221,6 +238,7 @@ class com_Creature:
 
             if self.death_function is not None:
                 self.death_function(self.owner)
+
 
 
 
@@ -453,7 +471,7 @@ def draw_messages():
 
 
 def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None):
-    # This function takes in some text and displ#wtfays it on the refered surface#community version LUL jo is das schlimm ne aber wollte dir gerade den performance analyzer zeigen
+    # This function takes in some text and displ
 
     text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
 
@@ -462,7 +480,7 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
     display_surface.blit(text_surf, text_rect)
 
 
-#bruh das auto einruecken aht iwe alles kaputt gemacht Ich merksvergleich das mal pls mit github und aender die da wo das broken ist BRUH oder mom
+
 #          _______  _        _______  _______  _______  _______
 # |\     /|(  ____ \( \      (  ____ )(  ____ \(  ____ )(  ____ \
 # | )   ( || (    \/| (      | (    )|| (    \/| (    )|| (    \/
@@ -486,6 +504,108 @@ def helper_text_height(font):
     # font_object = font.render("a", False, (0,0,0))
     # font_rect = font_object.get_rect
     return height
+
+def helper_text_width(font):
+
+    (width, height) = font.size("A")
+
+    return width
+
+
+
+#.___  ___.  _______ .__   __.  __    __       _______.
+#|   \/   | |   ____||  \ |  | |  |  |  |     /       |
+#|  \  /  | |  |__   |   \|  | |  |  |  |    |   (----`
+#|  |\/|  | |   __|  |  . `  | |  |  |  |     \   \
+#|  |  |  | |  |____ |  |\   | |  `--'  | .----)   |
+#|__|  |__| |_______||__| \__|  \______/  |_______/
+
+def menu_pause():
+    #This Menu pauses the game and displays a simple message in the center of THE MAP (not the screen [danke markus mit deinem vollbild kack :P])
+
+    menu_close = False
+
+    window_width = constants.MAP_WIDTH * constants.CELL_WIDTH
+    window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
+
+    menu_text = "PAUSED"
+    menu_font = ASSETS.FONT_DEBUG_MESSAGE
+
+    text_height = helper_text_height(menu_font)
+    text_width = len(menu_text) * helper_text_width(menu_font)
+
+
+
+    while not menu_close:
+
+        events_list = pygame.event.get()
+
+        for event in events_list:
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_p:
+                    menu_close = True
+
+        draw_text(SURFACE_MAIN, menu_text, ((window_width /2) - (text_width /2), (window_height / 2)- (text_height / 2)),constants.COLOR_BLACK, constants.COLOR_WHITE)
+
+        #Man Muss das jedes mal updaten wenn man was malt
+        pygame.display.flip()
+
+def menu_inventory():
+
+
+
+
+    menu_close = False
+
+    menu_width = 200
+    menu_height = 200
+
+    window_width = constants.MAP_WIDTH * constants.CELL_WIDTH
+    window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
+
+    menu_text_font = ASSETS.FONT_MESSAGE_TEXT
+
+    menu_text_height = helper_text_height(menu_text_font)
+
+    local_inventory_surface = pygame.Surface((menu_width, menu_height))
+
+    while not menu_close:
+
+        #Clear the menu
+        local_inventory_surface.fill(constants.COLOR_BLACK)
+
+        # TODO Register Changes
+        print_list = [obj.name_object for obj in PLAYER.container.inventory]
+
+        events_list = pygame.event.get()
+
+        for event in events_list:
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_i:
+                    menu_close = True
+
+        ##Draw the list
+        for i, name in enumerate(print_list):
+
+            draw_text(local_inventory_surface, name, (0,0 + (i * menu_height)),constants.COLOR_WHITE,)
+
+
+        # Display Menu
+        SURFACE_MAIN.blit(local_inventory_surface, ((window_width /2) - (menu_width / 2), (window_height / 2)- (menu_height / 2)))
+
+        pygame.display.update()
+
+
+
+
+
+
+
+
 
 
 #  _______      ___      .___  ___.  _______
@@ -560,10 +680,15 @@ def game_initialize():
 
     item_com1 = com_Item()
     creature_com2 = com_Creature("crabby", death_function=death_monster)
-    ai_com = ai_Test()
-    ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com, item = item_com1)
+    ai_com1 = ai_Test()
+    ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
 
-    GAME.current_objects = [PLAYER, ENEMY]
+    item_com2 = com_Item()
+    creature_com3 = com_Creature("BOB", death_function=death_monster)
+    ai_com2 = ai_Test()
+    ENEMY2 = obj_Actor(3, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
+
+    GAME.current_objects = [PLAYER, ENEMY, ENEMY2]
 
 
 def game_handle_keys():
@@ -655,6 +780,13 @@ def game_handle_keys():
             if event.key == pygame.K_d:
                 if len(PLAYER.container.inventory) > 0:
                     PLAYER.container.inventory[-1].item.drop(PLAYER.x, PLAYER.y)
+
+            if event.key == pygame.K_p:
+                game_message("Game resumed", constants.COLOR_WHITE)
+                menu_pause()
+
+            if event.key == pygame.K_i:
+                menu_inventory()
 
 
 
