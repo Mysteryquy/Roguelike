@@ -590,8 +590,8 @@ def menu_inventory():
 
         ##Draw the list
         for i, name in enumerate(print_list):
-
-            draw_text(local_inventory_surface, name, (0,0 + (i * menu_height)),constants.COLOR_WHITE,)
+            print(i)
+            draw_text(local_inventory_surface, name, (0,0 + (i * constants.INVENTORY_TEXT_HEIGHT )),constants.COLOR_WHITE)
 
 
         # Display Menu
