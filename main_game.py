@@ -20,10 +20,12 @@ import constants
 #ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 
-# Wir haben jetzt eine Funktion für Menüs
-# Ein Pause Menü (wenn man p drückt)
-# Zum Testen noch einen zweiten Gegner erstellt
-# Ein Inventar ( wenn man i drückt) ---> BUGGY: Es wird immer nur ein "Item" angezeigt
+# Part 20 - Using the menu
+# + Wir können jetzt gehknöpfe gedrückt halten
+# + Die Animationen durlaufen nach ende einer Pause sich all ihre angesammelten Animationen mehr sondern verhalten sich normal
+# + Items werden jetzt im Menü hervorgehoben, wenn man mit der Maus auf ihrer Höhe im menü ist
+# + Man kann Items per Mausklick droppen
+
 
 
 
@@ -549,6 +551,8 @@ def menu_pause():
 
         draw_text(SURFACE_MAIN, menu_text, ((window_width /2) - (text_width /2), (window_height / 2)- (text_height / 2)),constants.COLOR_BLACK, constants.COLOR_WHITE)
 
+        CLOCK.tick(constants.GAME_FPS)
+
         #Man Muss das jedes mal updaten wenn man was malt
         pygame.display.flip()
 
@@ -556,17 +560,23 @@ def menu_inventory():
 
 
 
-
+    # Initalize to False, when True, the menu closes
     menu_close = False
 
-    menu_width = 200
-    menu_height = 200
-
+    # Calculate window dimensions
     window_width = constants.MAP_WIDTH * constants.CELL_WIDTH
     window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
 
+    # Menu characteristcs
+    menu_width = 200
+    menu_height = 200
+    menu_x = (window_width /2) - (menu_width / 2)
+    menu_y = (window_height / 2)- (menu_height / 2)
+
+    # Menu text characteristcs
     menu_text_font = ASSETS.FONT_MESSAGE_TEXT
 
+    # Helper var
     menu_text_height = helper_text_height(menu_text_font)
 
     local_inventory_surface = pygame.Surface((menu_width, menu_height))
@@ -580,6 +590,18 @@ def menu_inventory():
         print_list = [obj.name_object for obj in PLAYER.container.inventory]
 
         events_list = pygame.event.get()
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        mouse_x_rel = mouse_x - menu_x
+        mouse_y_rel = mouse_y - menu_y
+
+        mouse_in_window = (mouse_x_rel > 0 and
+                           mouse_y_rel > 0 and
+                           mouse_x_rel < menu_width and
+                           mouse_y_rel < menu_height)
+
+        pepegarechnung = mouse_y_rel / menu_text_height
+        mouse_line_selection = int(pepegarechnung)
 
         for event in events_list:
 
@@ -588,14 +610,34 @@ def menu_inventory():
                 if event.key == pygame.K_i:
                     menu_close = True
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if (mouse_in_window and mouse_line_selection <= len(print_list)-1):
+                        PLAYER.container.inventory[mouse_line_selection].item.drop(PLAYER.x, PLAYER.y)
+
+
+
         ##Draw the list
-        for i, name in enumerate(print_list):
-            print(i)
-            draw_text(local_inventory_surface, name, (0,0 + (i * constants.INVENTORY_TEXT_HEIGHT )),constants.COLOR_WHITE)
+        for line, (name) in enumerate(print_list):
+
+            if int(line) == int(mouse_line_selection) and mouse_in_window:
+                draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                          constants.COLOR_WHITE, constants.COLOR_GREY)
+
+            else:
+                draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                          constants.COLOR_WHITE)
+
+
+
+
+
 
 
         # Display Menu
-        SURFACE_MAIN.blit(local_inventory_surface, ((window_width /2) - (menu_width / 2), (window_height / 2)- (menu_height / 2)))
+        SURFACE_MAIN.blit(local_inventory_surface, (menu_x , menu_y ))
+
+        CLOCK.tick(constants.GAME_FPS)
 
         pygame.display.update()
 
@@ -655,6 +697,8 @@ def game_initialize():
 
     # initialize Pygame
     pygame.init()
+
+    pygame.key.set_repeat(200, 70)
 
     GAME = obj_Game()
 
