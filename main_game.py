@@ -241,7 +241,12 @@ class com_Creature:
             if self.death_function is not None:
                 self.death_function(self.owner)
 
+    def heal(self, value):
 
+        self.hp + value
+
+        if self.hp > self.maxhp:
+            self.hp = self.maxhp
 
 
 # TODO class com_item:
@@ -266,9 +271,11 @@ class com_Container(object):
     ## TODO Get weight of everything in cointainer
 
 class com_Item:
-    def __init__(self, weight = 0.0, volume = 0.0):
+    def __init__(self, weight = 0.0, volume = 0.0, use_function = None, value = None):
         self.weight = weight
         self.volume = volume
+        self.value = value
+        self.use_function = use_function
 
     ## TODO Pick up this item
     def pick_up(self, actor):
@@ -293,6 +300,16 @@ class com_Item:
 
 
     ## TODO Use item
+    def use(self):
+
+        if self.use_function:
+            result = self.use_function(self.container.owner, self.value)
+
+            if result is not None:
+                print("use function failed")
+
+            else:
+                self.container.inventory.remove(self.owner)
 
 
 #   _____  .___ 
@@ -515,6 +532,30 @@ def helper_text_width(font):
 
 
 
+#o   o   O   o-o  o-O-o   o-o
+#|\ /|  / \ o       |    /
+#| O | o---o|  -o   |   O
+#|   | |   |o   |   |    \
+#o   o o   o o-o  o-O-o   o-o
+
+def cast_heal(target, value):
+
+    if target.creature.hp == target.creature.maxhp:
+        game_message("HP is allready full")
+
+    else:
+        game_message(target.name_object + " healed for " + str(value) + " HP")
+        target.creature.heal(value)
+        print(target.creature.hp)
+
+
+
+    return None
+
+
+
+
+
 #.___  ___.  _______ .__   __.  __    __       _______.
 #|   \/   | |   ____||  \ |  | |  |  |  |     /       |
 #|  \  /  | |  |__   |   \|  | |  |  |  |    |   (----`
@@ -613,7 +654,7 @@ def menu_inventory():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if (mouse_in_window and mouse_line_selection <= len(print_list)-1):
-                        PLAYER.container.inventory[mouse_line_selection].item.drop(PLAYER.x, PLAYER.y)
+                        PLAYER.container.inventory[mouse_line_selection].item.use()
 
 
 
@@ -722,12 +763,12 @@ def game_initialize():
     creature_com1 = com_Creature("greg")
     PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1, container = container_com1)
 
-    item_com1 = com_Item()
+    item_com1 = com_Item(value = 4, use_function = cast_heal)
     creature_com2 = com_Creature("crabby", death_function=death_monster)
     ai_com1 = ai_Test()
     ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
 
-    item_com2 = com_Item()
+    item_com2 = com_Item(value = 5, use_function = cast_heal)
     creature_com3 = com_Creature("BOB", death_function=death_monster)
     ai_com2 = ai_Test()
     ENEMY2 = obj_Actor(3, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
