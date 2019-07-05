@@ -436,8 +436,7 @@ def draw_game():
     draw_debug()
     draw_messages()
 
-    # update the display
-    pygame.display.flip()
+
 
 
 def draw_map(map_to_draw):
@@ -497,6 +496,23 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
     text_rect.topleft = T_coords
 
     display_surface.blit(text_surf, text_rect)
+
+def draw_tile_rect(coords):
+
+    x, y = coords
+
+    new_x = x * constants.CELL_WIDTH
+    new_y = y * constants.CELL_HEIGHT
+
+    new_surface = pygame.Surface((constants.CELL_WIDTH, constants.CELL_HEIGHT))
+
+    new_surface.fill(constants.COLOR_WHITE)
+
+    new_surface.set_alpha(150)
+
+    SURFACE_MAIN.blit(new_surface, (int(new_x), int(new_y)))
+
+
 
 
 
@@ -682,6 +698,59 @@ def menu_inventory():
 
         pygame.display.update()
 
+def menu_tile_select():
+    #This menu let the player select a tile.
+    #It pauses the game and produces an on screen rectangle when the player presses the mb will return the map address
+
+    menu_close = False
+
+    while not menu_close:
+
+        #Get mouse position
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        #Mouse mao selection
+        map_coord_x = mouse_x / constants.CELL_WIDTH
+        map_coord_y = mouse_y / constants.CELL_HEIGHT
+
+        # transform into integers
+        int_x = int(map_coord_x)
+        int_y = int(map_coord_y)
+
+
+        #Get button clicks
+        events_list = pygame.event.get()
+
+
+
+        #Draw Game first
+        draw_game()
+
+        #Draw Rectangle at mouse position on top of game
+        draw_tile_rect((int_x , int_y))
+
+        # update the display
+        pygame.display.flip()
+
+        # tick the CLOCK
+        CLOCK.tick(constants.GAME_FPS)
+
+
+        # return map_cords when left mb is pressed
+        for event in events_list:
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_l:
+                    menu_close = True
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if event.button == 1:
+                    game_message( str((int_x , int_y)) )
+
+
+
 
 
 
@@ -719,6 +788,9 @@ def game_main_loop():
 
         # draw the game
         draw_game()
+
+        # update the display
+        pygame.display.flip()
 
         CLOCK.tick(constants.GAME_FPS)
 
@@ -872,6 +944,9 @@ def game_handle_keys():
 
             if event.key == pygame.K_i:
                 menu_inventory()
+
+            if event.key == pygame.K_l:
+                menu_tile_select()
 
 
 
