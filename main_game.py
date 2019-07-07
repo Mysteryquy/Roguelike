@@ -414,6 +414,29 @@ def map_objects_at_coords(coords_x, coords_y):
 
     return object_options
 
+def map_find_line(coords1, coords2):
+    'Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)'
+
+    x1, y1 = coords1
+    x2, y2 = coords2
+
+    tcod.line_iter(x1, y1, x2, y2)
+
+    calc_x, calc_y = tcod.line_iter()
+
+    coord_list = []
+
+    if x1 == x2 and y1 == y2:
+        return [(x1, y1)]
+
+    while (not calc_x is None):
+
+        coord_list.append((calc_x , calc_y))
+
+        calc_x, calc_y = tcod.line_step()
+
+    return coord_list
+
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
 # |  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __
@@ -533,7 +556,6 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg):
 
     return Text_surface, Text_surface.get_rect()
 
-
 def helper_text_height(font):
     (width, height) = font.size("A")
     # font_object = font.render("a", False, (0,0,0))
@@ -568,6 +590,22 @@ def cast_heal(target, value):
 
     return None
 
+def cast_lightning(damage):
+
+    # prompt player for a tile
+    point_selected = menu_tile_select()
+
+    # convert that tile into a list of tiles between A -> B
+    list_of_tiles = map_find_line((PLAYER.x, PLAYER.y), point_selected)
+
+
+    # cycle through list, damage everything found
+    for i, (x , y) in enumerate(list_of_tiles):
+
+        target == map_check_for_creature(x,y)
+
+        if target and i != 0:
+            target.creature.take_damage(damage)
 
 
 
@@ -747,7 +785,7 @@ def menu_tile_select():
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
-                    game_message( str((int_x , int_y)) )
+                    return (int_x , int_y)
 
 
 
@@ -947,6 +985,9 @@ def game_handle_keys():
 
             if event.key == pygame.K_l:
                 menu_tile_select()
+
+            if event.key == pygame.K_k:
+                cast_lightning(10)
 
 
 
