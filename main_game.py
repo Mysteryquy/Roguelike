@@ -420,22 +420,12 @@ def map_find_line(coords1, coords2):
     x1, y1 = coords1
     x2, y2 = coords2
 
-    tcod.line_iter(x1, y1, x2, y2)
 
-    calc_x, calc_y = tcod.line_iter()
-
-    coord_list = []
 
     if x1 == x2 and y1 == y2:
         return [(x1, y1)]
 
-    while (not calc_x is None):
-
-        coord_list.append((calc_x , calc_y))
-
-        calc_x, calc_y = tcod.line_step()
-
-    return coord_list
+    return list(tcod.line_iter(x1,y1,x2,y2))
 
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
@@ -602,7 +592,7 @@ def cast_lightning(damage):
     # cycle through list, damage everything found
     for i, (x , y) in enumerate(list_of_tiles):
 
-        target == map_check_for_creature(x,y)
+        target = map_check_for_creature(x,y)
 
         if target and i != 0:
             target.creature.take_damage(damage)
