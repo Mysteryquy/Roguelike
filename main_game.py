@@ -414,21 +414,24 @@ def map_objects_at_coords(coords_x, coords_y):
 
     return object_options
 
-def map_find_line(coords1, coords2):
+def map_find_line(coords1, coords2, include_origin=False):
     'Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)'
 
     x1, y1 = coords1
     x2, y2 = coords2
 
-
-
     if x1 == x2 and y1 == y2:
         return [(x1, y1)]
 
-    return list(tcod.line_iter(x1,y1,x2,y2))
+    if include_origin:
+        return list(tcod.line_iter(x1, y1, x2, y2))
+    else:
+        tmp = tcod.line_iter(x1, y1, x2, y2)
+        tmp.__next__()
+        return list(tmp)
 
 def map_check_for_wall(x,y):
-    incoming_map[x][y].blockpath
+    return GAME.current_map[x][y].block_path
 
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
@@ -513,7 +516,7 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
 
     display_surface.blit(text_surf, text_rect)
 
-def draw_tile_rect(coords):
+def draw_tile_rect(coords, color=constants.COLOR_WHITE):
 
     x, y = coords
 
@@ -522,7 +525,7 @@ def draw_tile_rect(coords):
 
     new_surface = pygame.Surface((constants.CELL_WIDTH, constants.CELL_HEIGHT))
 
-    new_surface.fill(constants.COLOR_WHITE)
+    new_surface.fill(color)
 
     new_surface.set_alpha(150)
 
@@ -586,6 +589,7 @@ def cast_heal(target, value):
 def cast_lightning(damage):
 
     player_location = (PLAYER.x, PLAYER.y)
+
 
     # prompt player for a tile
     point_selected = menu_tile_select(coords_origin=player_location,  max_range=5, penetrate_walls=False)
@@ -737,8 +741,6 @@ def menu_inventory():
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
     """
-
-
     """
     #This menu let the player select a tile.
     #It pauses the game and produces an on screen rectangle when the player presses the mb will return the map address
@@ -769,12 +771,15 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
 
                 valid_tiles.append((x,y))
 
-                if max_range and i == max_range - 1:
+                #if max_range and i == max_range - 1:
+                #    print("HIER")
+                #   break
+
+                if not penetrate_walls and map_check_for_wall(x,y):
                     break
 
-                if not penetrate_walls and GAME.current_map[x][y].block_path:
-                    break
-
+            if max_range:
+                valid_tiles = valid_tiles[:max_range]
         else:
             valid_tiles = [(int_x, int_y)]
 
@@ -797,10 +802,12 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
         #Draw Game first
         draw_game()
 
-        #Draw Rectangle at mouse position on top of game
-        for (tile_x, tile_y) in valid_tiles:
-            draw_tile_rect((int_x, int_y))
-
+        draw_tile_rect((int_x, int_y))
+        #Draw Rectangle at mouse position on top of game, dont draw the last tile in grey
+        for (tile_x, tile_y) in valid_tiles[:-1]:
+            draw_tile_rect((tile_x,tile_y), constants.COLOR_GREY)
+        last_tile_x,last_tile_y = valid_tiles[-1]
+        draw_tile_rect((last_tile_x,last_tile_y), constants.COLOR_RED)
 
         # update the display
         pygame.display.flip()
