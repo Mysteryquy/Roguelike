@@ -427,6 +427,9 @@ def map_find_line(coords1, coords2):
 
     return list(tcod.line_iter(x1,y1,x2,y2))
 
+def map_check_for_wall(x,y):
+    incoming_map[x][y].blockpath
+
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
 # |  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __
@@ -582,20 +585,26 @@ def cast_heal(target, value):
 
 def cast_lightning(damage):
 
+    player_location = (PLAYER.x, PLAYER.y)
+
     # prompt player for a tile
-    point_selected = menu_tile_select()
+    point_selected = menu_tile_select(coords_origin=player_location,  max_range=5, penetrate_walls=False)
 
-    # convert that tile into a list of tiles between A -> B
-    list_of_tiles = map_find_line((PLAYER.x, PLAYER.y), point_selected)
+    if point_selected:
+        list_of_tiles = map_find_line(player_location, point_selected)
+
+        for i, (x, y) in enumerate(list_of_tiles):
+
+            target = map_check_for_creature(x, y)
+
+            if target:
+                target.creature.take_damage(damage)
 
 
-    # cycle through list, damage everything found
-    for i, (x , y) in enumerate(list_of_tiles):
 
-        target = map_check_for_creature(x,y)
 
-        if target and i != 0:
-            target.creature.take_damage(damage)
+
+
 
 
 
@@ -726,7 +735,11 @@ def menu_inventory():
 
         pygame.display.update()
 
-def menu_tile_select():
+def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
+    """
+
+
+    """
     #This menu let the player select a tile.
     #It pauses the game and produces an on screen rectangle when the player presses the mb will return the map address
 
@@ -737,6 +750,9 @@ def menu_tile_select():
         #Get mouse position
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
+        # Get button clicks
+        events_list = pygame.event.get()
+
         #Mouse mao selection
         map_coord_x = mouse_x / constants.CELL_WIDTH
         map_coord_y = mouse_y / constants.CELL_HEIGHT
@@ -745,9 +761,36 @@ def menu_tile_select():
         int_x = int(map_coord_x)
         int_y = int(map_coord_y)
 
+        valid_tiles = []
 
-        #Get button clicks
-        events_list = pygame.event.get()
+        if coords_origin:
+            full_list_tiles = map_find_line(coords_origin, (int_x, int_y))
+            for i, (x, y) in enumerate(full_list_tiles):
+
+                valid_tiles.append((x,y))
+
+                if max_range and i == max_range - 1:
+                    break
+
+                if not penetrate_walls and GAME.current_map[x][y].block_path:
+                    break
+
+        else:
+            valid_tiles = [(int_x, int_y)]
+
+        # return map_cords when left mb is pressed
+        for event in events_list:
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_l:
+                        menu_close = True
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if event.button == 1:
+                    return (valid_tiles[-1])
+
 
 
 
@@ -755,7 +798,9 @@ def menu_tile_select():
         draw_game()
 
         #Draw Rectangle at mouse position on top of game
-        draw_tile_rect((int_x , int_y))
+        for (tile_x, tile_y) in valid_tiles:
+            draw_tile_rect((int_x, int_y))
+
 
         # update the display
         pygame.display.flip()
@@ -764,18 +809,7 @@ def menu_tile_select():
         CLOCK.tick(constants.GAME_FPS)
 
 
-        # return map_cords when left mb is pressed
-        for event in events_list:
 
-            if event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_l:
-                    menu_close = True
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-
-                if event.button == 1:
-                    return (int_x , int_y)
 
 
 
