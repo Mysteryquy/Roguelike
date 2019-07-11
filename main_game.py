@@ -128,13 +128,6 @@ class obj_Actor:
 
                 SURFACE_MAIN.blit(self.animation[self.sprite_image], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
 
-
-
-
-
-
-
-
 class obj_Game:
     def __init__(self):
 
@@ -194,7 +187,6 @@ class obj_Spritesheet: #Bilder von Spritesheets holen
 
 
 
-
 #                                                         __
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
 # _/ ___\/  _ \ /     \\____ \ /  _ \ /    \_/ __ \ /    \   __\/  ___/
@@ -247,9 +239,6 @@ class com_Creature:
 
         if self.hp > self.maxhp:
             self.hp = self.maxhp
-
-
-# TODO class com_item:
 
 class com_Container(object):
 
@@ -359,7 +348,6 @@ def map_create():
 
     return new_map
 
-
 def map_check_for_creature(x, y, exclude_object=None):
     target = None
 
@@ -386,7 +374,6 @@ def map_check_for_creature(x, y, exclude_object=None):
             if target:
                 return target
 
-
 def map_make_fov(incoming_map):
     global FOV_MAP
 
@@ -397,7 +384,6 @@ def map_make_fov(incoming_map):
             # same as before, but now we have array for walkable and transparent
             FOV_MAP.walkable[x][y] = not incoming_map[x][y].block_path
             FOV_MAP.transparent[x][y] = not incoming_map[x][y].block_path
-
 
 def map_calculate_fov():
     global FOV_CALCULATE
@@ -433,6 +419,24 @@ def map_find_line(coords1, coords2, include_origin=False):
 def map_check_for_wall(x,y):
     return GAME.current_map[x][y].block_path
 
+def map_find_radius(coords, radius):
+
+    center_x, center_y = coords
+
+    tile_list = []
+
+    start_x = (center_x - radius)
+    end_x =  (center_x + radius +1)
+
+    start_y = (center_y - radius)
+    end_y = (center_y + radius +1)
+
+    for x in range(start_x ,end_x ):
+        for y in range(start_y, end_y):
+            tile_list.append((x,y))
+
+    return tile_list
+
 # _______  .______          ___   ____    __    ____  __  .__   __.   _______
 # |       \ |   _  \        /   \  \   \  /  \  /   / |  | |  \ |  |  /  _____|
 # |  .--.  ||  |_)  |      /  ^  \  \   \/    \/   /  |  | |   \|  | |  |  __
@@ -454,9 +458,6 @@ def draw_game():
 
     draw_debug()
     draw_messages()
-
-
-
 
 def draw_map(map_to_draw):
     for x in range(0, constants.MAP_WIDTH):
@@ -481,10 +482,8 @@ def draw_map(map_to_draw):
                     else:
                         SURFACE_MAIN.blit(ASSETS.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
-
 def draw_debug():
     draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE, constants.COLOR_BLACK)
-
 
 def draw_messages():
     if len(GAME.message_history) <= constants.NUM_MESSAGES:
@@ -506,7 +505,6 @@ def draw_messages():
 
         i += 1
 
-
 def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None):
     # This function takes in some text and displ
 
@@ -516,18 +514,29 @@ def draw_text(display_surface, text_to_display, T_coords, text_color, back_color
 
     display_surface.blit(text_surf, text_rect)
 
-def draw_tile_rect(coords, color=constants.COLOR_WHITE):
+def draw_tile_rect(coords, color=None, tile_alpha = None):
 
     x, y = coords
+
+    if color:
+        local_color = color
+    else:
+        local_color = constants.COLOR_WHITE
+
+
+    if tile_alpha:
+        local_alpha = tile_alpha
+    else:
+        local_alpha = 200
 
     new_x = x * constants.CELL_WIDTH
     new_y = y * constants.CELL_HEIGHT
 
     new_surface = pygame.Surface((constants.CELL_WIDTH, constants.CELL_HEIGHT))
 
-    new_surface.fill(color)
+    new_surface.fill(local_color)
 
-    new_surface.set_alpha(150)
+    new_surface.set_alpha(local_alpha)
 
     SURFACE_MAIN.blit(new_surface, (int(new_x), int(new_y)))
 
@@ -603,6 +612,37 @@ def cast_lightning(damage):
 
             if target:
                 target.creature.take_damage(damage)
+
+def cast_fireball():
+
+    # defs
+    damage = 5
+    local_radius = 1
+    max_r = 4
+    player_location = (PLAYER.x, PLAYER.y)
+
+    point_selected = menu_tile_select(coords_origin=player_location, max_range=max_r, penetrate_walls=False, pierce_creature=False, radius=local_radius)
+
+    #get sequence of tiles
+    tiles_to_damage = map_find_radius(point_selected, local_radius)
+
+    creature_hit = False
+
+
+    #damage all creatures in tiles
+    for (x,y) in tiles_to_damage:
+        creature_to_damage = map_check_for_creature(x,y)
+
+        if creature_to_damage:
+            creature_to_damage.creature.take_damage(damage)
+
+            if creature_to_damage is not PLAYER:
+                creature_hit = True
+
+    if creature_hit:
+        game_message("The fire rages and evaporates all flesh it came in contact with. Its nearly as hot as Alina Paul", constants.COLOR_RED)
+
+
 
 
 
@@ -739,7 +779,7 @@ def menu_inventory():
 
         pygame.display.update()
 
-def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
+def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius = None):
     """
     """
     #This menu let the player select a tile.
@@ -778,6 +818,9 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
                 if not penetrate_walls and map_check_for_wall(x,y):
                     break
 
+                if not pierce_creature and map_check_for_creature(x,y):
+                    break
+
             if max_range:
                 valid_tiles = valid_tiles[:max_range]
         else:
@@ -808,6 +851,12 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True):
             draw_tile_rect((tile_x,tile_y), constants.COLOR_GREY)
         last_tile_x,last_tile_y = valid_tiles[-1]
         draw_tile_rect((last_tile_x,last_tile_y), constants.COLOR_RED)
+
+        if radius:
+            area_effect = map_find_radius(valid_tiles[-1], radius)
+
+            for (tile_x, tile_y) in area_effect:
+                draw_tile_rect((tile_x, tile_y))
 
         # update the display
         pygame.display.flip()
@@ -1018,7 +1067,7 @@ def game_handle_keys():
                 menu_tile_select()
 
             if event.key == pygame.K_k:
-                cast_lightning(10)
+                cast_fireball()
 
 
 
