@@ -6,6 +6,7 @@ import tcod
 import tcod.map
 import os
 import ctypes
+import math
 
 # gamefiles
 import constants
@@ -20,11 +21,9 @@ import constants
 #ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 
-# Part 20 - Using the menu
-# + Wir können jetzt gehknöpfe gedrückt halten
-# + Die Animationen durlaufen nach ende einer Pause sich all ihre angesammelten Animationen mehr sondern verhalten sich normal
-# + Items werden jetzt im Menü hervorgehoben, wenn man mit der Maus auf ihrer Höhe im menü ist
-# + Man kann Items per Mausklick droppen
+#TODO :
+# Fonts wieder zurück in constants legen
+# Bei der draw_text funktion ein font argument einbauen
 
 
 
@@ -66,6 +65,7 @@ class struc_Assets:
         #FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
+        self.FONT_CURSOR_TEXT = pygame.font.Font("data/joystix.ttf", constants.CELL_HEIGHT)
 
 
 #  ______   .______          __   _______   ______ .___________.    _______.
@@ -127,6 +127,31 @@ class obj_Actor:
                         self.sprite_image += 1
 
                 SURFACE_MAIN.blit(self.animation[self.sprite_image], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+
+    def distance_to(self, other):
+
+        dx = other.x - self.x
+        dy = other.y - self.y
+
+        return math.sqrt(dx ** 2 + dy ** 2)
+
+    def move_towards(self, other):
+
+        dx = other.x - self.x
+        dy = other.y - self.y
+
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
+
+        self.creature.move(dx, dy)
+
+
+
+
+
+
 
 class obj_Game:
     def __init__(self):
@@ -308,10 +333,43 @@ class com_Item:
 # \____|__  /___|
 #        \/ 
 
-class ai_Test:
+class ai_Confuse:
+
+    def __init__(self, old_ai, num_turns):
+
+        self.old_ai = old_ai
+        self.num_turns = num_turns
 
     def take_turn(self):
-        self.owner.creature.move(tcod.random_get_int(None, -1, 1), tcod.random_get_int(None, -1, 1))
+        if self.num_turns > 0:
+            self.owner.creature.move(tcod.random_get_int(None, -1, 1), tcod.random_get_int(None, -1, 1))
+
+            self.num_turns -= 1
+
+        else:
+            self.owner.ai = self.old_ai
+
+            game_message("The confusion has stopped", constants.COLOR_GREEN)
+
+class ai_Chase:
+    # A basic AI which chases the player and tries to bump into him
+
+
+
+    def take_turn(self):
+        monster = self.owner
+
+        if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
+
+            # Move to the player if far away
+            if monster.distance_to(PLAYER) >= 2:
+                self.owner.move_towards(PLAYER)
+
+            # if close enough, attack player
+            elif PLAYER.creature.hp > 0:
+                monster.creature.attack(PLAYER, 3)
+
+
 
 
 def death_monster(monster):
@@ -505,16 +563,18 @@ def draw_messages():
 
         i += 1
 
-def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None):
-    # This function takes in some text and displ
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center = False):
+    # This function takes in some text and display
 
     text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
-
-    text_rect.topleft = T_coords
+    if not center:
+        text_rect.topleft = T_coords
+    else:
+        text_rect.center = T_coords
 
     display_surface.blit(text_surf, text_rect)
 
-def draw_tile_rect(coords, color=None, tile_alpha = None):
+def draw_tile_rect(coords, color=None, tile_alpha = None, mark = None):
 
     x, y = coords
 
@@ -537,6 +597,10 @@ def draw_tile_rect(coords, color=None, tile_alpha = None):
     new_surface.fill(local_color)
 
     new_surface.set_alpha(local_alpha)
+
+    if mark:
+        draw_text(new_surface,"X",(constants.CELL_WIDTH/2, constants.CELL_HEIGHT/2),constants.COLOR_BLACK, center = True)
+
 
     SURFACE_MAIN.blit(new_surface, (int(new_x), int(new_y)))
 
@@ -641,6 +705,24 @@ def cast_fireball():
 
     if creature_hit:
         game_message("The fire rages and evaporates all flesh it came in contact with. Its nearly as hot as Alina Paul", constants.COLOR_RED)
+
+def cast_confusion():
+
+    #select tile
+    point_selected = menu_tile_select()
+
+    # get target
+    if point_selected:
+        (tile_x, tile_y) = point_selected
+        target = map_check_for_creature(tile_x, tile_y)
+
+        if target:
+            #temporarily confuse monster
+            old_ai = target.ai
+            target.ai = ai_Confuse(old_ai, num_turns = 5)
+            target.ai.owner = target
+
+            game_message("The creature is confused", constants.COLOR_GREEN)
 
 
 
@@ -850,7 +932,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         for (tile_x, tile_y) in valid_tiles[:-1]:
             draw_tile_rect((tile_x,tile_y), constants.COLOR_GREY)
         last_tile_x,last_tile_y = valid_tiles[-1]
-        draw_tile_rect((last_tile_x,last_tile_y), constants.COLOR_RED)
+        draw_tile_rect((last_tile_x,last_tile_y), constants.COLOR_RED, mark= "X")
 
         if radius:
             area_effect = map_find_radius(valid_tiles[-1], radius)
@@ -950,18 +1032,18 @@ def game_initialize():
 
 
     container_com1 = com_Container()
-    creature_com1 = com_Creature("greg")
+    creature_com1 = com_Creature("SPIELER")
     PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1, container = container_com1)
 
     item_com1 = com_Item(value = 4, use_function = cast_heal)
-    creature_com2 = com_Creature("crabby", death_function=death_monster)
-    ai_com1 = ai_Test()
+    creature_com2 = com_Creature("Healkrabbe", death_function=death_monster)
+    ai_com1 = ai_Chase()
     ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
 
-    item_com2 = com_Item(value = 5, use_function = cast_heal)
-    creature_com3 = com_Creature("BOB", death_function=death_monster)
-    ai_com2 = ai_Test()
-    ENEMY2 = obj_Actor(3, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
+    item_com2 = com_Item(value = 5, use_function = cast_fireball)
+    creature_com3 = com_Creature("Feuerballkrabbe", death_function=death_monster)
+    ai_com2 = ai_Chase()
+    ENEMY2 = obj_Actor(7, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
 
     GAME.current_objects = [PLAYER, ENEMY, ENEMY2]
 
