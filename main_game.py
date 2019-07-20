@@ -67,6 +67,10 @@ class struc_Assets:
         self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_CURSOR_TEXT = pygame.font.Font("data/joystix.ttf", constants.CELL_HEIGHT)
 
+        ## ITEMS ##
+        self.S_SWORD = [pygame.transform.scale(pygame.image.load("data/sword.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+        self.S_SHIELD = [pygame.transform.scale(pygame.image.load("data/shield.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+
 
 #  ______   .______          __   _______   ______ .___________.    _______.
 # /  __  \  |   _  \        |  | |   ____| /      ||           |   /       |
@@ -78,7 +82,7 @@ class struc_Assets:
 
 class obj_Actor:
 
-    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None, item = None):
+    def __init__(self, x, y, name_object, animation, animation_speed = 1.0, creature=None, ai=None, container = None, item = None, equipment = None):
         self.x = x
         self.y = y
         self.name_object = name_object
@@ -105,6 +109,27 @@ class obj_Actor:
         self.item = item
         if self.item:
             self.item.owner = self
+
+        self.equipment = equipment
+        if self.equipment:
+            self.equipment.owner = self
+
+            self.item = com_Item()
+            self.item.owner = self
+
+    @property
+    def display_name(self):
+
+        if self.creature:
+            return (self.creature.name_instance + " the " + self.name_object)
+
+        if self.item:
+            if self.equipment and self.equipment.equipped:
+                return (self.name_object + "(equipped)")
+            else:
+                return self.name_object
+
+
 
     def draw(self):
         is_visible = FOV_MAP.fov[self.y, self.x]
@@ -222,8 +247,10 @@ class obj_Spritesheet: #Bilder von Spritesheets holen
 
 class com_Creature:
 
-    def __init__(self, name_instance, hp=10, death_function=None):
+    def __init__(self, name_instance, base_atk = 2, base_def = 0, hp=10, death_function=None):
         self.name_instance = name_instance
+        self.base_atk = base_atk
+        self.base_def = base_def
         self.maxhp = hp
         self.hp = hp
         self.death_function = death_function
@@ -236,18 +263,20 @@ class com_Creature:
 
         if target:
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-            self.attack(target, 10)
+            self.attack(target)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx
             self.owner.y += dy
 
-    def attack(self, target, damage):
+    def attack(self, target):
+
+        damage_dealt = self.power - target.creature.defense
 
         game_message(
-            self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!",
+            self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage_dealt) + " damage!",
               constants.COLOR_WHITE)
-        target.creature.take_damage(damage)
+        target.creature.take_damage(damage_dealt)
 
     def take_damage(self, damage):
         self.hp -= damage
@@ -265,6 +294,34 @@ class com_Creature:
         if self.hp > self.maxhp:
             self.hp = self.maxhp
 
+    @property
+    def power(self):
+
+        total_power = self.base_atk
+
+        if self.owner.container:
+            object_bonuses = [obj.equipment.attack_bonus for obj in self.owner.container.equipped_items]
+
+            for bonus in object_bonuses:
+                if bonus:
+                    total_power += bonus
+
+        return total_power
+
+    @property
+    def defense(self):
+
+        total_defense = self.base_def
+
+        if self.owner.container:
+            object_bonuses = [obj.equipment.defense_bonus for obj in self.owner.container.equipped_items]
+
+            for bonus in object_bonuses:
+                if bonus:
+                    total_defense += bonus
+
+        return total_defense
+
 class com_Container(object):
 
     def __init__(self, volume = 10.0, inventory = []):
@@ -279,7 +336,12 @@ class com_Container(object):
 
     ## TODO Get Names of everything in inventory
 
+    @property
+    def equipped_items(self):
 
+        list_of_equipped_items = [obj for obj in self.inventory if obj.equipment and object.equipment.equipped]
+
+        return list_of_equipped_items
 
 
     ## TODO Get weight of everything in cointainer
@@ -291,7 +353,7 @@ class com_Item:
         self.value = value
         self.use_function = use_function
 
-    ## TODO Pick up this item
+    ## Pick up this item
     def pick_up(self, actor):
 
         if actor.container:
@@ -304,7 +366,7 @@ class com_Item:
                 GAME.current_objects.remove(self.owner)
                 self.container = actor.container
 
-    ## TODO Drop Item
+    ## Drop Item
     def drop(self, new_x, new_y):
         GAME.current_objects.append(self.owner)
         self.container.inventory.remove(self.owner)
@@ -313,8 +375,14 @@ class com_Item:
         game_message("Item dropped")
 
 
-    ## TODO Use item
+    ##  Use item
     def use(self):
+
+        if self.owner.equipment:
+            self.owner.equipment.toggle_equip()
+            return
+
+
 
         if self.use_function:
             result = self.use_function(self.container.owner, self.value)
@@ -325,6 +393,45 @@ class com_Item:
             else:
                 self.container.inventory.remove(self.owner)
 
+class com_Equipment:
+
+    def __init__(self, attack_bonus = None, defense_bonus = None, slot = None):
+
+        self.attack_bonus = attack_bonus
+        self.defense_bonus = defense_bonus
+        self.slot = slot
+
+        self.equipped = False
+
+    def toggle_equip(self):
+
+        if self.equipped:
+            self.unequip()
+        else:
+            self.equip()
+
+    def equip(self):
+
+        # check for equ in slot
+        all_equipped_items = self.owner.item.current_container.equipped_items
+
+
+        for item in all_equipped_items:
+            if item.equipment.slot and (item.equipment.slot == self.slot):
+                game_message("Equipment slot is occupied!", constants.COLOR_RED)
+                return
+
+        # toggle self.equipped
+        self.equipped = True
+
+        game_message("Item equipped")
+
+    def unequip(self):
+
+        # toggle self.equipped
+        self.equipped = False
+
+        game_message("Item uneqipped")
 
 #   _____  .___ 
 #  /  _  \ |   |
@@ -349,7 +456,7 @@ class ai_Confuse:
         else:
             self.owner.ai = self.old_ai
 
-            game_message("The confusion has stopped", constants.COLOR_GREEN)
+            game_message( self.owner.display_name + " has broken free!" , constants.COLOR_GREEN)
 
 class ai_Chase:
     # A basic AI which chases the player and tries to bump into him
@@ -367,7 +474,7 @@ class ai_Chase:
 
             # if close enough, attack player
             elif PLAYER.creature.hp > 0:
-                monster.creature.attack(PLAYER, 3)
+                monster.creature.attack(PLAYER)
 
 
 
@@ -807,7 +914,7 @@ def menu_inventory():
         local_inventory_surface.fill(constants.COLOR_BLACK)
 
         # TODO Register Changes
-        print_list = [obj.name_object for obj in PLAYER.container.inventory]
+        print_list = [obj.display_name for obj in PLAYER.container.inventory]
 
         events_list = pygame.event.get()
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -852,7 +959,8 @@ def menu_inventory():
 
 
 
-
+        # Render Game
+        draw_game()
 
         # Display Menu
         SURFACE_MAIN.blit(local_inventory_surface, (menu_x , menu_y ))
@@ -1045,7 +1153,19 @@ def game_initialize():
     ai_com2 = ai_Chase()
     ENEMY2 = obj_Actor(7, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
 
-    GAME.current_objects = [PLAYER, ENEMY, ENEMY2]
+    #create a sword
+    equipment_com1 = com_Equipment(attack_bonus= 2, slot = "hand_right")
+    SWORD = obj_Actor(2,3,"Short-Sword", ASSETS.S_SWORD, equipment= equipment_com1)
+
+    #create a shield
+    equipment_com2 = com_Equipment(defense_bonus= 2, slot = "hand_left")
+    SHIELD = obj_Actor(3, 3, "Buckler", ASSETS.S_SHIELD, equipment=equipment_com2)
+
+    # create a sword2
+    equipment_com3 = com_Equipment(attack_bonus=2, slot = "hand_right")
+    SWORD2 = obj_Actor(2, 4, "Short-Sword", ASSETS.S_SWORD, equipment=equipment_com3)
+
+    GAME.current_objects = [PLAYER, ENEMY, ENEMY2, SWORD, SHIELD, SWORD2]
 
 
 def game_handle_keys():
@@ -1149,7 +1269,7 @@ def game_handle_keys():
                 menu_tile_select()
 
             if event.key == pygame.K_k:
-                cast_fireball()
+                cast_confusion()
 
 
 
