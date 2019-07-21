@@ -339,7 +339,7 @@ class com_Container(object):
     @property
     def equipped_items(self):
 
-        list_of_equipped_items = [obj for obj in self.inventory if obj.equipment and object.equipment.equipped]
+        list_of_equipped_items = [obj for obj in self.inventory if obj.equipment and obj.equipment.equipped]
 
         return list_of_equipped_items
 
@@ -352,6 +352,7 @@ class com_Item:
         self.volume = volume
         self.value = value
         self.use_function = use_function
+        self.container = None
 
     ## Pick up this item
     def pick_up(self, actor):
@@ -373,6 +374,7 @@ class com_Item:
         self.owner.x = new_x
         self.owner.y = new_y
         game_message("Item dropped")
+        self.container = None
 
 
     ##  Use item
@@ -413,7 +415,8 @@ class com_Equipment:
     def equip(self):
 
         # check for equ in slot
-        all_equipped_items = self.owner.item.current_container.equipped_items
+        #TODO change this to be different
+        all_equipped_items = self.owner.item.container.equipped_items
 
 
         for item in all_equipped_items:
