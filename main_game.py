@@ -788,7 +788,7 @@ def cast_lightning(damage):
             if target:
                 target.creature.take_damage(damage)
 
-def cast_fireball():
+def cast_fireball(caster, value):
 
     # defs
     damage = 5
@@ -1274,6 +1274,9 @@ def game_handle_keys():
 
             if event.key == pygame.K_k:
                 cast_confusion()
+
+            if event.key == pygame.K_m:
+                cast_lightning(10)
 
 
 
