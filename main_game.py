@@ -1,4 +1,5 @@
 # 3rd party modules#3rd party modules
+#capital bruh
 from typing import Any
 
 import pygame
