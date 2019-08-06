@@ -907,8 +907,8 @@ def menu_inventory():
     window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
 
     # Menu characteristcs
-    menu_width = 200
-    menu_height = 200
+    menu_width = 500
+    menu_height = 400
     menu_x = (window_width /2) - (menu_width / 2)
     menu_y = (window_height / 2)- (menu_height / 2)
 

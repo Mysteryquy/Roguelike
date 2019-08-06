@@ -15,6 +15,8 @@ MAP_HEIGHT = 30
 #FPS LIMIT
 GAME_FPS = 60
 
+INVENTORY_TEXT_HEIGHT = 20
+
 
 #Color definitions
 COLOR_BLACK = (0, 0, 0)
