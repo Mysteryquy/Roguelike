@@ -345,7 +345,7 @@ class com_Container(object):
     @property
     def equipped_items(self):
 
-        list_of_equipped_items = [obj for obj in self.inventory if obj.equipment and object.equipment.equipped]
+        list_of_equipped_items = [obj for obj in self.inventory if obj.equipment and obj.equipment.equipped]
 
         return list_of_equipped_items
 
@@ -419,7 +419,7 @@ class com_Equipment:
     def equip(self):
 
         # check for equ in slot
-        all_equipped_items = self.owner.item.current_container.equipped_items
+        all_equipped_items = self.owner.item.container.equipped_items
 
 
         for item in all_equipped_items:
