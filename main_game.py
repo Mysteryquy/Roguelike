@@ -49,6 +49,7 @@ class struc_Assets:
         #Sprite sheets#
         self.charspritesheet = obj_Spritesheet("data/Reptiles.png")
         self.enemyspritesheet = obj_Spritesheet("data/ROFL.png")
+        self.scrollspritesheet = obj_Spritesheet("data/Scroll.png")
 
 
         #ANIMATIONS#
@@ -71,6 +72,10 @@ class struc_Assets:
         ## ITEMS ##
         self.S_SWORD = [pygame.transform.scale(pygame.image.load("data/sword.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
         self.S_SHIELD = [pygame.transform.scale(pygame.image.load("data/shield.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+        self.S_SCROLL_01 = self.scrollspritesheet.get_image("a", 5, 16, 16, (32,32))
+        self.S_SCROLL_02 = self.scrollspritesheet.get_image("a", 2, 16, 16, (32,32))
+        self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
+
 
 
 #  ______   .______          __   _______   ______ .___________.    _______.
@@ -767,13 +772,17 @@ def cast_heal(target, value):
 
     return None
 
-def cast_lightning(damage):
+def cast_lightning(caster, T_damage_maxrange):
 
-    player_location = (PLAYER.x, PLAYER.y)
+
+
+    damage, m_range = T_damage_maxrange
+
+    player_location = (caster.x, caster.y)
 
 
     # prompt player for a tile
-    point_selected = menu_tile_select(coords_origin=player_location,  max_range=5, penetrate_walls=False)
+    point_selected = menu_tile_select(coords_origin=player_location,  max_range=m_range, penetrate_walls=False)
 
     if point_selected:
         list_of_tiles = map_find_line(player_location, point_selected)
@@ -785,13 +794,13 @@ def cast_lightning(damage):
             if target:
                 target.creature.take_damage(damage)
 
-def cast_fireball(caster, value):
+def cast_fireball(caster, T_damage_radius_range):
 
     # defs
-    damage = 5
-    local_radius = 1
-    max_r = 4
-    player_location = (PLAYER.x, PLAYER.y)
+    damage, local_radius, max_r = T_damage_radius_range
+
+
+    player_location = (caster.x, caster.y)
 
     point_selected = menu_tile_select(coords_origin=player_location, max_range=max_r, penetrate_walls=False, pierce_creature=False, radius=local_radius)
 
@@ -814,7 +823,9 @@ def cast_fireball(caster, value):
     if creature_hit:
         game_message("The fire rages and evaporates all flesh it came in contact with. Its nearly as hot as Alina Paul", constants.COLOR_RED)
 
-def cast_confusion():
+def cast_confusion(caster, effect_length):
+
+
 
     #select tile
     point_selected = menu_tile_select()
@@ -827,7 +838,7 @@ def cast_confusion():
         if target:
             #temporarily confuse monster
             old_ai = target.ai
-            target.ai = ai_Confuse(old_ai, num_turns = 5)
+            target.ai = ai_Confuse(old_ai, num_turns = effect_length)
             target.ai.owner = target
 
             game_message("The creature is confused", constants.COLOR_GREEN)
@@ -942,6 +953,7 @@ def menu_inventory():
                 if event.button == 1:
                     if (mouse_in_window and mouse_line_selection <= len(print_list)-1):
                         PLAYER.container.inventory[mouse_line_selection].item.use()
+                        menu_close = True
 
 
 
@@ -1057,15 +1069,92 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
 
 
+#Generators
+
+def gen_item(coords):
+
+    global GAME
+
+    random_number = tcod.random_get_int(0, 1, 5)
+
+    if random_number == 1:
+        new_item = gen_scroll_confusion(coords)
+    elif random_number == 2:
+        new_item = gen_scroll_fireball(coords)
+    elif random_number == 3:
+        new_item = gen_scroll_confusion(coords)
+    elif random_number == 4:
+        new_item = gen_weapon_sword(coords)
+    elif random_number == 5:
+        new_item = gen_armor_shield(coords)
+
+
+    GAME.current_objects.append(new_item)
 
 
 
+def gen_scroll_lighning(coords):
 
+    x, y = coords
 
+    damage = tcod.random_get_int(0, 5, 7)
+    m_range = tcod.random_get_int(0, 5, 7)
 
+    item_com = com_Item(use_function= cast_lightning , value= (damage, m_range))
 
+    return_object = obj_Actor(x, y, "lightning scroll", animation= ASSETS.S_SCROLL_01, item =item_com )
 
+    return return_object
 
+def gen_scroll_fireball(coords):
+
+    x, y = coords
+
+    damage = tcod.random_get_int(0, 2, 4)
+    radius = 1
+    m_range = tcod.random_get_int(0, 9, 12)
+
+    item_com = com_Item(use_function= cast_fireball , value= (damage,radius, m_range))
+
+    return_object = obj_Actor(x, y, "fireball scroll", animation= ASSETS.S_SCROLL_02, item=item_com )
+
+    return return_object
+
+def gen_scroll_confusion(coords):
+
+    x, y = coords
+
+    effect_length = tcod.random_get_int(0, 5, 10)
+
+    item_com = com_Item(use_function= cast_confusion , value= effect_length)
+
+    return_object = obj_Actor(x, y, "Konfuzius scroll", animation= ASSETS.S_SCROLL_03, item=item_com )
+
+    return return_object
+
+def gen_weapon_sword(coords):
+
+    x, y = coords
+
+    bonus = tcod.random_get_int(0, 1, 2)
+
+    equipment_com = com_Equipment(attack_bonus= bonus)
+
+    return_object = obj_Actor(x, y, "sword", animation = ASSETS.S_SWORD, equipment= equipment_com)
+
+    return return_object
+
+def gen_armor_shield(coords):
+
+    x, y = coords
+
+    bonus = tcod.random_get_int(0, 1, 2)
+
+    equipment_com = com_Equipment(defense_bonus=bonus)
+
+    return_object = obj_Actor(x, y, "shield", animation=ASSETS.S_SHIELD, equipment=equipment_com)
+
+    return return_object
 
 
 
@@ -1147,12 +1236,12 @@ def game_initialize():
     item_com1 = com_Item(value = 4, use_function = cast_heal)
     creature_com2 = com_Creature("Healkrabbe", death_function=death_monster)
     ai_com1 = ai_Chase()
-    ENEMY = obj_Actor(2, 2, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
+    ENEMY = obj_Actor(16, 16, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
 
     item_com2 = com_Item(value = 5, use_function = cast_fireball)
     creature_com3 = com_Creature("Feuerballkrabbe", death_function=death_monster)
     ai_com2 = ai_Chase()
-    ENEMY2 = obj_Actor(7, 2, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
+    ENEMY2 = obj_Actor(16, 15, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
 
     #create a sword
     equipment_com1 = com_Equipment(attack_bonus= 2, slot = "hand_right")
@@ -1166,7 +1255,14 @@ def game_initialize():
     equipment_com3 = com_Equipment(attack_bonus=2, slot = "hand_right")
     SWORD2 = obj_Actor(2, 4, "Short-Sword", ASSETS.S_SWORD, equipment=equipment_com3)
 
-    GAME.current_objects = [PLAYER, ENEMY, ENEMY2, SWORD, SHIELD, SWORD2]
+
+
+    GAME.current_objects = [PLAYER, ENEMY, ENEMY2, SWORD, SHIELD, SWORD2,]
+
+    # create items
+    gen_item((4, 4))
+    gen_item((4, 5))
+    gen_item((4, 6))
 
 
 def game_handle_keys():
