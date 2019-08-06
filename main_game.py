@@ -50,11 +50,15 @@ class struc_Assets:
         self.charspritesheet = obj_Spritesheet("data/Reptiles.png")
         self.enemyspritesheet = obj_Spritesheet("data/ROFL.png")
         self.scrollspritesheet = obj_Spritesheet("data/Scroll.png")
+        self.reptile = obj_Spritesheet("data/Reptile0.png")
+        self.flesh = obj_Spritesheet("data/Flesh.png")
 
 
         #ANIMATIONS#
         self.A_PLAYER = self.charspritesheet.get_animation("m", 5, 16, 16, 4, (32, 32))
         self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
+        self.A_SNAKE_01 = self.reptile.get_animation("d", 4, 16, 16, 2, (32, 32))
+        self.A_SNAKE_02 = self.reptile.get_animation("a", 4, 16, 16, 2, (32, 32))
 
 
         #SPRITES#
@@ -75,6 +79,8 @@ class struc_Assets:
         self.S_SCROLL_01 = self.scrollspritesheet.get_image("a", 5, 16, 16, (32,32))
         self.S_SCROLL_02 = self.scrollspritesheet.get_image("a", 2, 16, 16, (32,32))
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
+        self.S_FLESH_SNAKE = self.flesh.get_image("a", 3, 16, 16, (32,32))
+
 
 
 
@@ -177,12 +183,6 @@ class obj_Actor:
         dy = int(round(dy / distance))
 
         self.creature.move(dx, dy)
-
-
-
-
-
-
 
 class obj_Game:
     def __init__(self):
@@ -482,14 +482,11 @@ class ai_Chase:
             elif PLAYER.creature.hp > 0:
                 monster.creature.attack(PLAYER)
 
-
-
-
-def death_monster(monster):
+def death_snake(monster):
     # On death, most monsters stop moving tho
     game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!", constants.COLOR_GREY)
     # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
-
+    monster.animation = ASSETS.S_FLESH_SNAKE
     monster.creature = None
     monster.ai = None
 
@@ -1068,8 +1065,26 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         CLOCK.tick(constants.GAME_FPS)
 
 
+#                                 _
+#  __ _  ___ _ __   ___ _ __ __ _| |_ ___
+# / _` |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \
+#| (_| |  __/ | | |  __/ | | (_| | ||  __/
+# \__, |\___|_| |_|\___|_|  \__,_|\__\___|
+# |___/
 
-#Generators
+##PALYER##
+def gen_player(coords):
+
+    x, y = coords
+
+    container_com = com_Container()
+    creature_com = com_Creature("SPIELER", base_atk= 4)
+    PLAYER = obj_Actor(x, y, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com, container = container_com)
+
+    return PLAYER
+
+
+##ITEMS##
 
 def gen_item(coords):
 
@@ -1090,8 +1105,6 @@ def gen_item(coords):
 
 
     GAME.current_objects.append(new_item)
-
-
 
 def gen_scroll_lighning(coords):
 
@@ -1158,6 +1171,54 @@ def gen_armor_shield(coords):
 
 
 
+## ENEMYS ##
+
+def gen_enemy(coords):
+
+    random_number = tcod.random_get_int(0, 1, 100)
+
+    if random_number <= 15:
+        new_enemy = gen_snake_anaconda(coords)
+
+    else:
+        new_enemy = gen_snake_cobra(coords)
+
+    GAME.current_objects.append(new_enemy)
+
+def gen_snake_anaconda(coords):
+
+    x,y = coords
+
+    max_health = tcod.random_get_int(0, 15, 20)
+    base_attack = tcod.random_get_int(0, 3, 6)
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = com_Creature(creature_name, death_function=death_snake, hp= max_health, base_atk= base_attack)
+    ai_com = ai_Chase()
+
+    snake = obj_Actor(x, y, "Anaconda", ASSETS.A_SNAKE_01, creature=creature_com, ai=ai_com,)
+
+    return snake
+
+def gen_snake_cobra(coords):
+
+    x,y = coords
+
+    max_health = tcod.random_get_int(0, 5, 10)
+    base_attack = tcod.random_get_int(0, 1, 3)
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = com_Creature(creature_name, death_function=death_snake, hp= max_health, base_atk= base_attack)
+    ai_com = ai_Chase()
+
+    snake = obj_Actor(x, y, "Cobra", ASSETS.A_SNAKE_02, creature=creature_com, ai=ai_com,)
+
+    return snake
+
+
+
 #  _______      ___      .___  ___.  _______
 # /  _____|    /   \     |   \/   | |   ____|
 # |  |  __     /  ^  \    |  \  /  | |  |__
@@ -1196,7 +1257,6 @@ def game_main_loop():
     pygame.quit()
     exit()
 
-
 def game_initialize():
     '''Das hier startet Pygame und das Hauptfenster'''
 
@@ -1229,20 +1289,6 @@ def game_initialize():
     ASSETS = struc_Assets()
 
 
-    container_com1 = com_Container()
-    creature_com1 = com_Creature("SPIELER")
-    PLAYER = obj_Actor(1, 1, "python", ASSETS.A_PLAYER, animation_speed = 0.5, creature=creature_com1, container = container_com1)
-
-    item_com1 = com_Item(value = 4, use_function = cast_heal)
-    creature_com2 = com_Creature("Healkrabbe", death_function=death_monster)
-    ai_com1 = ai_Chase()
-    ENEMY = obj_Actor(16, 16, "crab", ASSETS.A_ENEMY, creature=creature_com2, ai=ai_com1, item = item_com1)
-
-    item_com2 = com_Item(value = 5, use_function = cast_fireball)
-    creature_com3 = com_Creature("Feuerballkrabbe", death_function=death_monster)
-    ai_com2 = ai_Chase()
-    ENEMY2 = obj_Actor(16, 15, "BOB", ASSETS.A_ENEMY, creature=creature_com3, ai=ai_com2, item=item_com2)
-
     #create a sword
     equipment_com1 = com_Equipment(attack_bonus= 2, slot = "hand_right")
     SWORD = obj_Actor(2,3,"Short-Sword", ASSETS.S_SWORD, equipment= equipment_com1)
@@ -1255,15 +1301,21 @@ def game_initialize():
     equipment_com3 = com_Equipment(attack_bonus=2, slot = "hand_right")
     SWORD2 = obj_Actor(2, 4, "Short-Sword", ASSETS.S_SWORD, equipment=equipment_com3)
 
+    tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
-
-    GAME.current_objects = [PLAYER, ENEMY, ENEMY2, SWORD, SHIELD, SWORD2,]
 
     # create items
     gen_item((4, 4))
     gen_item((4, 5))
     gen_item((4, 6))
 
+    # create 2 enemys
+    gen_enemy((15,15))
+    gen_enemy((15,17))
+
+    PLAYER = gen_player((2,2))
+
+    GAME.current_objects.append(PLAYER)
 
 def game_handle_keys():
     global FOV_CALCULATE
@@ -1375,10 +1427,8 @@ def game_handle_keys():
 
     return "no-action"
 
-
 def game_message(game_msg, msg_color = constants.COLOR_GREY):
     GAME.message_history.append((game_msg, msg_color))
-
 
 if __name__ == '__main__':
     game_initialize()
