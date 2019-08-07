@@ -1,0 +1,40 @@
+Brainstorm needed after tutorial series:
+-Plan the theme 
+-Plan features 
+-Define Roadmap 
+-Assign responsibilities
+-Define who is responsible for what order
+
+
+
+
+
+
+General Theme 
+-Waking World and Dreamworld (on one u have to hide and actions you do in one world change the other) 
+-You play as the bad guy (maybe kill some gods?) 
+-Player can decide in the game of he wants to side with the forces of good or evil (different upgrade paths, skills, monsters to fight etc) 
+-simple dungeon crawler without story/theme
+-Bounty hunter on different missions 
+-Magical tower with treasure on top 
+-descent to hell itself to safe wife
+-(Game has no RNG and) Player uncovers more and more powerful ways to get stronger (e.g. player can find scrolls with Numbers / Letters that can be entered into a portal that spits out a item ect) that are the same in  EVERY RUN
+
+
+
+
+(unique) Features
+-Revisitable town to upgrade and build [meta game in the game]
+-Spell-mix system: Combination of skill parts (like in tyranny) 
+-Gather followers and let them fight for you 
+-Alchemy system: Dropped monster parts can be combined into potions 
+
+
+
+Skills
+-Chose them based on start /class choice (tome) 
+-Find them on the map (dcss) 
+-Buy them for gold 
+-Get / steal them from monsters
+-If you use a skill the category levels up (similar to dcss) 
+-No permanent skills, all magic available through once usable scrolls 
