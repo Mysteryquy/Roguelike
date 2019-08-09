@@ -187,7 +187,7 @@ class obj_Actor:
 class obj_Game:
     def __init__(self):
 
-        self.current_map = map_create()
+
         self.message_history = []
 
         self.current_objects = []
@@ -241,6 +241,30 @@ class obj_Spritesheet: #Bilder von Spritesheets holen
 
         return image_list
 
+class obj_Room:
+    #This is a rectangle that lives on the map
+
+    def __init__(self, coords, size):
+
+        self.x, self.y = coords
+        self.w, self.h = size
+
+        self.x2 = self.x1 + self.w
+        self.y2 = self.y1 + self.h
+
+    @property
+    def center(self):
+        center_x = (self.x1 + self.x2) / 2
+        center_y = (self.y1 + self.y2) / 2
+
+        return (center_x, center_y)
+
+    def intercept(self, other):
+
+        # return True if other obj intersects with this one
+        objects_intersect = (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
+
+        return objects_intersect
 
 
 #                                                         __
@@ -499,22 +523,80 @@ def death_snake(monster):
 # |__|  |__| /__/     \__\ | _|
 
 def map_create():
-    new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    new_map = [[struc_Tile(True) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
-    new_map[10][10].block_path = True
-    new_map[10][15].block_path = True
 
-    for x in range(constants.MAP_WIDTH):
-        new_map[x][0].block_path = True
-        new_map[x][constants.MAP_HEIGHT - 1].block_path = True
+    # generate new room
+    list_of_rooms = []
 
-    for y in range(constants.MAP_HEIGHT):
-        new_map[0][y].block_path = True
-        new_map[constants.MAP_WIDTH - 1][y].block_path = True
+    for i in range(constants.MAP_MAX_NUM_ROOMS):
+
+        w = tcod.random_get_int(0, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
+        h = tcod.random_get_int(0, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
+        x = tcod.random_get_int(0,2, constants.MAP_WIDTH - w - 2)
+        y = tcod.random_get_int(0,2, constants.MAP_HEIGHT - h - 2)
+
+        #create the room
+        new_room = obj_Room((x,y), (w,h))
+
+        failed = False
+
+        # TODO check for interference
+        for other_room in list_of_rooms:
+            if new_room.intercept(other_room):
+                failed = True
+                break
+
+        if not failed:
+
+            map_create_room(new_map, new_room)
+            current_center = new_room.center
+
+            if len(list_of_rooms) == 0:
+
+                gen_player(current_center)
+
+            else:
+                previous_center = list_of_rooms[-1].center
+
+                map_create_tunnels(current_center, previous_center, new_map)
+
+            list_of_rooms.append(new_room)
+
+
+
 
     map_make_fov(new_map)
 
     return new_map
+
+def map_create_room(new_map, new_room):
+
+
+    for x in range(new_room.x1, new_room.x2):
+        for y in range(new_room.y1, new_room.y2):
+
+            new_map[x][y].block_path = False
+
+def map_create_tunnels(coords1, coords2, new_map):
+
+
+    coin_flip = (tcod.random_get_int(0, 0, 1) == 1)
+
+    x1, y1 = coords1
+    x2, y2 = coords2
+
+    if coin_flip:
+        for x in range(min(x1, x2), max(x1, x2) + 1):
+            new_map[x][y1].block_path = False
+        for y in range(min(y1, y2), max(y1, y2) + 1):
+            new_map[x2][y].block_path = False
+
+    else:
+        for y in range(min(y1, y2), max(y1, y2) + 1):
+            new_map[x1][y].block_path = False
+        for x in range(min(x1, x2), max(x1, x2) + 1):
+            new_map[x][y2].block_path = False
 
 def map_check_for_creature(x, y, exclude_object=None):
     target = None
@@ -1271,7 +1353,13 @@ def game_initialize():
 
     pygame.key.set_repeat(200, 70)
 
+    tcod.namegen_parse("data/namegen/jice_celtic.cfg")
+
+    ASSETS = struc_Assets()
+
     GAME = obj_Game()
+
+    GAME.current_map = map_create()
 
     CLOCK = pygame.time.Clock()
 
@@ -1286,7 +1374,7 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
-    ASSETS = struc_Assets()
+
 
 
     #create a sword
@@ -1301,19 +1389,9 @@ def game_initialize():
     equipment_com3 = com_Equipment(attack_bonus=2, slot = "hand_right")
     SWORD2 = obj_Actor(2, 4, "Short-Sword", ASSETS.S_SWORD, equipment=equipment_com3)
 
-    tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
 
-    # create items
-    gen_item((4, 4))
-    gen_item((4, 5))
-    gen_item((4, 6))
 
-    # create 2 enemys
-    gen_enemy((15,15))
-    gen_enemy((15,17))
-
-    PLAYER = gen_player((2,2))
 
     GAME.current_objects.append(PLAYER)
 
