@@ -246,7 +246,7 @@ class obj_Room:
 
     def __init__(self, coords, size):
 
-        self.x, self.y = coords
+        self.x1, self.y1 = coords
         self.w, self.h = size
 
         self.x2 = self.x1 + self.w
@@ -551,6 +551,9 @@ def map_create():
 
             map_create_room(new_map, new_room)
             current_center = new_room.center
+            (x,y) = current_center
+            current_center = (int(round(x)),int(round(y)))
+
 
             if len(list_of_rooms) == 0:
 
@@ -559,6 +562,8 @@ def map_create():
             else:
                 previous_center = list_of_rooms[-1].center
 
+                (x,y) = previous_center
+                previous_center = (int(round(x)), int(round(y)))
                 map_create_tunnels(current_center, previous_center, new_map)
 
             list_of_rooms.append(new_room)
@@ -583,8 +588,11 @@ def map_create_tunnels(coords1, coords2, new_map):
 
     coin_flip = (tcod.random_get_int(0, 0, 1) == 1)
 
-    x1, y1 = coords1
-    x2, y2 = coords2
+
+    (x1,y1) = coords1
+    (x2,y2) = coords2
+
+
 
     if coin_flip:
         for x in range(min(x1, x2), max(x1, x2) + 1):
@@ -1355,14 +1363,6 @@ def game_initialize():
 
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
-    ASSETS = struc_Assets()
-
-    GAME = obj_Game()
-
-    GAME.current_map = map_create()
-
-    CLOCK = pygame.time.Clock()
-
 
     # looks for resolution of the display of the user
     info = pygame.display.Info()
@@ -1370,6 +1370,20 @@ def game_initialize():
 
     SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height),
                                            pygame.NOFRAME)
+
+
+    ASSETS = struc_Assets()
+
+
+    GAME = obj_Game()
+
+    GAME.current_map = map_create()
+
+    #map start????
+    PLAYER = gen_player((10,10))
+
+    CLOCK = pygame.time.Clock()
+
 
 
     FOV_CALCULATE = True
