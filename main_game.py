@@ -534,8 +534,12 @@ def map_create():
 
         w = tcod.random_get_int(0, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
         h = tcod.random_get_int(0, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
-        x = tcod.random_get_int(0,2, constants.MAP_WIDTH - w - 2)
-        y = tcod.random_get_int(0,2, constants.MAP_HEIGHT - h - 2)
+        if len(list_of_rooms) == 0:
+            x = 3
+            y = 2
+        else:
+            x = tcod.random_get_int(0,2, constants.MAP_WIDTH - w - 2)
+            y = tcod.random_get_int(0,2, constants.MAP_HEIGHT - h - 2)
 
         #create the room
         new_room = obj_Room((x,y), (w,h))
