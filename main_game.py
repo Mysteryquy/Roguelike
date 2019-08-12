@@ -523,6 +523,7 @@ def death_snake(monster):
 # |__|  |__| /__/     \__\ | _|
 
 def map_create():
+    global PLAYER
     new_map = [[struc_Tile(True) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
 
@@ -556,8 +557,7 @@ def map_create():
 
 
             if len(list_of_rooms) == 0:
-
-                gen_player(current_center)
+                PLAYER = gen_player(current_center)
 
             else:
                 previous_center = list_of_rooms[-1].center
@@ -595,15 +595,15 @@ def map_create_tunnels(coords1, coords2, new_map):
 
 
     if coin_flip:
-        for x in range(min(x1, x2), max(x1, x2) + 1):
+        for x in range(min(x1, x2), max(x1, x2) ):
             new_map[x][y1].block_path = False
-        for y in range(min(y1, y2), max(y1, y2) + 1):
+        for y in range(min(y1, y2), max(y1, y2) ):
             new_map[x2][y].block_path = False
 
     else:
-        for y in range(min(y1, y2), max(y1, y2) + 1):
+        for y in range(min(y1, y2), max(y1, y2) +1):
             new_map[x1][y].block_path = False
-        for x in range(min(x1, x2), max(x1, x2) + 1):
+        for x in range(min(x1, x2), max(x1, x2) +1):
             new_map[x][y2].block_path = False
 
 def map_check_for_creature(x, y, exclude_object=None):
@@ -641,7 +641,7 @@ def map_make_fov(incoming_map):
         for x in range(constants.MAP_WIDTH):
             # same as before, but now we have array for walkable and transparent
             FOV_MAP.walkable[x][y] = not incoming_map[x][y].block_path
-            FOV_MAP.transparent[x][y] = not incoming_map[x][y].block_path
+            FOV_MAP.transparent[y][x] = not incoming_map[x][y].block_path
 
 def map_calculate_fov():
     global FOV_CALCULATE
@@ -674,7 +674,7 @@ def map_find_line(coords1, coords2, include_origin=False):
         tmp.__next__()
         return list(tmp)
 
-def map_check_for_wall(x,y):
+def map_check_for_wall(map, x,y):
     return GAME.current_map[x][y].block_path
 
 def map_find_radius(coords, radius):
@@ -1069,6 +1069,12 @@ def menu_inventory():
 
         pygame.display.update()
 
+def debug_tile_select():
+    global GAME, FOV_MAP
+    (x,y) = menu_tile_select()
+    print((x,y))
+    print(FOV_MAP.fov[y,x])
+
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius = None):
     """
     """
@@ -1101,9 +1107,6 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
                 valid_tiles.append((x,y))
 
-                #if max_range and i == max_range - 1:
-                #    print("HIER")
-                #   break
 
                 if not penetrate_walls and map_check_for_wall(x,y):
                     break
@@ -1379,8 +1382,6 @@ def game_initialize():
 
     GAME.current_map = map_create()
 
-    #map start????
-    PLAYER = gen_player((10,10))
 
     CLOCK = pygame.time.Clock()
 
@@ -1514,6 +1515,9 @@ def game_handle_keys():
 
             if event.key == pygame.K_m:
                 cast_lightning(10)
+
+            if event.key == pygame.K_x:
+                debug_tile_select()
 
 
 

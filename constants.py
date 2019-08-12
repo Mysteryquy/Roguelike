@@ -49,9 +49,9 @@ S_FLOOR = pygame.image.load("data/floor.jpg")
 S_FLOOREXPLORED = pygame.image.load("data/floorunseen.png")
 
 #FOV SETTINGS Er hat anstelle der Null "libcod.FOV_BASIC" da stehen
-FOV_ALGO = 0
+FOV_ALGO = libtcodpy.FOV_RESTRICTIVE
 FOV_LIGHT_WALLS = True
-TORCH_RADIUS = 10
+TORCH_RADIUS = 5
 
 #FONT SETTINGS
 FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
