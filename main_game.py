@@ -266,6 +266,29 @@ class obj_Room:
 
         return objects_intersect
 
+class obj_Camera:
+
+    def __init__(self):
+
+        self.width = constants.CAMERA_WIDTH
+        self.height = constants.CAMERA_HEIGHT
+        self.x, self.y = (0, 0)
+
+    def update(self):
+
+        self.x = PLAYER.x * constants.CELL_WIDTH + (constants.CELL_WIDTH /2)
+        self.y = PLAYER.y * constants.CAMERA_HEIGHT + (constants.CELL_HEIGHT /2)
+
+    @property
+    def rectangle(self):
+
+        pos_rect = pygame.Rect((0,0), (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+
+        pos_rect.center = (self.x, self.y)
+
+        return pos_rect
+
+
 
 #                                                         __
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
@@ -721,10 +744,14 @@ def map_find_radius(coords, radius):
 # |_______/ | _| `._____/__/     \__\  \__/  \__/     |__| |__| \__|  \______|
 
 def draw_game():
-    global SURFACE_MAIN
+    global SURFACE_MAIN, SURFACE_MAP
 
     # clear the surface
     SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
+    SURFACE_MAP.fill(constants.COLOR_BLACK)
+
+    CAMERA.update()
+
 
     # draw the map
     draw_map(GAME.current_map)
@@ -732,7 +759,7 @@ def draw_game():
     for obj in GAME.current_objects:
         obj.draw()
 
-    SURFACE_MAIN.blit(SURFACE_MAP, (0,0))
+    SURFACE_MAIN.blit(SURFACE_MAP, (0,0), CAMERA.rectangle)
 
     draw_debug()
     draw_messages()
@@ -1365,7 +1392,7 @@ def game_main_loop():
 def game_initialize():
     '''Das hier startet Pygame und das Hauptfenster'''
 
-    global SURFACE_MAIN, SURFACE_MAP, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS
+    global SURFACE_MAIN, SURFACE_MAP, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA
     # makes window start at top left corner
     os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
     # disable scaling of windows
@@ -1387,6 +1414,7 @@ def game_initialize():
 
     SURFACE_MAP = pygame.Surface((constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_WIDTH))
 
+    CAMERA = obj_Camera()
 
     ASSETS = struc_Assets()
 
