@@ -3,8 +3,8 @@ import tcod as libtcodpy
 
 pygame.init()
 
-CAMERA_WIDTH = 800
-CAMERA_HEIGHT = 600
+CAMERA_WIDTH = 1000
+CAMERA_HEIGHT = 800
 CELL_WIDTH = 32
 CELL_HEIGHT = 32
 

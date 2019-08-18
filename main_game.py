@@ -277,7 +277,7 @@ class obj_Camera:
     def update(self):
 
         self.x = PLAYER.x * constants.CELL_WIDTH + (constants.CELL_WIDTH /2)
-        self.y = PLAYER.y * constants.CAMERA_HEIGHT + (constants.CELL_HEIGHT /2)
+        self.y = PLAYER.y * constants.CELL_HEIGHT + (constants.CELL_HEIGHT /2)
 
     @property
     def rectangle(self):
@@ -744,7 +744,7 @@ def map_find_radius(coords, radius):
 # |_______/ | _| `._____/__/     \__\  \__/  \__/     |__| |__| \__|  \______|
 
 def draw_game():
-    global SURFACE_MAIN, SURFACE_MAP
+    global SURFACE_MAIN, SURFACE_MAP, GAME
 
     # clear the surface
     SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
@@ -759,7 +759,9 @@ def draw_game():
     for obj in GAME.current_objects:
         obj.draw()
 
+
     SURFACE_MAIN.blit(SURFACE_MAP, (0,0), CAMERA.rectangle)
+    #print(CAMERA.rectangle)
 
     draw_debug()
     draw_messages()
@@ -1412,7 +1414,7 @@ def game_initialize():
 
     SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
 
-    SURFACE_MAP = pygame.Surface((constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_WIDTH))
+    SURFACE_MAP = pygame.Surface((constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
 
     CAMERA = obj_Camera()
 
