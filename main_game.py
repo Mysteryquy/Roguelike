@@ -577,7 +577,7 @@ def map_create():
 
     map_make_fov(new_map)
 
-    return new_map
+    return (new_map, list_of_rooms)
 
 def map_create_room(new_map, new_room):
 
@@ -586,6 +586,20 @@ def map_create_room(new_map, new_room):
         for y in range(new_room.y1, new_room.y2):
 
             new_map[x][y].block_path = False
+
+def map_place_objects(room_list):
+
+    for room in room_list:
+
+        x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
+        y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
+
+        gen_enemy((x, y))
+
+        x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
+        y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
+
+        gen_item((x, y))
 
 def map_create_tunnels(coords1, coords2, new_map):
 
@@ -1384,7 +1398,9 @@ def game_initialize():
 
     GAME = obj_Game()
 
-    GAME.current_map = map_create()
+    GAME.current_map, GAME.current_rooms = map_create()
+
+    map_place_objects(GAME.current_rooms)
 
 
     CLOCK = pygame.time.Clock()
