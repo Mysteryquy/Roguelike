@@ -3,15 +3,15 @@ import tcod as libtcodpy
 
 pygame.init()
 
-GAME_WIDTH = 800
-GAME_HEIGHT = 600
+CAMERA_WIDTH = 800
+CAMERA_HEIGHT = 600
 CELL_WIDTH = 32
 CELL_HEIGHT = 32
 
-#Mapvars
-MAP_WIDTH = 50
-MAP_HEIGHT = 50
-MAP_MAX_NUM_ROOMS = 10
+#Map limitations
+MAP_WIDTH = 20
+MAP_HEIGHT = 20
+MAP_MAX_NUM_ROOMS = 25
 
 
 #Room limitations

@@ -148,7 +148,7 @@ class obj_Actor:
 
         if is_visible:
             if len(self.animation) == 1:
-                SURFACE_MAIN.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+                SURFACE_MAP.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
 
             elif len(self.animation) > 1:
                 if CLOCK.get_fps() > 0.0:
@@ -163,7 +163,7 @@ class obj_Actor:
                     else:
                         self.sprite_image += 1
 
-                SURFACE_MAIN.blit(self.animation[self.sprite_image], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+                SURFACE_MAP.blit(self.animation[self.sprite_image], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
 
     def distance_to(self, other):
 
@@ -732,6 +732,8 @@ def draw_game():
     for obj in GAME.current_objects:
         obj.draw()
 
+    SURFACE_MAIN.blit(SURFACE_MAP, (0,0))
+
     draw_debug()
     draw_messages()
 
@@ -746,17 +748,17 @@ def draw_map(map_to_draw):
 
                 if map_to_draw[x][y].block_path:
 
-                    SURFACE_MAIN.blit(ASSETS.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    SURFACE_MAP.blit(ASSETS.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:
-                    SURFACE_MAIN.blit(ASSETS.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    SURFACE_MAP.blit(ASSETS.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
             elif map_to_draw[x][y].explored:
 
                     if map_to_draw[x][y].block_path: #Bruh was will der von mir
 
-                        SURFACE_MAIN.blit(ASSETS.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                        SURFACE_MAP.blit(ASSETS.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     else:
-                        SURFACE_MAIN.blit(ASSETS.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                        SURFACE_MAP.blit(ASSETS.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 def draw_debug():
     draw_text(SURFACE_MAIN, "fps: " + str(int(CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE, constants.COLOR_BLACK)
@@ -769,10 +771,10 @@ def draw_messages():
 
     text_height = helper_text_height(ASSETS.FONT_MESSAGE_TEXT)
 
-    info = pygame.display.Info()
-    screen_height = info.current_h
+    #info = pygame.display.Info()
+    #screen_height = info.current_h
 
-    start_y = screen_height - (constants.NUM_MESSAGES * text_height)
+    start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 5
 
     i = 0
 
@@ -820,7 +822,7 @@ def draw_tile_rect(coords, color=None, tile_alpha = None, mark = None):
         draw_text(new_surface,"X",(constants.CELL_WIDTH/2, constants.CELL_HEIGHT/2),constants.COLOR_BLACK, center = True)
 
 
-    SURFACE_MAIN.blit(new_surface, (int(new_x), int(new_y)))
+    SURFACE_MAP.blit(new_surface, (int(new_x), int(new_y)))
 
 
 
@@ -947,14 +949,6 @@ def cast_confusion(caster, effect_length):
             target.ai.owner = target
 
             game_message("The creature is confused", constants.COLOR_GREEN)
-
-
-
-
-
-
-
-
 
 
 
@@ -1183,7 +1177,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 # \__, |\___|_| |_|\___|_|  \__,_|\__\___|
 # |___/
 
-##PALYER##
+##PLAYER##
 def gen_player(coords):
 
     x, y = coords
@@ -1371,7 +1365,7 @@ def game_main_loop():
 def game_initialize():
     '''Das hier startet Pygame und das Hauptfenster'''
 
-    global SURFACE_MAIN, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS
+    global SURFACE_MAIN, SURFACE_MAP, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS
     # makes window start at top left corner
     os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
     # disable scaling of windows
@@ -1389,8 +1383,9 @@ def game_initialize():
     info = pygame.display.Info()
     screen_width, screen_height = info.current_w, info.current_h
 
-    SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height),
-                                           pygame.NOFRAME)
+    SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+
+    SURFACE_MAP = pygame.Surface((constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_WIDTH))
 
 
     ASSETS = struc_Assets()
