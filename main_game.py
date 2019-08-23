@@ -276,8 +276,14 @@ class obj_Camera:
 
     def update(self):
 
-        self.x = PLAYER.x * constants.CELL_WIDTH + (constants.CELL_WIDTH /2)
-        self.y = PLAYER.y * constants.CELL_HEIGHT + (constants.CELL_HEIGHT /2)
+        target_x = PLAYER.x * constants.CELL_WIDTH + (constants.CELL_WIDTH /2)
+        target_y = PLAYER.y * constants.CELL_HEIGHT + (constants.CELL_HEIGHT /2)
+
+        distance_x, distance_y = self.map_dist((target_x, target_y))
+
+        # Durch das 1 kann der Effekt erzeugt werden, dass die Cam dem Spieler "folgt" und nicht an ihm festgeklebt ist. Kann geändert werden nach Geschmack
+        self.x += int(distance_x * 1)
+        self.y += int(distance_y * 1)
 
     @property
     def rectangle(self):
@@ -287,6 +293,47 @@ class obj_Camera:
         pos_rect.center = (self.x, self.y)
 
         return pos_rect
+
+    @property
+    def map_address(self):
+
+        map_x = self.x / constants.CELL_WIDTH
+        map_y = self.y / constants.CELL_HEIGHT
+
+        return (map_x, map_y)
+
+    def win_to_map(self, coords):
+
+        tar_x, tar_y = coords
+
+
+        #convert window coords to distance from camera
+        cam_d_x, cam_d_y = self.cam_dist((tar_x, tar_y))
+
+        # distance from cam -> map cords
+        map_p_x = self.x + cam_d_x
+        map_p_y = self.y + cam_d_y
+
+        return ((map_p_x, map_p_y))
+
+    def map_dist(self, coords):
+
+        new_x, new_y = coords
+
+        dist_x = new_x - self.x
+        dist_y = new_y - self.y
+
+        return (dist_x, dist_y)
+
+    def cam_dist(self, coords):
+
+        win_x, win_y = coords
+
+        dist_x = win_x - (self.width / 2)
+        dist_y = win_y - (self.height / 2)
+
+        return (dist_x, dist_y)
+
 
 
 
@@ -513,6 +560,7 @@ class ai_Confuse:
 
 class ai_Chase:
     # A basic AI which chases the player and tries to bump into him
+    # TODO Let the creature move around walls
 
 
 
@@ -767,8 +815,29 @@ def draw_game():
     draw_messages()
 
 def draw_map(map_to_draw):
-    for x in range(0, constants.MAP_WIDTH):
-        for y in range(0, constants.MAP_HEIGHT):
+
+    cam_x, cam_y = CAMERA.map_address
+    display_map_w = constants.CAMERA_WIDTH / constants.CELL_WIDTH
+    display_map_h = constants.CAMERA_HEIGHT / constants.CELL_HEIGHT
+
+    render_w_min = int(cam_x - (display_map_w / 2))
+    render_h_min = int(cam_y - (display_map_h / 2))
+    render_w_max = int(cam_x + (display_map_w / 2))
+    render_h_max = int(cam_y + (display_map_h / 2))
+
+    if render_w_min < 0:
+        render_w_min = 0
+    if render_h_min <0:
+        render_h_min = 0
+    if render_w_max > constants.MAP_WIDTH:
+        render_w_max = constants.MAP_WIDTH
+    if render_h_max > constants.MAP_HEIGHT:
+        render_h_max = constants.MAP_HEIGHT
+
+
+
+    for x in range(render_w_min, render_w_max):
+        for y in range(render_h_min, render_h_max):
 
             is_visible = FOV_MAP.fov[y, x]
             if is_visible:
@@ -994,8 +1063,8 @@ def menu_pause():
 
     menu_close = False
 
-    window_width = constants.MAP_WIDTH * constants.CELL_WIDTH
-    window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
+    window_width = constants.CAMERA_WIDTH
+    window_height = constants.CAMERA_HEIGHT
 
     menu_text = "PAUSED"
     menu_font = ASSETS.FONT_DEBUG_MESSAGE
@@ -1031,8 +1100,8 @@ def menu_inventory():
     menu_close = False
 
     # Calculate window dimensions
-    window_width = constants.MAP_WIDTH * constants.CELL_WIDTH
-    window_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
+    window_width = constants.CAMERA_WIDTH
+    window_height = constants.CAMERA_HEIGHT
 
     # Menu characteristcs
     menu_width = 500
@@ -1132,9 +1201,13 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         # Get button clicks
         events_list = pygame.event.get()
 
-        #Mouse mao selection
-        map_coord_x = mouse_x / constants.CELL_WIDTH
-        map_coord_y = mouse_y / constants.CELL_HEIGHT
+        mapx_pixel, mapy_pixel = CAMERA.win_to_map((mouse_x, mouse_y))
+
+
+
+        #Mouse map selection
+        map_coord_x = mapx_pixel / constants.CELL_WIDTH
+        map_coord_y = mapy_pixel / constants.CELL_HEIGHT
 
         # transform into integers
         int_x = int(map_coord_x)
@@ -1177,9 +1250,19 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
 
         #Draw Game first
-        draw_game()
+        SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
+        SURFACE_MAP.fill(constants.COLOR_BLACK)
 
-        draw_tile_rect((int_x, int_y))
+        CAMERA.update()
+
+        # draw the map
+        draw_map(GAME.current_map)
+
+        for obj in GAME.current_objects:
+            obj.draw()
+
+
+        draw_tile_rect((int_x, int_y)) #Hier ?
         #Draw Rectangle at mouse position on top of game, dont draw the last tile in grey
         for (tile_x, tile_y) in valid_tiles[:-1]:
             draw_tile_rect((tile_x,tile_y), constants.COLOR_GREY)
@@ -1191,6 +1274,12 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
             for (tile_x, tile_y) in area_effect:
                 draw_tile_rect((tile_x, tile_y))
+
+        SURFACE_MAIN.blit(SURFACE_MAP, (0, 0), CAMERA.rectangle)
+        # print(CAMERA.rectangle)
+
+        draw_debug()
+        draw_messages()
 
         # update the display
         pygame.display.flip()
@@ -1224,7 +1313,7 @@ def gen_item(coords):
 
     global GAME
 
-    random_number = tcod.random_get_int(0, 1, 5)
+    random_number = tcod.random_get_int(0, 1, 6)
 
     if random_number == 1:
         new_item = gen_scroll_confusion(coords)
@@ -1236,6 +1325,8 @@ def gen_item(coords):
         new_item = gen_weapon_sword(coords)
     elif random_number == 5:
         new_item = gen_armor_shield(coords)
+    elif random_number == 6:
+        new_item = gen_scroll_lighning(coords)
 
 
     GAME.current_objects.append(new_item)
