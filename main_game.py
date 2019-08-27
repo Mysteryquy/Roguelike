@@ -709,10 +709,13 @@ def map_create_room(new_map, new_room):
             new_map[x][y].block_path = False
 
 def map_place_objects(room_list):
+    global PLAYER
 
     for room in room_list:
 
-        if room == room_list[0]: PLAYER.x, PLAYER.y = room.center
+        if room == room_list[0]:
+            x,y = room.center
+            PLAYER.x, PLAYER.y = int(x),int(y)
 
         x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
@@ -1695,12 +1698,14 @@ def game_message(game_msg, msg_color = constants.COLOR_GREY):
 
 def game_new():
 
-    global GAME
+    global GAME, PLAYER
 
+    PLAYER = gen_player((0, 0))
     # starts a nre game and map
     GAME = obj_Game()
+    GAME.current_objects.append(PLAYER)
 
-    gen_player((0,0))
+
 
     map_place_objects(GAME.current_rooms)
 
