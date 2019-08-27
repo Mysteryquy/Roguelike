@@ -192,6 +192,58 @@ class obj_Game:
 
         self.current_objects = []
 
+        self.maps_previous = []
+
+        self.maps_next = []
+
+        self.current_map, self.current_rooms = map_create()
+
+
+    def transition_next(self):
+        global FOV_CALCULATE
+
+        FOV_CALCULATE = True
+
+        self.maps_previous.append((PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+
+        if len(self.maps_next) == 0:
+
+            self.current_objects = [PLAYER]
+
+            self.current_map, self.current_rooms = map_create()
+
+            map_place_objects(self.current_rooms)
+
+        else:
+            (PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = self.maps_next[-1]
+
+            map_make_fov(self.current_map)
+
+            FOV_CALCULATE = True
+
+            del self.maps_next[-1]
+
+
+
+
+
+    def transition_previous(self):
+        global FOV_CALCULATE
+
+        if len(self.map_previous) != 0:
+            self.maps_next.append((PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+
+            (PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = self.maps_previous[-1]
+
+            map_make_fov(self.current_map)
+
+            FOV_CALCULATE = True
+
+            del self.maps_previous[-1]
+
+
+
+
 class obj_Spritesheet: #Bilder von Spritesheets holen
 
     def __init__(self, file_name):
@@ -631,10 +683,8 @@ def map_create():
             current_center = (int(round(x)),int(round(y)))
 
 
-            if len(list_of_rooms) == 0:
-                PLAYER = gen_player(current_center)
+            if len(list_of_rooms) != 0:
 
-            else:
                 previous_center = list_of_rooms[-1].center
 
                 (x,y) = previous_center
@@ -661,6 +711,8 @@ def map_create_room(new_map, new_room):
 def map_place_objects(room_list):
 
     for room in room_list:
+
+        if room == room_list[0]: PLAYER.x, PLAYER.y = room.center
 
         x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
@@ -1485,7 +1537,7 @@ def game_main_loop():
 def game_initialize():
     '''Das hier startet Pygame und das Hauptfenster'''
 
-    global SURFACE_MAIN, SURFACE_MAP, GAME, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA
+    global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA
     # makes window start at top left corner
     os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
     # disable scaling of windows
@@ -1511,40 +1563,13 @@ def game_initialize():
 
     ASSETS = struc_Assets()
 
-
-    GAME = obj_Game()
-
-    GAME.current_map, GAME.current_rooms = map_create()
-
-    map_place_objects(GAME.current_rooms)
-
-
     CLOCK = pygame.time.Clock()
-
-
 
     FOV_CALCULATE = True
 
+    game_new()
 
 
-
-    #create a sword
-    equipment_com1 = com_Equipment(attack_bonus= 2, slot = "hand_right")
-    SWORD = obj_Actor(2,3,"Short-Sword", ASSETS.S_SWORD, equipment= equipment_com1)
-
-    #create a shield
-    equipment_com2 = com_Equipment(defense_bonus= 2, slot = "hand_left")
-    SHIELD = obj_Actor(3, 3, "Buckler", ASSETS.S_SHIELD, equipment=equipment_com2)
-
-    # create a sword2
-    equipment_com3 = com_Equipment(attack_bonus=2, slot = "hand_right")
-    SWORD2 = obj_Actor(2, 4, "Short-Sword", ASSETS.S_SWORD, equipment=equipment_com3)
-
-
-
-
-
-    GAME.current_objects.append(PLAYER)
 
 def game_handle_keys():
     global FOV_CALCULATE
@@ -1655,12 +1680,31 @@ def game_handle_keys():
             if event.key == pygame.K_x:
                 debug_tile_select()
 
+            if event.key == pygame.K_s:
+                GAME.transition_next()
+
+            if event.key == pygame.K_w:
+                GAME.transition_previous()
+
 
 
     return "no-action"
 
 def game_message(game_msg, msg_color = constants.COLOR_GREY):
     GAME.message_history.append((game_msg, msg_color))
+
+def game_new():
+
+    global GAME
+
+    # starts a nre game and map
+    GAME = obj_Game()
+
+    gen_player((0,0))
+
+    map_place_objects(GAME.current_rooms)
+
+
 
 if __name__ == '__main__':
     game_initialize()
