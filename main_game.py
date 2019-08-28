@@ -230,7 +230,7 @@ class obj_Game:
     def transition_previous(self):
         global FOV_CALCULATE
 
-        if len(self.map_previous) != 0:
+        if len(self.maps_previous) != 0:
             self.maps_next.append((PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
 
             (PLAYER.x, PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = self.maps_previous[-1]
@@ -240,6 +240,8 @@ class obj_Game:
             FOV_CALCULATE = True
 
             del self.maps_previous[-1]
+        else:
+            game_message("There is no previous level", constants.COLOR_WHITE)
 
 
 
@@ -499,11 +501,12 @@ class com_Container(object):
     ## TODO Get weight of everything in cointainer
 
 class com_Item:
-    def __init__(self, weight = 0.0, volume = 0.0, use_function = None, value = None):
+    def __init__(self, weight = 0.0, volume = 0.0, use_function = None, value = None, pickup_text = None):
         self.weight = weight
         self.volume = volume
         self.value = value
         self.use_function = use_function
+        self.pickup_text = pickup_text
 
     ## Pick up this item
     def pick_up(self, actor):
@@ -513,7 +516,10 @@ class com_Item:
                 game_message("Not enough room to pick up")
 
             else:
-                game_message("Picked up")
+                if self.pickup_text:
+                    game_message("Picked up " + self.pickup_text)
+                else:
+                    game_message("Picked up")
                 actor.container.inventory.append(self.owner)
                 GAME.current_objects.remove(self.owner)
                 self.container = actor.container
@@ -547,12 +553,12 @@ class com_Item:
 
 class com_Equipment:
 
-    def __init__(self, attack_bonus = None, defense_bonus = None, slot = None):
+    def __init__(self, attack_bonus = None, defense_bonus = None, slot = None, equip_text = None):
 
         self.attack_bonus = attack_bonus
         self.defense_bonus = defense_bonus
         self.slot = slot
-
+        self.equip_text = equip_text
         self.equipped = False
 
     def toggle_equip(self):
@@ -575,8 +581,10 @@ class com_Equipment:
 
         # toggle self.equipped
         self.equipped = True
-
-        game_message("Item equipped")
+        if self.equip_text:
+            game_message("Equipped the " + self.equip_text)
+        else:
+            game_message("Item equipped")
 
     def unequip(self):
 
@@ -1393,7 +1401,7 @@ def gen_scroll_lighning(coords):
     damage = tcod.random_get_int(0, 5, 7)
     m_range = tcod.random_get_int(0, 5, 7)
 
-    item_com = com_Item(use_function= cast_lightning , value= (damage, m_range))
+    item_com = com_Item(use_function= cast_lightning , value= (damage, m_range), pickup_text="Lightning Scroll")
 
     return_object = obj_Actor(x, y, "lightning scroll", animation= ASSETS.S_SCROLL_01, item =item_com )
 
@@ -1407,7 +1415,7 @@ def gen_scroll_fireball(coords):
     radius = 1
     m_range = tcod.random_get_int(0, 9, 12)
 
-    item_com = com_Item(use_function= cast_fireball , value= (damage,radius, m_range))
+    item_com = com_Item(use_function= cast_fireball , value= (damage,radius, m_range), pickup_text="Fireball Scroll")
 
     return_object = obj_Actor(x, y, "fireball scroll", animation= ASSETS.S_SCROLL_02, item=item_com )
 
@@ -1419,9 +1427,9 @@ def gen_scroll_confusion(coords):
 
     effect_length = tcod.random_get_int(0, 5, 10)
 
-    item_com = com_Item(use_function= cast_confusion , value= effect_length)
+    item_com = com_Item(use_function= cast_confusion , value= effect_length, pickup_text="Scroll of Confusion")
 
-    return_object = obj_Actor(x, y, "Konfuzius scroll", animation= ASSETS.S_SCROLL_03, item=item_com )
+    return_object = obj_Actor(x, y, "Konfuzius scroll", animation= ASSETS.S_SCROLL_03, item=item_com)
 
     return return_object
 
@@ -1431,7 +1439,7 @@ def gen_weapon_sword(coords):
 
     bonus = tcod.random_get_int(0, 1, 2)
 
-    equipment_com = com_Equipment(attack_bonus= bonus)
+    equipment_com = com_Equipment(attack_bonus= bonus,equip_text="Sword")
 
     return_object = obj_Actor(x, y, "sword", animation = ASSETS.S_SWORD, equipment= equipment_com)
 
@@ -1443,7 +1451,7 @@ def gen_armor_shield(coords):
 
     bonus = tcod.random_get_int(0, 1, 2)
 
-    equipment_com = com_Equipment(defense_bonus=bonus)
+    equipment_com = com_Equipment(defense_bonus=bonus,equip_text="Shield")
 
     return_object = obj_Actor(x, y, "shield", animation=ASSETS.S_SHIELD, equipment=equipment_com)
 
