@@ -55,6 +55,8 @@ class struc_Assets:
         self.scrollspritesheet = obj_Spritesheet("data/Scroll.png")
         self.reptile = obj_Spritesheet("data/Reptile0.png")
         self.flesh = obj_Spritesheet("data/Flesh.png")
+        self.tile = obj_Spritesheet("data/Tile.png")
+        self.rodent = obj_Spritesheet("data/Rodent0.png")
 
 
         #ANIMATIONS#
@@ -62,6 +64,7 @@ class struc_Assets:
         self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
         self.A_SNAKE_01 = self.reptile.get_animation("d", 4, 16, 16, 2, (32, 32))
         self.A_SNAKE_02 = self.reptile.get_animation("a", 4, 16, 16, 2, (32, 32))
+        self.A_MOUSE_01 = self.rodent.get_animation("a", 2, 16, 16, 2, (32,32))
 
 
         #SPRITES#
@@ -83,12 +86,19 @@ class struc_Assets:
         self.S_SCROLL_02 = self.scrollspritesheet.get_image("a", 2, 16, 16, (32,32))
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
         self.S_FLESH_SNAKE = self.flesh.get_image("a", 3, 16, 16, (32,32))
+        self.S_FLESH_EAT = self.flesh.get_image("a", 1, 16, 16, (32, 32))
+
+        ## SPECIAL ##
+
+        self.S_STAIRS_DOWN = self.tile.get_image("b",2, 16, 16, (32,32))
+        self.S_STAIRS_UP = self.tile.get_image("a", 2, 16, 16, (32, 32))
 
         self.animation_dict = {
             "A_PLAYER"  :  self.A_PLAYER,
             "A_ENEMY"  :  self.A_ENEMY,
             "A_SNAKE_01"  :  self.A_SNAKE_01,
             "A_SNAKE_02"  :  self.A_SNAKE_02,
+            "A_MOUSE_01"  : self.A_MOUSE_01,
 
 
             ## ITEMS ##
@@ -97,7 +107,12 @@ class struc_Assets:
             "S_SCROLL_01"  :  self.S_SCROLL_01,
             "S_SCROLL_02"  :  self.S_SCROLL_02,
             "S_SCROLL_03"  :  self.S_SCROLL_03,
-            "S_FLESH_SNAKE"  :  self.S_FLESH_SNAKE }
+            "S_FLESH_SNAKE"  :  self.S_FLESH_SNAKE,
+
+            "S_STAIRS_DOWN"  :  self.S_STAIRS_DOWN,
+            "S_STAIRS_UP"  :  self.S_STAIRS_UP,
+            "S_FLESH_EAT"  :  self.S_FLESH_EAT
+            }
 
 
 
@@ -112,7 +127,7 @@ class struc_Assets:
 
 class obj_Actor:
 
-    def __init__(self, x, y, name_object, animation_key, animation_speed = 1.0, creature=None, ai=None, container = None, item = None, equipment = None):
+    def __init__(self, x, y, name_object, animation_key, animation_speed = 1.0, creature=None, ai=None, container = None, item = None, equipment = None, stairs = None):
         self.x = x
         self.y = y
         self.name_object = name_object
@@ -147,6 +162,11 @@ class obj_Actor:
 
             self.item = com_Item()
             self.item.owner = self
+
+        self.stairs = stairs
+        if self.stairs:
+            self.stairs.owner = self
+
 
     @property
     def display_name(self):
@@ -195,6 +215,18 @@ class obj_Actor:
 
         dx = other.x - self.x
         dy = other.y - self.y
+
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
+
+        self.creature.move(dx, dy)
+
+    def move_away(self, other):
+
+        dx = self.x - other.x
+        dy = self.y - other.y
 
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
@@ -636,6 +668,20 @@ class com_Equipment:
 
         game_message("Item uneqipped")
 
+class com_Stairs:
+
+    def __init__(self, downwards = True):
+
+        self.downwards = downwards
+
+    def use(self):
+
+        if downwards:
+            GAME.transition_next()
+        else:
+            GAME.transition_previous()
+
+
 #   _____  .___ 
 #  /  _  \ |   |
 # /  /_\  \|   |
@@ -680,6 +726,16 @@ class ai_Chase:
             elif PLAYER.creature.hp > 0:
                 monster.creature.attack(PLAYER)
 
+class ai_Flee:
+
+
+    def take_turn(self):
+        monster = self.owner
+
+        if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
+
+            self.owner.move_away(PLAYER)
+
 def death_snake(monster):
     # On death, most monsters stop moving tho
     game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!", constants.COLOR_GREY)
@@ -688,6 +744,16 @@ def death_snake(monster):
     monster.animation_key = "S_FLESH_SNAKE"
     monster.creature = None
     monster.ai = None
+
+def death_mouse(mouse):
+
+    # On death, most monsters stop moving tho
+    game_message(mouse.creature.name_instance + " is killed. Eat it to heal up a bit!", constants.COLOR_GREY)
+    # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+    mouse.animation = ASSETS.S_FLESH_EAT
+    mouse.animation_key = "S_FLESH_EAT"
+    mouse.creature = None
+    mouse.ai = None
 
 
 # .___  ___.      ___      .______
@@ -763,11 +829,22 @@ def map_create_room(new_map, new_room):
 def map_place_objects(room_list):
     global PLAYER
 
+    top_level = (len(GAME.maps_previous) == 0)
+
     for room in room_list:
 
-        if room == room_list[0]:
+        first_room = (room == room_list[0])
+        last_room = (room == room_list[-1])
+
+        if first_room == room_list[0]:
             x,y = room.center
             PLAYER.x, PLAYER.y = int(x),int(y)
+
+        if first_room and not top_level:
+            gen_stairs((PLAYER.x, PLAYER.y), downwards=False)
+
+        if last_room:
+            gen_stairs(room.center)
 
         x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
@@ -1070,17 +1147,16 @@ def helper_text_width(font):
 #|   | |   |o   |   |    \
 #o   o o   o o-o  o-O-o   o-o
 
-def cast_heal(target, value):
+def cast_heal(caster, value):
 
-    if target.creature.hp == target.creature.maxhp:
+    if caster.creature.hp == caster.creature.maxhp:
         game_message("HP is allready full")
+        return "canceled"
 
     else:
-        game_message(target.name_object + " healed for " + str(value) + " HP")
-        target.creature.heal(value)
-        print(target.creature.hp)
-
-
+        game_message(caster.name_object + " healed for " + str(value) + " HP")
+        caster.creature.heal(value)
+        print(caster.creature.hp)
 
     return None
 
@@ -1414,6 +1490,20 @@ def gen_player(coords):
     return PLAYER
 
 
+##STRUCTURES##
+def gen_stairs(coords, downwards = True):
+
+    x, y = coords
+
+    if downwards:
+        stairs_com = com_Stairs()
+        stairs = obj_Actor(x, y, "stairs", animation_key = "S_STAIRS_DOWN" , stairs = stairs_com)
+    else:
+        stairs_com = com_Stairs(downwards)
+        stairs = obj_Actor(x, y, "stairs", animation_key = "S_STAIRS_UP", stairs = stairs_com)
+
+    GAME.current_objects.append(stairs)
+
 ##ITEMS##
 
 def gen_item(coords):
@@ -1512,6 +1602,9 @@ def gen_enemy(coords):
     if random_number <= 15:
         new_enemy = gen_snake_anaconda(coords)
 
+    elif random_number <= 50:
+        new_enemy = gen_mouse(coords)
+
     else:
         new_enemy = gen_snake_cobra(coords)
 
@@ -1549,7 +1642,24 @@ def gen_snake_cobra(coords):
 
     return snake
 
+def gen_mouse(coords):
 
+
+    x,y = coords
+
+    max_health = 1
+    base_attack = 0
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = com_Creature(creature_name, death_function=death_mouse, hp= max_health, base_atk= base_attack)
+    ai_com = ai_Flee()
+
+    item_com = com_Item(use_function=cast_heal, value=2)
+
+    mouse = obj_Actor(x, y, "Mouse", animation_key= "A_MOUSE_01", creature=creature_com, ai=ai_com, item=item_com)
+
+    return mouse
 
 #  _______      ___      .___  ___.  _______
 # /  _____|    /   \     |   \/   | |   ____|
@@ -1630,7 +1740,11 @@ def game_handle_keys():
     global FOV_CALCULATE
 
     # get player input
+    keys_list = pygame.key.get_pressed()
     events_list = pygame.event.get()
+
+    #Check for mid key
+    MOD_KEY = (keys_list[pygame.K_RSHIFT] or keys_list[pygame.K_LSHIFT])
 
     # process input
     for event in events_list:
@@ -1738,8 +1852,12 @@ def game_handle_keys():
             if event.key == pygame.K_s:
                 GAME.transition_next()
 
-            if event.key == pygame.K_w:
-                GAME.transition_previous()
+            if MOD_KEY and event.key == pygame.K_PERIOD:
+                list_of_objs = map_objects_at_coords(PLAYER.x, PLAYER.y)
+                for obj in list_of_objs:
+                    if obj.stairs:
+                        obj.stairs.use()
+
 
 
 

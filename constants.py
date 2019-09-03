@@ -11,7 +11,7 @@ CELL_HEIGHT = 32
 #Map limitations
 MAP_WIDTH = 100
 MAP_HEIGHT = 100
-MAP_MAX_NUM_ROOMS = 25
+MAP_MAX_NUM_ROOMS = 3
 
 
 #Room limitations
