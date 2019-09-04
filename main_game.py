@@ -1673,13 +1673,13 @@ def game_initialize():
     CLOCK = pygame.time.Clock()
 
     FOV_CALCULATE = True
-    """   
+
     try:
        game_load()
     except:
         game_new()
-    """
-    game_new()
+
+    #game_new()
 
 def game_handle_keys():
     global FOV_CALCULATE
@@ -1799,6 +1799,7 @@ def game_handle_keys():
 
             if event.key == pygame.K_b:
                 game_save()
+                game_load()
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
                 list_of_objs = map_objects_at_coords(PLAYER.x, PLAYER.y)
@@ -1833,6 +1834,8 @@ def game_exit():
 
 
 def game_save():
+    game_message("Saved Game", constants.COLOR_WHITE)
+    
     for obj in GAME.current_objects:
         obj.animation_destroy()
 
@@ -1840,8 +1843,9 @@ def game_save():
         pickle.dump([GAME, PLAYER], file)
 
 
+
 def game_load():
-    global GAME, PLAYER
+    global GAME, PLAYER, FOV_CALCULATE
 
     with gzip.open("data/savegame", "rb") as file:
         GAME, PLAYER = pickle.load(file)
@@ -1850,6 +1854,9 @@ def game_load():
         obj.animation_init()
 
     map_make_fov(GAME.current_map)
+    FOV_CALCULATE = True
+    map_calculate_fov()
+
 
 
 if __name__ == '__main__':
