@@ -683,6 +683,10 @@ class ai_Confuse:
 
             game_message(self.owner.display_name + " has broken free!", constants.COLOR_GREEN)
 
+def map_is_visible(x,y):
+    global FOV_MAP
+
+    return FOV_MAP.fov[y,x]
 
 class ai_Chase:
     # A basic AI which chases the player and tries to bump into him
@@ -691,8 +695,10 @@ class ai_Chase:
     def take_turn(self):
         monster = self.owner
 
-        if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
 
+        #if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
+
+        if map_is_visible(monster.x,monster.y):
             # Move to the player if far away
             if monster.distance_to(PLAYER) >= 2:
                 self.owner.move_towards(PLAYER)
@@ -747,14 +753,14 @@ def map_create():
 
     for i in range(constants.MAP_MAX_NUM_ROOMS):
 
-        w = tcod.random_get_int(0, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
-        h = tcod.random_get_int(0, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
+        w = tcod.random_get_int(None, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
+        h = tcod.random_get_int(None, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
         if len(list_of_rooms) == 0:
             x = 3
             y = 2
         else:
-            x = tcod.random_get_int(0, 2, constants.MAP_WIDTH - w - 2)
-            y = tcod.random_get_int(0, 2, constants.MAP_HEIGHT - h - 2)
+            x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w - 2)
+            y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h - 2)
 
         # create the room
         new_room = obj_Room((x, y), (w, h))
@@ -814,19 +820,19 @@ def map_place_objects(room_list):
         if last_room:
             gen_stairs(room.center)
 
-        x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
-        y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
+        x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
+        y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
 
         gen_enemy((x, y))
 
-        x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
-        y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
+        x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
+        y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
 
         gen_item((x, y))
 
 
 def map_create_tunnels(coords1, coords2, new_map):
-    coin_flip = (tcod.random_get_int(0, 0, 1) == 1)
+    coin_flip = (tcod.random_get_int(None, 0, 1) == 1)
 
     (x1, y1) = coords1
     (x2, y2) = coords2
@@ -1269,12 +1275,10 @@ def menu_inventory():
         mouse_x_rel = mouse_x - menu_x
         mouse_y_rel = mouse_y - menu_y
 
-        mouse_in_window = (mouse_x_rel > 0 and
-                           mouse_y_rel > 0 and
-                           mouse_x_rel < menu_width and
-                           mouse_y_rel < menu_height)
+        mouse_in_window = (0 < mouse_x_rel < menu_width and
+                           0 < mouse_y_rel < menu_height)
 
-        pepegarechnung = mouse_y_rel / menu_text_height
+        pepegarechnung = mouse_y_rel / constants.INVENTORY_TEXT_HEIGHT
         mouse_line_selection = int(pepegarechnung)
 
         for event in events_list:
@@ -1458,7 +1462,7 @@ def gen_stairs(coords, downwards=True):
 def gen_item(coords):
     global GAME
 
-    random_number = tcod.random_get_int(0, 1, 6)
+    random_number = tcod.random_get_int(None, 1, 6)
 
     if random_number == 1:
         new_item = gen_scroll_confusion(coords)
@@ -1470,7 +1474,7 @@ def gen_item(coords):
         new_item = gen_weapon_sword(coords)
     elif random_number == 5:
         new_item = gen_armor_shield(coords)
-    elif random_number == 6:
+    else:
         new_item = gen_scroll_lighning(coords)
 
     GAME.current_objects.append(new_item)
@@ -1479,8 +1483,8 @@ def gen_item(coords):
 def gen_scroll_lighning(coords):
     x, y = coords
 
-    damage = tcod.random_get_int(0, 5, 7)
-    m_range = tcod.random_get_int(0, 5, 7)
+    damage = tcod.random_get_int(None, 5, 7)
+    m_range = tcod.random_get_int(None, 5, 7)
 
     item_com = com_Item(use_function=cast_lightning, value=(damage, m_range), pickup_text="Lightning Scroll")
 
@@ -1492,9 +1496,9 @@ def gen_scroll_lighning(coords):
 def gen_scroll_fireball(coords):
     x, y = coords
 
-    damage = tcod.random_get_int(0, 2, 4)
+    damage = tcod.random_get_int(None, 2, 4)
     radius = 1
-    m_range = tcod.random_get_int(0, 9, 12)
+    m_range = tcod.random_get_int(None, 9, 12)
 
     item_com = com_Item(use_function=cast_fireball, value=(damage, radius, m_range), pickup_text="Fireball Scroll")
 
@@ -1506,7 +1510,7 @@ def gen_scroll_fireball(coords):
 def gen_scroll_confusion(coords):
     x, y = coords
 
-    effect_length = tcod.random_get_int(0, 5, 10)
+    effect_length = tcod.random_get_int(None, 5, 10)
 
     item_com = com_Item(use_function=cast_confusion, value=effect_length, pickup_text="Scroll of Confusion")
 
@@ -1518,7 +1522,7 @@ def gen_scroll_confusion(coords):
 def gen_weapon_sword(coords):
     x, y = coords
 
-    bonus = tcod.random_get_int(0, 1, 2)
+    bonus = tcod.random_get_int(None, 1, 2)
 
     equipment_com = com_Equipment(attack_bonus=bonus, equip_text="Sword")
 
@@ -1530,7 +1534,7 @@ def gen_weapon_sword(coords):
 def gen_armor_shield(coords):
     x, y = coords
 
-    bonus = tcod.random_get_int(0, 1, 2)
+    bonus = tcod.random_get_int(None, 1, 2)
 
     equipment_com = com_Equipment(defense_bonus=bonus, equip_text="Shield")
 
@@ -1542,7 +1546,7 @@ def gen_armor_shield(coords):
 ## ENEMYS ##
 
 def gen_enemy(coords):
-    random_number = tcod.random_get_int(0, 1, 100)
+    random_number = tcod.random_get_int(None,0,100)
 
     if random_number <= 15:
         new_enemy = gen_snake_anaconda(coords)
@@ -1559,8 +1563,8 @@ def gen_enemy(coords):
 def gen_snake_anaconda(coords):
     x, y = coords
 
-    max_health = tcod.random_get_int(0, 15, 20)
-    base_attack = tcod.random_get_int(0, 3, 6)
+    max_health = tcod.random_get_int(None, 15, 20)
+    base_attack = tcod.random_get_int(None, 3, 6)
 
     creature_name = tcod.namegen_generate("Celtic female")
 
@@ -1575,8 +1579,8 @@ def gen_snake_anaconda(coords):
 def gen_snake_cobra(coords):
     x, y = coords
 
-    max_health = tcod.random_get_int(0, 5, 10)
-    base_attack = tcod.random_get_int(0, 1, 3)
+    max_health = tcod.random_get_int(None, 5, 10)
+    base_attack = tcod.random_get_int(None, 1, 3)
 
     creature_name = tcod.namegen_generate("Celtic male")
 
@@ -1660,6 +1664,7 @@ def game_initialize():
     # looks for resolution of the display of the user
     info = pygame.display.Info()
     screen_width, screen_height = info.current_w, info.current_h
+
 
     SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
 
@@ -1798,7 +1803,7 @@ def game_handle_keys():
                 GAME.transition_next()
 
             if event.key == pygame.K_b:
-                game_save()
+                game_save(display_message=True)
                 game_load()
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
@@ -1833,9 +1838,10 @@ def game_exit():
     exit()
 
 
-def game_save():
-    game_message("Saved Game", constants.COLOR_WHITE)
-    
+def game_save(display_message=False):
+    if display_message:
+        game_message("Saved Game", constants.COLOR_WHITE)
+
     for obj in GAME.current_objects:
         obj.animation_destroy()
 
