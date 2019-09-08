@@ -1888,7 +1888,7 @@ def game_handle_keys():
                 cast_confusion(caster=PLAYER, effect_length=2)
 
             if event.key == pygame.K_m:
-                cast_lightning(PLAYER, T_damage_maxrange=5)
+                cast_lightning(caster=PLAYER, T_damage_maxrange=5)
 
             if event.key == pygame.K_x:
                 debug_tile_select()
