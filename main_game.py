@@ -1197,12 +1197,137 @@ def cast_confusion(caster, effect_length):
             game_message("The creature is confused", constants.COLOR_GREEN)
 
 
+
+
+
+
+#  o         o   __o__
+# <|>       <|>    |
+# / \       / \   / \
+# \o/       \o/   \o/
+#  |         |     |
+# < >       < >   < >
+#  \         /     |
+#   o       o      o
+#   <\__ __/>    __|>_
+
+class ui_Button:
+
+    def __init__(self,
+                 surface,
+                 button_text,
+                 size,
+                 center_coords,
+                 color_box_mouseover = constants.COLOR_RED,
+                 color_box_default = constants.COLOR_GREEN,
+                 color_text_mouseover = constants.COLOR_WHITE,
+                 color_text_default = constants.COLOR_GREY):
+
+        self.surface = surface
+        self.button_text = button_text
+        self.size = size
+        self.center_coords = center_coords
+
+        self.c_box_mo = color_box_mouseover
+        self.c_box_default = color_box_default
+        self.c_text_mo = color_text_mouseover
+        self.c_text_default = color_text_default
+        self.c_c_box = color_box_default
+        self.c_c_text = color_text_default
+
+        self.rect = pygame.Rect((0,0), size)
+        self.rect.center = center_coords
+
+    def update(self, player_input):
+
+        mouse_clicked = False
+
+        local_events, local_mousepos = player_input
+        mouse_x, mouse_y = local_mousepos
+
+        mouse_over = ( mouse_x >= self.rect.left and mouse_x <= self.rect.right and mouse_y >= self.rect.top and mouse_y <= self.rect.bottom)
+
+        for event in local_events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: mouse_clicked = True
+
+        if mouse_over and mouse_clicked:
+            return True
+
+        if mouse_over:
+            self.c_c_box = self.c_box_mo
+            self.current_c_text = self.c_text_mo
+        else:
+            self.c_c_box = self.c_box_default
+            self.c_c_text = self.c_text_default
+
+
+
+
+
+
+
+    def draw(self):
+
+        pygame.draw.rect(self.surface, self.c_c_box, self.rect)
+        draw_text(self.surface,self.button_text,self.center_coords, self.c_c_text, center= True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # .___  ___.  _______ .__   __.  __    __       _______.
 # |   \/   | |   ____||  \ |  | |  |  |  |     /       |
 # |  \  /  | |  |__   |   \|  | |  |  |  |    |   (----`
 # |  |\/|  | |   __|  |  . `  | |  |  |  |     \   \
 # |  |  |  | |  |____ |  |\   | |  `--'  | .----)   |
 # |__|  |__| |_______||__| \__|  \______/  |_______/
+
+def menu_main():
+
+    game_initialize()
+
+    menu_running = True
+
+    title_y = constants.CAMERA_HEIGHT/ 2 - 40
+    title_x = constants.CAMERA_WIDTH / 2
+    title_text = "Markus und Tobias Rogue-like "
+
+    test_button = ui_Button(SURFACE_MAIN, "Start Game", (200, 45), (title_x, title_y + 40))
+
+    while menu_running:
+
+        list_of_events = pygame.event.get()
+        mouse_position = pygame.mouse.get_pos()
+
+        game_input = (list_of_events, mouse_position)
+
+        for event in list_of_events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                game_exit()
+
+        if test_button.update(game_input):
+            game_start()
+
+
+        SURFACE_MAIN.fill(constants.COLOR_BLACK)
+        draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
+        test_button.draw()
+
+        pygame.display.update()
+
+
+
 
 def menu_pause():
     # This Menu pauses the game and displays a simple message in the center of THE MAP (not the screen [danke markus mit deinem vollbild kack :P])
@@ -1679,10 +1804,7 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
-    try:
-       game_load()
-    except:
-        game_new()
+
 
     #game_new()
 
@@ -1864,10 +1986,19 @@ def game_load():
     map_calculate_fov()
 
 
+def game_start():
+
+    try:
+       game_load()
+    except:
+        game_new()
+
+    game_main_loop()
+
 
 if __name__ == '__main__':
-    game_initialize()
-    game_main_loop()
+
+    menu_main()
 
 #              .7
 #            .'/
