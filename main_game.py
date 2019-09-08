@@ -1,6 +1,5 @@
 # 3rd party modules#3rd party modules
 # capital bruh
-from typing import Any
 
 import pygame
 import tcod
@@ -164,11 +163,11 @@ class obj_Actor:
     def display_name(self):
 
         if self.creature:
-            return (self.creature.name_instance + " the " + self.name_object)
+            return self.creature.name_instance + " the " + self.name_object
 
         if self.item:
             if self.equipment and self.equipment.equipped:
-                return (self.name_object + "(equipped)")
+                return self.name_object + "(equipped)"
             else:
                 return self.name_object
 
@@ -372,12 +371,12 @@ class obj_Room:
         center_x = (self.x1 + self.x2) / 2
         center_y = (self.y1 + self.y2) / 2
 
-        return (center_x, center_y)
+        return center_x, center_y
 
     def intercept(self, other):
         # return True if other obj intersects with this one
         objects_intersect = (
-                    self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
+                self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
 
         return objects_intersect
 
@@ -412,7 +411,7 @@ class obj_Camera:
         map_x = self.x / constants.CELL_WIDTH
         map_y = self.y / constants.CELL_HEIGHT
 
-        return (map_x, map_y)
+        return map_x, map_y
 
     def win_to_map(self, coords):
         tar_x, tar_y = coords
@@ -424,7 +423,7 @@ class obj_Camera:
         map_p_x = self.x + cam_d_x
         map_p_y = self.y + cam_d_y
 
-        return ((map_p_x, map_p_y))
+        return map_p_x, map_p_y
 
     def map_dist(self, coords):
         new_x, new_y = coords
@@ -432,7 +431,7 @@ class obj_Camera:
         dist_x = new_x - self.x
         dist_y = new_y - self.y
 
-        return (dist_x, dist_y)
+        return dist_x, dist_y
 
     def cam_dist(self, coords):
         win_x, win_y = coords
@@ -440,7 +439,7 @@ class obj_Camera:
         dist_x = win_x - (self.width / 2)
         dist_y = win_y - (self.height / 2)
 
-        return (dist_x, dist_y)
+        return dist_x, dist_y
 
 
 #                                                         __
@@ -495,7 +494,7 @@ class com_Creature:
 
     def heal(self, value):
 
-        self.hp + value
+        self.hp = self.hp + value
 
         if self.hp > self.maxhp:
             self.hp = self.maxhp
@@ -531,7 +530,9 @@ class com_Creature:
 
 class com_Container(object):
 
-    def __init__(self, volume=10.0, inventory=[]):
+    def __init__(self, volume=10.0, inventory=None):
+        if inventory is None:
+            inventory = []
         self.inventory = inventory
         self.max_volume = volume
         self._volume = 0.0
@@ -558,6 +559,7 @@ class com_Item:
         self.value = value
         self.use_function = use_function
         self.pickup_text = pickup_text
+        self.container = None
 
     ## Pick up this item
     def pick_up(self, actor):
@@ -652,7 +654,7 @@ class com_Stairs:
 
     def use(self):
 
-        if downwards:
+        if self.downwards:
             GAME.transition_next()
         else:
             GAME.transition_previous()
@@ -683,10 +685,12 @@ class ai_Confuse:
 
             game_message(self.owner.display_name + " has broken free!", constants.COLOR_GREEN)
 
-def map_is_visible(x,y):
+
+def map_is_visible(x, y):
     global FOV_MAP
 
-    return FOV_MAP.fov[y,x]
+    return FOV_MAP.fov[y, x]
+
 
 class ai_Chase:
     # A basic AI which chases the player and tries to bump into him
@@ -695,10 +699,9 @@ class ai_Chase:
     def take_turn(self):
         monster = self.owner
 
+        # if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
 
-        #if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
-
-        if map_is_visible(monster.x,monster.y):
+        if map_is_visible(monster.x, monster.y):
             # Move to the player if far away
             if monster.distance_to(PLAYER) >= 2:
                 self.owner.move_towards(PLAYER)
@@ -791,7 +794,7 @@ def map_create():
 
     map_make_fov(new_map)
 
-    return (new_map, list_of_rooms)
+    return new_map, list_of_rooms
 
 
 def map_create_room(new_map, new_room):
@@ -855,23 +858,23 @@ def map_check_for_creature(x, y, exclude_object=None):
 
     if exclude_object:
         # ceck objectlist to find creature at that location that isnt excluded
-        for object in GAME.current_objects:
-            if (object is not exclude_object and
-                    object.x == x and
-                    object.y == y and
-                    object.creature):
-                target = object
+        for obj in GAME.current_objects:
+            if (obj is not exclude_object and
+                    obj.x == x and
+                    obj.y == y and
+                    obj.creature):
+                target = obj
 
             if target:
                 return target
 
     else:
         # ceck objectlist to find any creature at that location
-        for object in GAME.current_objects:
-            if (object.x == x and
-                    object.y == y and
-                    object.creature):
-                target = object
+        for obj in GAME.current_objects:
+            if (obj.x == x and
+                    obj.y == y and
+                    obj.creature):
+                target = obj
 
             if target:
                 return target
@@ -906,7 +909,7 @@ def map_objects_at_coords(coords_x, coords_y):
 
 
 def map_find_line(coords1, coords2, include_origin=False):
-    'Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)'
+    """Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)"""
 
     x1, y1 = coords1
     x2, y2 = coords2
@@ -922,7 +925,7 @@ def map_find_line(coords1, coords2, include_origin=False):
         return list(tmp)
 
 
-def map_check_for_wall(map, x, y):
+def map_check_for_wall(x, y):
     return GAME.current_map[x][y].block_path
 
 
@@ -1197,10 +1200,6 @@ def cast_confusion(caster, effect_length):
             game_message("The creature is confused", constants.COLOR_GREEN)
 
 
-
-
-
-
 #  o         o   __o__
 # <|>       <|>    |
 # / \       / \   / \
@@ -1218,10 +1217,10 @@ class ui_Button:
                  button_text,
                  size,
                  center_coords,
-                 color_box_mouseover = constants.COLOR_RED,
-                 color_box_default = constants.COLOR_GREEN,
-                 color_text_mouseover = constants.COLOR_WHITE,
-                 color_text_default = constants.COLOR_GREY):
+                 color_box_mouseover=constants.COLOR_RED,
+                 color_box_default=constants.COLOR_GREEN,
+                 color_text_mouseover=constants.COLOR_WHITE,
+                 color_text_default=constants.COLOR_GREY):
 
         self.surface = surface
         self.button_text = button_text
@@ -1235,7 +1234,7 @@ class ui_Button:
         self.c_c_box = color_box_default
         self.c_c_text = color_text_default
 
-        self.rect = pygame.Rect((0,0), size)
+        self.rect = pygame.Rect((0, 0), size)
         self.rect.center = center_coords
 
     def update(self, player_input):
@@ -1245,44 +1244,27 @@ class ui_Button:
         local_events, local_mousepos = player_input
         mouse_x, mouse_y = local_mousepos
 
-        mouse_over = ( mouse_x >= self.rect.left and mouse_x <= self.rect.right and mouse_y >= self.rect.top and mouse_y <= self.rect.bottom)
+        mouse_over = (self.rect.left <= mouse_x <= self.rect.right and self.rect.top <= mouse_y <= self.rect.bottom)
 
         for event in local_events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: mouse_clicked = True
+                if event.button == 1:
+                    mouse_clicked = True
 
         if mouse_over and mouse_clicked:
             return True
 
         if mouse_over:
             self.c_c_box = self.c_box_mo
-            self.current_c_text = self.c_text_mo
+            self.c_c_text = self.c_text_mo
         else:
             self.c_c_box = self.c_box_default
             self.c_c_text = self.c_text_default
 
-
-
-
-
-
-
     def draw(self):
 
         pygame.draw.rect(self.surface, self.c_c_box, self.rect)
-        draw_text(self.surface,self.button_text,self.center_coords, self.c_c_text, center= True)
-
-
-
-
-
-
-
-
-
-
-
-
+        draw_text(self.surface, self.button_text, self.center_coords, self.c_c_text, center=True)
 
 
 # .___  ___.  _______ .__   __.  __    __       _______.
@@ -1293,12 +1275,11 @@ class ui_Button:
 # |__|  |__| |_______||__| \__|  \______/  |_______/
 
 def menu_main():
-
     game_initialize()
 
     menu_running = True
 
-    title_y = constants.CAMERA_HEIGHT/ 2 - 40
+    title_y = constants.CAMERA_HEIGHT / 2 - 40
     title_x = constants.CAMERA_WIDTH / 2
     title_text = "Markus und Tobias Rogue-like "
 
@@ -1319,14 +1300,11 @@ def menu_main():
         if test_button.update(game_input):
             game_start()
 
-
         SURFACE_MAIN.fill(constants.COLOR_BLACK)
         draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
         test_button.draw()
 
         pygame.display.update()
-
-
 
 
 def menu_pause():
@@ -1415,7 +1393,7 @@ def menu_inventory():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if (mouse_in_window and mouse_line_selection <= len(print_list) - 1):
+                    if mouse_in_window and mouse_line_selection <= len(print_list) - 1:
                         PLAYER.container.inventory[mouse_line_selection].item.use()
                         menu_close = True
 
@@ -1504,7 +1482,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
-                    return (valid_tiles[-1])
+                    return valid_tiles[-1]
 
         # Draw Game first
         SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
@@ -1558,15 +1536,10 @@ def gen_player(coords):
 
     container_com = com_Container()
     creature_com = com_Creature("SPIELER", base_atk=4)
-    PLAYER = obj_Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
+    player = obj_Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                        container=container_com)
 
-    return PLAYER
-
-
-def round_tuple(tuple):
-    x, y = tuple
-    return (round(x), round(y))
+    return player
 
 
 ##STRUCTURES##
@@ -1671,7 +1644,7 @@ def gen_armor_shield(coords):
 ## ENEMYS ##
 
 def gen_enemy(coords):
-    random_number = tcod.random_get_int(None,0,100)
+    random_number = tcod.random_get_int(None, 0, 100)
 
     if random_number <= 15:
         new_enemy = gen_snake_anaconda(coords)
@@ -1771,25 +1744,25 @@ def game_main_loop():
 
 
 def game_initialize():
-    '''Das hier startet Pygame und das Hauptfenster'''
+    """Das hier startet Pygame und das Hauptfenster"""
 
     global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA
     # makes window start at top left corner
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+    # os.environ['SDL_VIDEO_WINDOW_POS'] = "30,30"
     # disable scaling of windows
     ctypes.windll.user32.SetProcessDPIAware()
 
     # initialize Pygame
     pygame.init()
+    pygame.display.set_caption("Roguelike")
 
-    pygame.key.set_repeat(200, 70)
+    pygame.key.set_repeat(200,70)
 
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
     # looks for resolution of the display of the user
     info = pygame.display.Info()
     screen_width, screen_height = info.current_w, info.current_h
-
 
     SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
 
@@ -1804,9 +1777,8 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
+    # game_new()
 
-
-    #game_new()
 
 def game_handle_keys():
     global FOV_CALCULATE
@@ -1913,10 +1885,10 @@ def game_handle_keys():
                 menu_tile_select()
 
             if event.key == pygame.K_k:
-                cast_confusion()
+                cast_confusion(caster=PLAYER, effect_length=2)
 
             if event.key == pygame.K_m:
-                cast_lightning(10)
+                cast_lightning(PLAYER, T_damage_maxrange=5)
 
             if event.key == pygame.K_x:
                 debug_tile_select()
@@ -1971,7 +1943,6 @@ def game_save(display_message=False):
         pickle.dump([GAME, PLAYER], file)
 
 
-
 def game_load():
     global GAME, PLAYER, FOV_CALCULATE
 
@@ -1987,9 +1958,8 @@ def game_load():
 
 
 def game_start():
-
     try:
-       game_load()
+        game_load()
     except:
         game_new()
 
@@ -1997,7 +1967,6 @@ def game_start():
 
 
 if __name__ == '__main__':
-
     menu_main()
 
 #              .7
