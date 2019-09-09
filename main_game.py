@@ -9,6 +9,7 @@ import ctypes
 import math
 import pickle
 import gzip
+import random
 
 # gamefiles
 import constants
@@ -106,6 +107,17 @@ class struc_Assets:
             "S_STAIRS_UP": self.S_STAIRS_UP,
             "S_FLESH_EAT": self.S_FLESH_EAT
         }
+
+        ## AUDIO ##
+        self.music_main_menu = "data/audio/Broke.mp3"
+        self.music_lvl_1 = "data/audio/level_1.mp3"
+        self.snd_hit_1 = pygame.mixer.Sound("data/audio/hit_hurt1.wav")
+        self.snd_hit_2 = pygame.mixer.Sound("data/audio/hit_hurt2.wav")
+        self.snd_hit_3 = pygame.mixer.Sound("data/audio/hit_hurt3.wav")
+
+        self.snd_list_hit = [self.snd_hit_1, self.snd_hit_2, self.snd_hit_3 ]
+
+
 
 
 #  ______   .______          __   _______   ______ .___________.    _______.
@@ -482,6 +494,9 @@ class com_Creature:
             self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage_dealt) + " damage!",
             constants.COLOR_WHITE)
         target.creature.take_damage(damage_dealt)
+
+        if damage_dealt > 0 and self.owner is PLAYER:
+            pygame.mixer.Sound.play(RANDOM_ENGINE.choice(ASSETS.snd_list_hit))
 
     def take_damage(self, damage):
         self.hp -= damage
@@ -1281,9 +1296,15 @@ def menu_main():
 
     title_y = constants.CAMERA_HEIGHT / 2 - 40
     title_x = constants.CAMERA_WIDTH / 2
-    title_text = "Markus und Tobias Rogue-like "
+    title_text = "Untitled (but very cool) Game "
+
+    SURFACE_MAIN.fill(constants.COLOR_BLACK)
+    draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
 
     test_button = ui_Button(SURFACE_MAIN, "Start Game", (200, 45), (title_x, title_y + 40))
+
+    pygame.mixer.music.load(ASSETS.music_main_menu)
+    pygame.mixer.music.play(-1)
 
     while menu_running:
 
@@ -1298,10 +1319,10 @@ def menu_main():
                 game_exit()
 
         if test_button.update(game_input):
+            pygame.mixer.music.stop()
             game_start()
 
-        SURFACE_MAIN.fill(constants.COLOR_BLACK)
-        draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
+
         test_button.draw()
 
         pygame.display.update()
@@ -1746,7 +1767,7 @@ def game_main_loop():
 def game_initialize():
     """Das hier startet Pygame und das Hauptfenster"""
 
-    global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA
+    global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA, RANDOM_ENGINE
     # makes window start at top left corner
     # os.environ['SDL_VIDEO_WINDOW_POS'] = "30,30"
     # disable scaling of windows
@@ -1774,6 +1795,9 @@ def game_initialize():
     ASSETS = struc_Assets()
 
     CLOCK = pygame.time.Clock()
+
+    # Random Engine
+    RANDOM_ENGINE = random.SystemRandom()
 
     FOV_CALCULATE = True
 
