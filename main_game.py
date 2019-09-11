@@ -44,6 +44,11 @@ class struc_Tile:
 
 class struc_Assets:
     def __init__(self):
+
+
+
+
+
         # Sprite sheets#
         self.charspritesheet = obj_Spritesheet("data/Reptiles.png")
         self.enemyspritesheet = obj_Spritesheet("data/ROFL.png")
@@ -87,6 +92,8 @@ class struc_Assets:
 
         self.S_STAIRS_DOWN = self.tile.get_image("b", 2, 16, 16, (32, 32))
         self.S_STAIRS_UP = self.tile.get_image("a", 2, 16, 16, (32, 32))
+        self.MAIN_MENU_BACKGROUND = pygame.image.load("data/mm.png")
+        self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND, (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
 
         self.animation_dict = {
             "A_PLAYER": self.A_PLAYER,
@@ -109,13 +116,24 @@ class struc_Assets:
         }
 
         ## AUDIO ##
+
+        self.snd_list = []
+
         self.music_main_menu = "data/audio/Broke.mp3"
         self.music_lvl_1 = "data/audio/level_1.mp3"
-        self.snd_hit_1 = pygame.mixer.Sound("data/audio/hit_hurt1.wav")
-        self.snd_hit_2 = pygame.mixer.Sound("data/audio/hit_hurt2.wav")
-        self.snd_hit_3 = pygame.mixer.Sound("data/audio/hit_hurt3.wav")
+        self.snd_hit_1 = self.add_sound("data/audio/hit_hurt1.wav")
+        self.snd_hit_2 = self.add_sound("data/audio/hit_hurt2.wav")
+        self.snd_hit_3 = self.add_sound("data/audio/hit_hurt3.wav")
 
         self.snd_list_hit = [self.snd_hit_1, self.snd_hit_2, self.snd_hit_3 ]
+
+    def add_sound(self, file_address):
+
+        new_sound = pygame.mixer.Sound(file_address)
+
+        self.snd_list.append(new_sound)
+
+        return new_sound
 
 
 
@@ -1298,10 +1316,26 @@ def menu_main():
     title_x = constants.CAMERA_WIDTH / 2
     title_text = "Untitled (but very cool) Game "
 
-    SURFACE_MAIN.fill(constants.COLOR_BLACK)
+    #Button Adresses
+    continue_game_button_y = title_y + 60
+    new_game_button_y = continue_game_button_y + 60
+    options_button_y = new_game_button_y + 60
+    quit_button_y = options_button_y + 60
+
+
+    SURFACE_MAIN.blit(ASSETS.MAIN_MENU_BACKGROUND, (0,0))
+
     draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
 
-    test_button = ui_Button(SURFACE_MAIN, "Start Game", (200, 45), (title_x, title_y + 40))
+    continue_game_button = ui_Button(SURFACE_MAIN, "Continue", (200, 45), (title_x, continue_game_button_y))
+
+    new_game_button = ui_Button(SURFACE_MAIN, "New Game", (200, 45), (title_x, new_game_button_y))
+
+    options_button = ui_Button(SURFACE_MAIN, "Options", (200, 45), (title_x, options_button_y))
+
+    quit_button = ui_Button(SURFACE_MAIN, "QUIT GAME", (200, 45), (title_x, quit_button_y))
+
+
 
     pygame.mixer.music.load(ASSETS.music_main_menu)
     pygame.mixer.music.play(-1)
@@ -1318,14 +1352,89 @@ def menu_main():
                 pygame.quit()
                 game_exit()
 
-        if test_button.update(game_input):
+        # Button updates
+        if continue_game_button.update(game_input):
             pygame.mixer.music.stop()
-            game_start()
+            pygame.mixer.music.load(ASSETS.music_lvl_1)
+            pygame.mixer.music.play(-1)
+            #try to load game, start new if problems
+            try:
+                game_load()
+            except:
+                game_new()
+
+            game_main_loop()
+
+        if new_game_button.update(game_input):
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load(ASSETS.music_lvl_1)
+            pygame.mixer.music.play(-1)
+            game_new()
+            game_main_loop()
+
+        if options_button.update(game_input):
+            menu_main_options()
+            SURFACE_MAIN.blit(ASSETS.MAIN_MENU_BACKGROUND, (0, 0))
+            draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
 
 
-        test_button.draw()
+        if quit_button.update(game_input):
+            pygame.quit()
+            exit()
+
+
+        continue_game_button.draw()
+        new_game_button.draw()
+        options_button.draw()
+        quit_button.draw()
 
         pygame.display.update()
+
+
+def menu_main_options():
+
+    # MENU VARS#
+    settings_menu_width = 200
+    settings_menu_height = 200
+    settings_menu_background_color = constants.COLOR_GREY
+
+    window_center = (constants.CAMERA_WIDTH/2, constants.CAMERA_HEIGHT/2)
+
+    settings_menu_surface = pygame.Surface((settings_menu_width,settings_menu_height))
+
+    settings_menu_rect = pygame.Rect(0,0, settings_menu_width, settings_menu_height)
+
+    settings_menu_rect.center = window_center
+
+    menu_close = False
+
+    settings_menu_surface.fill(settings_menu_background_color)
+
+    SURFACE_MAIN.blit(settings_menu_surface, settings_menu_rect.topleft)
+
+    while not menu_close:
+
+
+
+        list_of_events = pygame.event.get()
+        mouse_position = pygame.mouse.get_pos()
+
+        game_input = (list_of_events, mouse_position)
+
+        for event in list_of_events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                game_exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    menu_close = True
+
+        pygame.display.update()
+
+
+
+
 
 
 def menu_pause():
@@ -1981,13 +2090,6 @@ def game_load():
     map_calculate_fov()
 
 
-def game_start():
-    try:
-        game_load()
-    except:
-        game_new()
-
-    game_main_loop()
 
 
 if __name__ == '__main__':
