@@ -45,9 +45,12 @@ class struc_Tile:
 class struc_Assets:
     def __init__(self):
 
+        self.load_assets()
+        self.volume_adjust()
 
 
 
+    def load_assets(self):
 
         # Sprite sheets#
         self.charspritesheet = obj_Spritesheet("data/Reptiles.png")
@@ -121,13 +124,19 @@ class struc_Assets:
 
         self.music_main_menu = "data/audio/Broke.mp3"
         self.music_lvl_1 = "data/audio/level_1.mp3"
-        self.snd_hit_1 = self.add_sound("data/audio/hit_hurt1.wav")
-        self.snd_hit_2 = self.add_sound("data/audio/hit_hurt2.wav")
-        self.snd_hit_3 = self.add_sound("data/audio/hit_hurt3.wav")
+        self.snd_hit_1 = self.sound_add("data/audio/hit_hurt1.wav")
+        self.snd_hit_2 = self.sound_add("data/audio/hit_hurt2.wav")
+        self.snd_hit_3 = self.sound_add("data/audio/hit_hurt3.wav")
 
         self.snd_list_hit = [self.snd_hit_1, self.snd_hit_2, self.snd_hit_3 ]
 
-    def add_sound(self, file_address):
+
+
+
+
+
+
+    def sound_add(self, file_address):
 
         new_sound = pygame.mixer.Sound(file_address)
 
@@ -135,8 +144,20 @@ class struc_Assets:
 
         return new_sound
 
+    def volume_adjust(self):
+
+        for sound in self.snd_list:
+            sound.set_volume(PREFERENCES.vol_sound)
+
+        pygame.mixer.music.set_volume(PREFERENCES.vol_music)
 
 
+class struc_Preferences:
+
+    def __init__(self):
+
+        self.vol_sound = .5
+        self.vol_music = .25
 
 #  ______   .______          __   _______   ______ .___________.    _______.
 # /  __  \  |   _  \        |  | |   ____| /      ||           |   /       |
@@ -470,6 +491,7 @@ class obj_Camera:
         dist_y = win_y - (self.height / 2)
 
         return dist_x, dist_y
+
 
 
 #                                                         __
@@ -1438,14 +1460,19 @@ def menu_main():
 def menu_main_options():
 
     # MENU VARS#
-    settings_menu_width = 200
+    settings_menu_width = 300
     settings_menu_height = 200
     settings_menu_background_color = constants.COLOR_GREY
 
     # Slider vars #
     slider_x = constants.CAMERA_WIDTH / 2
-    sound_effect_slider_y = constants.CAMERA_HEIGHT / 2
+    sound_effect_slider_y = constants.CAMERA_HEIGHT / 2 - 60
     sound_effect_vol = 0.5
+    music_effect_slider_y = sound_effect_slider_y + 70
+
+    # TEXT vars #
+    music_text_y = sound_effect_slider_y - 30
+    sound_text_y = music_effect_slider_y - 30
 
     window_center = (constants.CAMERA_WIDTH/2, constants.CAMERA_HEIGHT/2)
 
@@ -1461,7 +1488,10 @@ def menu_main_options():
 
 
 
-    sound_effect_slider = ui_Slider(SURFACE_MAIN, (125, 25), (slider_x, sound_effect_slider_y),  constants.COLOR_RED, constants.COLOR_GREEN, .5)
+    sound_effect_slider = ui_Slider(SURFACE_MAIN, (125, 25), (slider_x, sound_effect_slider_y), constants.COLOR_RED, constants.COLOR_GREEN, PREFERENCES.vol_sound)
+
+    music_effect_slider = ui_Slider(SURFACE_MAIN, (125, 25), (slider_x, music_effect_slider_y), constants.COLOR_RED, constants.COLOR_GREEN, PREFERENCES.vol_music)
+
 
     while not menu_close:
 
@@ -1479,14 +1509,33 @@ def menu_main_options():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    preferences_save()
                     menu_close = True
 
+        current_sound_volume = PREFERENCES.vol_sound
+        current_music_volume = PREFERENCES.vol_music
+
+        if current_sound_volume is not sound_effect_slider.current_val:
+            PREFERENCES.vol_sound = sound_effect_slider.current_val
+            ASSETS.volume_adjust()
+
+        if current_music_volume is not music_effect_slider.current_val:
+            PREFERENCES.vol_music = music_effect_slider.current_val
+            ASSETS.volume_adjust()
+
+
+
+
         sound_effect_slider.update(game_input)
+        music_effect_slider.update(game_input)
 
         # Draw the menu
         settings_menu_surface.fill(settings_menu_background_color)
         SURFACE_MAIN.blit(settings_menu_surface, settings_menu_rect.topleft)
+        draw_text(SURFACE_MAIN, "Music Volume", (slider_x, sound_text_y), constants.COLOR_BLACK, center=True)
+        draw_text(SURFACE_MAIN, "Sound Volume", (slider_x, music_text_y), constants.COLOR_BLACK, center=True)
         sound_effect_slider.draw()
+        music_effect_slider.draw()
         pygame.display.update()
 
 
@@ -1929,7 +1978,7 @@ def game_main_loop():
 def game_initialize():
     """Das hier startet Pygame und das Hauptfenster"""
 
-    global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA, RANDOM_ENGINE
+    global SURFACE_MAIN, SURFACE_MAP, PLAYER, ENEMY, FOV_CALCULATE, CLOCK, ASSETS, CAMERA, RANDOM_ENGINE, PREFERENCES
     # makes window start at top left corner
     # os.environ['SDL_VIDEO_WINDOW_POS'] = "30,30"
     # disable scaling of windows
@@ -1940,6 +1989,11 @@ def game_initialize():
     pygame.display.set_caption("Roguelike")
 
     pygame.key.set_repeat(200,70)
+
+    try:
+        preferences_load()
+    except:
+        PREFERENCES = struc_Preferences()
 
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
@@ -1954,7 +2008,11 @@ def game_initialize():
 
     CAMERA = obj_Camera()
 
+
+
     ASSETS = struc_Assets()
+
+
 
     CLOCK = pygame.time.Clock()
 
@@ -2142,6 +2200,18 @@ def game_load():
     FOV_CALCULATE = True
     map_calculate_fov()
 
+
+def preferences_save():
+
+    with gzip.open("data/pref", "wb") as file:
+        pickle.dump(PREFERENCES, file)
+
+
+def preferences_load():
+    global PREFERENCES
+
+    with gzip.open("data/pref", "rb") as file:
+        PREFERENCES = pickle.load(file)
 
 
 
