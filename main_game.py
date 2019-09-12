@@ -1299,6 +1299,50 @@ class ui_Button:
         pygame.draw.rect(self.surface, self.c_c_box, self.rect)
         draw_text(self.surface, self.button_text, self.center_coords, self.c_c_text, center=True)
 
+class ui_Slider:
+
+    def __init__(self,surface,size,center_coords,bg_color,fg_color, parameter_value):
+
+        self.surface = surface
+        self.size = size
+        self.bg_color = bg_color
+        self.fg_color = fg_color
+        self.current_val = parameter_value
+
+
+        self.bg_rect = pygame.Rect((0, 0), size)
+        self.bg_rect.center = center_coords
+
+        self.fg_rect = pygame.Rect((0, 0), (self.bg_rect.width * self.current_val, self.bg_rect.height))
+        self.fg_rect.topleft = self.bg_rect.topleft
+
+        self.grip_tab = pygame.Rect((0,0),(20, self.bg_rect.height + 5))
+        self.grip_tab.center = (self.fg_rect.right, self.bg_rect.centery)
+
+    def update(self, player_input):
+
+        mouse_down = pygame.mouse.get_pressed()[0]
+
+        local_events, local_mousepos = player_input
+        mouse_x, mouse_y = local_mousepos
+
+        mouse_over = (self.bg_rect.left <= mouse_x <= self.bg_rect.right and self.bg_rect.top <= mouse_y <= self.bg_rect.bottom)
+
+        if mouse_down and mouse_over:
+            self.current_val = (float(mouse_x) - float(self.bg_rect.left)) / self.bg_rect.width
+
+            self.fg_rect.width = self.bg_rect.width * self.current_val
+            self.grip_tab.center = (self.fg_rect.right, self.bg_rect.centery)
+
+    def draw(self):
+        pygame.draw.rect(self.surface, self.bg_color, self.bg_rect)
+        pygame.draw.rect(self.surface, self.fg_color, self.fg_rect)
+        pygame.draw.rect(self.surface, constants.COLOR_BLACK, self.grip_tab)
+
+
+
+
+
 
 # .___  ___.  _______ .__   __.  __    __       _______.
 # |   \/   | |   ____||  \ |  | |  |  |  |     /       |
@@ -1398,6 +1442,11 @@ def menu_main_options():
     settings_menu_height = 200
     settings_menu_background_color = constants.COLOR_GREY
 
+    # Slider vars #
+    slider_x = constants.CAMERA_WIDTH / 2
+    sound_effect_slider_y = constants.CAMERA_HEIGHT / 2
+    sound_effect_vol = 0.5
+
     window_center = (constants.CAMERA_WIDTH/2, constants.CAMERA_HEIGHT/2)
 
     settings_menu_surface = pygame.Surface((settings_menu_width,settings_menu_height))
@@ -1408,9 +1457,11 @@ def menu_main_options():
 
     menu_close = False
 
-    settings_menu_surface.fill(settings_menu_background_color)
 
-    SURFACE_MAIN.blit(settings_menu_surface, settings_menu_rect.topleft)
+
+
+
+    sound_effect_slider = ui_Slider(SURFACE_MAIN, (125, 25), (slider_x, sound_effect_slider_y),  constants.COLOR_RED, constants.COLOR_GREEN, .5)
 
     while not menu_close:
 
@@ -1430,11 +1481,13 @@ def menu_main_options():
                 if event.key == pygame.K_ESCAPE:
                     menu_close = True
 
+        sound_effect_slider.update(game_input)
+
+        # Draw the menu
+        settings_menu_surface.fill(settings_menu_background_color)
+        SURFACE_MAIN.blit(settings_menu_surface, settings_menu_rect.topleft)
+        sound_effect_slider.draw()
         pygame.display.update()
-
-
-
-
 
 
 def menu_pause():
