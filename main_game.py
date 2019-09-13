@@ -10,6 +10,7 @@ import math
 import pickle
 import gzip
 import random
+import datetime
 
 # gamefiles
 import constants
@@ -122,6 +123,7 @@ class struc_Assets:
 
         self.snd_list = []
 
+        self.music_death = "data/audio/death_music.mp3"
         self.music_main_menu = "data/audio/Broke.mp3"
         self.music_lvl_1 = "data/audio/level_1.mp3"
         self.snd_hit_1 = self.sound_add("data/audio/hit_hurt1.wav")
@@ -170,7 +172,7 @@ class struc_Preferences:
 class obj_Actor:
 
     def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, creature=None, ai=None, container=None,
-                 item=None, equipment=None, stairs=None):
+                 item=None, equipment=None, stairs=None, state = None):
         self.x = round(x)
         self.y = round(y)
         self.name_object = name_object
@@ -209,6 +211,10 @@ class obj_Actor:
         self.stairs = stairs
         if self.stairs:
             self.stairs.owner = self
+
+        self.state = state
+        if self.state:
+            self.state.owner = self
 
     @property
     def display_name(self):
@@ -793,6 +799,31 @@ def death_mouse(mouse):
     mouse.animation_key = "S_FLESH_EAT"
     mouse.creature = None
     mouse.ai = None
+
+
+def death_player(player):
+    player.state = "STATUS_DEAD"
+
+    SURFACE_MAIN.fill(constants.COLOR_BLACK)
+
+    screen_center = (constants.CAMERA_WIDTH/2, constants.CAMERA_HEIGHT/2)
+
+    draw_text(SURFACE_MAIN, "lol nibba u dead!", screen_center, constants.COLOR_WHITE, center=True)
+    draw_text(SURFACE_MAIN, "Check the legacy file to know what beat yo ass up", (constants.CAMERA_WIDTH/2,constants.CAMERA_HEIGHT/2 + 100), constants.COLOR_WHITE, center=True)
+
+    pygame.display.update()
+
+    file_name = ("data/legacy_"+ PLAYER.creature.name_instance + "." + datetime.date.today().strftime("%Y%B%d")+".txt")
+
+    legacy_file = open(file_name, "a+")
+
+    for message, color in GAME.message_history:
+        legacy_file.write(message + "\n")
+
+    pygame.mixer.music.load(ASSETS.music_death)
+    pygame.mixer.music.play()
+
+    pygame.time.wait(12000)
 
 
 # .___  ___.      ___      .______
@@ -1389,9 +1420,7 @@ def menu_main():
     quit_button_y = options_button_y + 60
 
 
-    SURFACE_MAIN.blit(ASSETS.MAIN_MENU_BACKGROUND, (0,0))
 
-    draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
 
     continue_game_button = ui_Button(SURFACE_MAIN, "Continue", (200, 45), (title_x, continue_game_button_y))
 
@@ -1440,13 +1469,16 @@ def menu_main():
 
         if options_button.update(game_input):
             menu_main_options()
-            SURFACE_MAIN.blit(ASSETS.MAIN_MENU_BACKGROUND, (0, 0))
-            draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
+
 
 
         if quit_button.update(game_input):
             pygame.quit()
             exit()
+
+        SURFACE_MAIN.blit(ASSETS.MAIN_MENU_BACKGROUND, (0, 0))
+
+        draw_text(SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
 
 
         continue_game_button.draw()
@@ -1767,7 +1799,7 @@ def gen_player(coords):
     print(coords)
 
     container_com = com_Container()
-    creature_com = com_Creature("SPIELER", base_atk=4)
+    creature_com = com_Creature("SPIELER", base_atk=4, death_function=death_player)
     player = obj_Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                        container=container_com)
 
@@ -1965,6 +1997,9 @@ def game_main_loop():
             for obj in GAME.current_objects:
                 if obj.ai:
                     obj.ai.take_turn()
+
+        if PLAYER.state is "STATUS_DEAD":
+            game_quit = True
 
         # draw the game
         draw_game()

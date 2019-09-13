@@ -1,0 +1,32 @@
+Picked up
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 9/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 8/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 7/10
+SPIELER attacks Aenbaed for 4 damage!
+Aenbaed`s health is 5/9
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 6/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 5/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 4/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 3/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 2/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 1/10
+Aenbaed attacks SPIELER for 1 damage!
+SPIELER`s health is 0/10
+Picked up
+Brigthach attacks SPIELER for 3 damage!
+SPIELER`s health is 7/10
+Brigthach attacks SPIELER for 3 damage!
+SPIELER`s health is 4/10
+Brigthach attacks SPIELER for 3 damage!
+SPIELER`s health is 1/10
+Brigthach attacks SPIELER for 3 damage!
+SPIELER`s health is -2/10
