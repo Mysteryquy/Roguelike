@@ -93,14 +93,14 @@ class struc_Assets:
 
         ## SPECIAL ##
 
-        self.S_STAIRS_DOWN = self.tile.get_image("d", 1, 16, 16, (32, 32))
-        self.S_STAIRS_UP = self.tile.get_image("a", 2, 16, 16, (32, 32))
+        self.S_STAIRS_DOWN = self.tile.get_image("a", 1, 16, 16, (32, 32))
+        self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
                                                            (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
         self.S_END_GAME_ITEM = self.tool.get_image("a", 1, 16, 16, (32, 32))
-        self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("a", 6, 16, 16, (32, 32))
-        self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("a", 7, 16, 16, (32, 32))
+        self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
+        self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
 
         self.animation_dict = {
             "A_PLAYER": self.A_PLAYER,
@@ -752,6 +752,8 @@ class com_Exitportal:
 
     def use(self):
 
+        print("Hans Wurst")
+
         if self.owner.state == "OPEN":
             PLAYER.state = "STATUS_WIN"
 
@@ -959,7 +961,7 @@ def map_place_objects(room_list):
 
     current_level = len(GAME.maps_previous) + 1
 
-    print(current_level)
+
     top_level = current_level == 1
     final_level = (current_level == constants.MAP_NUM_LEVELS)
 
@@ -970,14 +972,12 @@ def map_place_objects(room_list):
 
         if first_room:
             x, y = room.center
-            gen_portal(room.center)
             PLAYER.x, PLAYER.y = int(x), int(y)
 
         if first_room and top_level:
             # print(room.center)
             x, y = room.center
-            gen_scroll_fireball((int(x), int(y)))
-            # gen_portal(room.center)
+            gen_portal(room.center)
 
         if first_room and not top_level:
             gen_stairs((PLAYER.x, PLAYER.y), downwards=False)
@@ -2265,7 +2265,7 @@ def game_handle_keys():
                 for obj in list_of_objs:
                     if obj.stairs:
                         obj.stairs.use()
-                    if obj.exitportal:
+                    elif obj.exitportal:
                         obj.exitportal.use()
 
     return "no-action"
