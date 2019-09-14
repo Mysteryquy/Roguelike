@@ -30,3 +30,24 @@ Brigthach attacks SPIELER for 3 damage!
 SPIELER`s health is 1/10
 Brigthach attacks SPIELER for 3 damage!
 SPIELER`s health is -2/10
+Picked up
+SPIELER attacks Morran for 4 damage!
+Morran`s health is 4/8
+Morran attacks SPIELER for 1 damage!
+SPIELER`s health is 9/10
+SPIELER attacks Morran for 4 damage!
+Morran`s health is 0/8
+Morran is slaughtered into ugly bits of flesh!
+SPIELER attacks Ogboaid for 4 damage!
+Ogboaid`s health is -3/1
+Ogboaid is killed. Eat it to heal up a bit!
+Enthach attacks SPIELER for 2 damage!
+SPIELER`s health is 7/10
+Enthach attacks SPIELER for 2 damage!
+SPIELER`s health is 5/10
+Enthach attacks SPIELER for 2 damage!
+SPIELER`s health is 3/10
+Enthach attacks SPIELER for 2 damage!
+SPIELER`s health is 1/10
+Enthach attacks SPIELER for 2 damage!
+SPIELER`s health is -1/10

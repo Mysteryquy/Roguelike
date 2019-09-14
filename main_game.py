@@ -11,6 +11,7 @@ import pickle
 import gzip
 import random
 import datetime
+import os.path
 
 # gamefiles
 import constants
@@ -61,6 +62,8 @@ class struc_Assets:
         self.flesh = obj_Spritesheet("data/Flesh.png")
         self.tile = obj_Spritesheet("data/Tile.png")
         self.rodent = obj_Spritesheet("data/Rodent0.png")
+        self.tool = obj_Spritesheet("data/Tool.png")
+        self.doors = obj_Spritesheet("data/Door0.png")
 
         # ANIMATIONS#
         self.A_PLAYER = self.charspritesheet.get_animation("m", 5, 16, 16, 4, (32, 32))
@@ -94,10 +97,13 @@ class struc_Assets:
 
         ## SPECIAL ##
 
-        self.S_STAIRS_DOWN = self.tile.get_image("b", 2, 16, 16, (32, 32))
+        self.S_STAIRS_DOWN = self.tile.get_image("d", 1, 16, 16, (32, 32))
         self.S_STAIRS_UP = self.tile.get_image("a", 2, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND, (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+        self.S_END_GAME_ITEM = self.tool.get_image("a", 1, 16, 16, (32,32))
+        self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("a", 6,16, 16, (32,32))
+        self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("a", 7, 16, 16, (32, 32))
 
         self.animation_dict = {
             "A_PLAYER": self.A_PLAYER,
@@ -116,7 +122,11 @@ class struc_Assets:
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
             "S_STAIRS_UP": self.S_STAIRS_UP,
-            "S_FLESH_EAT": self.S_FLESH_EAT
+            "S_FLESH_EAT": self.S_FLESH_EAT,
+            "S_END_GAME_ITEM" : self.S_END_GAME_ITEM,
+            "S_END_GAME_PORTAL_OPENED" : self.S_END_GAME_PORTAL_OPENED,
+            "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED
+
         }
 
         ## AUDIO ##
@@ -172,7 +182,7 @@ class struc_Preferences:
 class obj_Actor:
 
     def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, creature=None, ai=None, container=None,
-                 item=None, equipment=None, stairs=None, state = None):
+                 item=None, equipment=None, stairs=None, state = None, exitportal = None):
         self.x = round(x)
         self.y = round(y)
         self.name_object = name_object
@@ -215,6 +225,11 @@ class obj_Actor:
         self.state = state
         if self.state:
             self.state.owner = self
+
+        self.exitportal = exitportal
+        if self.exitportal:
+            self.exitportal.owner = self
+
 
     @property
     def display_name(self):
@@ -721,6 +736,66 @@ class com_Stairs:
             GAME.transition_previous()
 
 
+class com_Exitportal:
+    def __init__(self):
+        self.OPENANIMATION = "S_END_GAME_PORTAL_OPENED"
+        self.CLOSEDANIMATION = "S_END_GAME_PORTAL_CLOSED"
+        self.open = False
+
+    def update(self):
+
+        found_item = False
+
+        #check conditions
+        portal_open = self.owner.state == "OPEN"
+
+        for obj in PLAYER.container.inventory:
+            if obj.name_object is "END_GAME_OBJECT":
+                found_item = True
+
+        if found_item and not portal_open:
+            self.owner.state = "OPEN"
+            self.owner.animation_key = self.S_END_GAME_PORTAL_OPENED
+            self.owner.animation_init()
+
+        if not found_item and portal_open:
+            self.owner.state = "CLOSED"
+            self.owner.animation_key = self.S_END_GAME_PORTAL_CLOSED
+            self.owner.animation_init()
+
+
+    def use(self):
+
+        if self.owner.state == "OPEN":
+
+            PLAYER.state = "STATUS_WIN"
+
+            SURFACE_MAIN.fill(constants.COLOR_WHITE)
+
+            screen_center = (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2)
+
+            draw_text(SURFACE_MAIN, "YOU WON!", screen_center, constants.COLOR_BLACK, center=True)
+            draw_text(SURFACE_MAIN, "Your win was recorded in your win file",
+                      (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
+                      center=True)
+
+            pygame.display.update()
+
+            file_name = ("data/winrecord_" + PLAYER.creature.name_instance + "." + datetime.date.today().strftime(
+                "%Y%B%d") + ".txt")
+
+            winrecord = open(file_name, "a+")
+
+            winrecord.write( "You won on the " + datetime.date.today().strftime("%Y%B%d")+" as " + PLAYER.creature.name_instance + "\n")
+
+
+            pygame.time.wait(6000)
+
+
+
+
+
+
 #   _____  .___ 
 #  /  _  \ |   |
 # /  /_\  \|   |
@@ -815,6 +890,12 @@ def death_player(player):
 
     file_name = ("data/legacy_"+ PLAYER.creature.name_instance + "." + datetime.date.today().strftime("%Y%B%d")+".txt")
 
+    file_exists = os.path.isfile(file_name)
+    save_exists = os.path.isfile("data/savegame")
+
+    if file_exists: os.remove(file_name)
+    if save_exists: os.remove("data/savegame")
+
     legacy_file = open(file_name, "a+")
 
     for message, color in GAME.message_history:
@@ -892,7 +973,10 @@ def map_create_room(new_map, new_room):
 def map_place_objects(room_list):
     global PLAYER
 
-    top_level = (len(GAME.maps_previous) == 0)
+    current_level = len(GAME.maps_previous) + 1
+
+    top_level = (current_level == 1)
+    final_level = (current_level == constants.MAP_NUM_LEVELS)
 
     for room in room_list:
 
@@ -903,11 +987,18 @@ def map_place_objects(room_list):
             x, y = room.center
             PLAYER.x, PLAYER.y = int(x), int(y)
 
+        if first_room and top_level:
+            gen_portal(room.center)
+
+
         if first_room and not top_level:
             gen_stairs((PLAYER.x, PLAYER.y), downwards=False)
 
         if last_room:
-            gen_stairs(room.center)
+            if final_level:
+                gen_END_GAME_ITEM(room.center)
+            else:
+                gen_stairs(room.center)
 
         x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
@@ -1459,6 +1550,7 @@ def menu_main():
                 game_new()
 
             game_main_loop()
+            game_initialize()
 
         if new_game_button.update(game_input):
             pygame.mixer.music.stop()
@@ -1466,6 +1558,7 @@ def menu_main():
             pygame.mixer.music.play(-1)
             game_new()
             game_main_loop()
+            game_initialize()
 
         if options_button.update(game_input):
             menu_main_options()
@@ -1799,7 +1892,7 @@ def gen_player(coords):
     print(coords)
 
     container_com = com_Container()
-    creature_com = com_Creature("SPIELER", base_atk=4, death_function=death_player)
+    creature_com = com_Creature("SPIELER", base_atk=666, death_function=death_player)
     player = obj_Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                        container=container_com)
 
@@ -1817,6 +1910,26 @@ def gen_stairs(coords, downwards=True):
         stairs = obj_Actor(x, y, "stairs", animation_key="S_STAIRS_UP", stairs=stairs_com)
 
     GAME.current_objects.append(stairs)
+
+def gen_portal(coords):
+
+    x, y = coords
+
+    port_com = com_Exitportal()
+    portal = obj_Actor(x, y, "exit portal",animation_key= "S_END_GAME_PORTAL_CLOSED", exitportal= port_com)
+
+    GAME.current_objects.append(portal)
+
+def gen_END_GAME_ITEM(coords):
+
+    x, y, = coords
+
+    item_com = com_Item()
+
+    return_object = obj_Actor(x, y, "Item that ends the game", animation_key= "S_END_GAME_ITEM", item = item_com)
+
+    GAME.current_objects.append(return_object)
+
 
 
 ##ITEMS##
@@ -1993,12 +2106,15 @@ def game_main_loop():
         if player_action == "QUIT":
             game_exit()
 
-        elif player_action != "no-action":
-            for obj in GAME.current_objects:
-                if obj.ai:
-                    obj.ai.take_turn()
 
-        if PLAYER.state is "STATUS_DEAD":
+        for obj in GAME.current_objects:
+            if obj.ai:
+                if player_action != "no-action":
+                    obj.ai.take_turn()
+            if obj.exitportal:
+                obj.exitportal.update()
+
+        if (PLAYER.state == "STATUS_DEAD" or PLAYER.state == "STATUS_WIN"):
             game_quit = True
 
         # draw the game
@@ -2184,6 +2300,8 @@ def game_handle_keys():
                 for obj in list_of_objs:
                     if obj.stairs:
                         obj.stairs.use()
+                    if obj.exitportal:
+                        obj.exitportal.use()
 
     return "no-action"
 
