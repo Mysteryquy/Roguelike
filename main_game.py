@@ -781,7 +781,7 @@ class com_Exitportal:
 
             pygame.display.update()
 
-            file_name = ("data/winrecord_" + PLAYER.creature.name_instance + "." + datetime.date.today().strftime(
+            file_name = ("data/userdata/winrecord_" + PLAYER.creature.name_instance + "." + datetime.date.today().strftime(
                 "%Y%B%d") + ".txt")
 
             winrecord = open(file_name, "a+")
@@ -888,13 +888,13 @@ def death_player(player):
 
     pygame.display.update()
 
-    file_name = ("data/legacy_"+ PLAYER.creature.name_instance + "." + datetime.date.today().strftime("%Y%B%d")+".txt")
+    file_name = ("data/userdata/legacy_"+ PLAYER.creature.name_instance + "." + datetime.date.today().strftime("%Y%B%d")+".txt")
 
     file_exists = os.path.isfile(file_name)
-    save_exists = os.path.isfile("data/savegame")
+    save_exists = os.path.isfile("data/userdata/savegame")
 
     if file_exists: os.remove(file_name)
-    if save_exists: os.remove("data/savegame")
+    if save_exists: os.remove("data/userdata/savegame")
 
     legacy_file = open(file_name, "a+")
 
@@ -2348,14 +2348,14 @@ def game_save(display_message=False):
     for obj in GAME.current_objects:
         obj.animation_destroy()
 
-    with gzip.open("data/savegame", "wb") as file:
+    with gzip.open("data/userdata/savegame", "wb") as file:
         pickle.dump([GAME, PLAYER], file)
 
 
 def game_load():
     global GAME, PLAYER, FOV_CALCULATE
 
-    with gzip.open("data/savegame", "rb") as file:
+    with gzip.open("data/userdata/savegame", "rb") as file:
         GAME, PLAYER = pickle.load(file)
 
     for obj in GAME.current_objects:
@@ -2368,14 +2368,14 @@ def game_load():
 
 def preferences_save():
 
-    with gzip.open("data/pref", "wb") as file:
+    with gzip.open("data/userdata/pref", "wb") as file:
         pickle.dump(PREFERENCES, file)
 
 
 def preferences_load():
     global PREFERENCES
 
-    with gzip.open("data/pref", "rb") as file:
+    with gzip.open("data/userdata/pref", "rb") as file:
         PREFERENCES = pickle.load(file)
 
 
