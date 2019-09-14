@@ -769,8 +769,8 @@ class com_Exitportal:
             pygame.display.update()
 
             file_name = (
-                        "data/userdata/winrecord_" + PLAYER.creature.name_instance + "." + datetime.date.today().strftime(
-                    "%Y%B%d") + ".txt")
+                    "data/userdata/winrecord_" + PLAYER.creature.name_instance + "." + datetime.date.today().strftime(
+                "%Y%B%d") + ".txt")
 
             winrecord = open(file_name, "a+")
 
@@ -960,7 +960,6 @@ def map_place_objects(room_list):
     global PLAYER
 
     current_level = len(GAME.maps_previous) + 1
-
 
     top_level = current_level == 1
     final_level = (current_level == constants.MAP_NUM_LEVELS)
@@ -1460,7 +1459,7 @@ class ui_Slider:
         mouse_x, mouse_y = local_mousepos
 
         mouse_over = (
-                    self.bg_rect.left <= mouse_x <= self.bg_rect.right and self.bg_rect.top <= mouse_y <= self.bg_rect.bottom)
+                self.bg_rect.left <= mouse_x <= self.bg_rect.right and self.bg_rect.top <= mouse_y <= self.bg_rect.bottom)
 
         if mouse_down and mouse_over:
             self.current_val = (float(mouse_x) - float(self.bg_rect.left)) / self.bg_rect.width
@@ -1863,7 +1862,7 @@ def gen_player(coords):
     print(coords)
 
     container_com = com_Container()
-    creature_com = com_Creature("SPIELER", base_atk=666, death_function=death_player)
+    creature_com = com_Creature("SPIELER", base_atk=666,base_def=100, death_function=death_player)
     player = obj_Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                        container=container_com)
 
@@ -1922,7 +1921,8 @@ def gen_item(coords):
     else:
         new_item = gen_scroll_lighning(coords)
 
-    # GAME.current_objects.append(new_item)
+
+    GAME.current_objects.append(new_item)
 
 
 def gen_scroll_lighning(coords):
