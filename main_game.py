@@ -755,12 +755,12 @@ class com_Exitportal:
 
         if found_item and not portal_open:
             self.owner.state = "OPEN"
-            self.owner.animation_key = self.S_END_GAME_PORTAL_OPENED
+            self.owner.animation_key = "S_END_GAME_PORTAL_OPENED"
             self.owner.animation_init()
 
         if not found_item and portal_open:
             self.owner.state = "CLOSED"
-            self.owner.animation_key = self.S_END_GAME_PORTAL_CLOSED
+            self.owner.animation_key = "S_END_GAME_PORTAL_CLOSED"
             self.owner.animation_init()
 
 
@@ -975,7 +975,8 @@ def map_place_objects(room_list):
 
     current_level = len(GAME.maps_previous) + 1
 
-    top_level = (current_level == 1)
+    print(current_level)
+    top_level = current_level == 1
     final_level = (current_level == constants.MAP_NUM_LEVELS)
 
     for room in room_list:
@@ -985,20 +986,28 @@ def map_place_objects(room_list):
 
         if first_room:
             x, y = room.center
+            gen_portal(room.center)
             PLAYER.x, PLAYER.y = int(x), int(y)
 
         if first_room and top_level:
-            gen_portal(room.center)
+            #print(room.center)
+            x,y = room.center
+            gen_scroll_fireball((int(x),int(y)))
+            #gen_portal(room.center)
+
 
 
         if first_room and not top_level:
             gen_stairs((PLAYER.x, PLAYER.y), downwards=False)
 
         if last_room:
+
             if final_level:
+                #gen_END_GAME_ITEM(room.center)
+                #gen_stairs(room.center,downwards=True)
                 gen_END_GAME_ITEM(room.center)
             else:
-                gen_stairs(room.center)
+                gen_stairs(room.center, downwards=True)
 
         x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
@@ -1779,8 +1788,11 @@ def menu_inventory():
 def debug_tile_select():
     global GAME, FOV_MAP
     (x, y) = menu_tile_select()
-    print((x, y))
-    print(FOV_MAP.fov[y, x])
+    objects = map_objects_at_coords(x,y)
+    for obj in objects:
+        print(obj.name_object)
+    gen_portal((x,y))
+
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
@@ -1926,7 +1938,7 @@ def gen_END_GAME_ITEM(coords):
 
     item_com = com_Item()
 
-    return_object = obj_Actor(x, y, "Item that ends the game", animation_key= "S_END_GAME_ITEM", item = item_com)
+    return_object = obj_Actor(x, y, "END_GAME_OBJECT", animation_key= "S_END_GAME_ITEM", item = item_com)
 
     GAME.current_objects.append(return_object)
 
@@ -1952,7 +1964,7 @@ def gen_item(coords):
     else:
         new_item = gen_scroll_lighning(coords)
 
-    GAME.current_objects.append(new_item)
+    #GAME.current_objects.append(new_item)
 
 
 def gen_scroll_lighning(coords):
