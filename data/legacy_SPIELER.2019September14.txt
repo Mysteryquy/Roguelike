@@ -1,0 +1,15 @@
+SPIELER attacks Beoboman for 4 damage!
+Beoboman`s health is -3/1
+Beoboman is killed. Eat it to heal up a bit!
+SPIELER attacks Morrma for 4 damage!
+Morrma`s health is 15/19
+Morrma attacks SPIELER for 4 damage!
+SPIELER`s health is 6/10
+SPIELER attacks Morrma for 4 damage!
+Morrma`s health is 11/19
+Morrma attacks SPIELER for 4 damage!
+SPIELER`s health is 2/10
+SPIELER attacks Morrma for 4 damage!
+Morrma`s health is 7/19
+Morrma attacks SPIELER for 4 damage!
+SPIELER`s health is -2/10
