@@ -21,15 +21,12 @@ import generator
 import render
 
 
-
-
 #     _______.___________..______       __    __    ______ .___________.
 #    /       |           ||   _  \     |  |  |  |  /      ||           |
 #   |   (----`---|  |----`|  |_)  |    |  |  |  | |  ,----'`---|  |----`
 #    \   \       |  |     |      /     |  |  |  | |  |         |  |     
 # .----)   |      |  |     |  |\  \----.|  `--'  | |  `----.    |  |
 # |_______/       |__|     | _| `._____| \______/   \______|    |__|
-
 
 
 class Preferences:
@@ -46,15 +43,12 @@ class Preferences:
 # \______/  |______/   \______/  |_______| \______|    |__|    |_______/  
 
 
-
 #                                                         __
 #  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
 # _/ ___\/  _ \ /     \\____ \ /  _ \ /    \_/ __ \ /    \   __\/  ___/
 # \  \__(  <_> )  Y Y  \  |_> >  <_> )   |  \  ___/|   |  \  |  \___ \
 # \___  >____/|__|_|  /   __/ \____/|___|  /\___  >___|  /__| /____  >
 #     \/            \/|__|               \/     \/     \/          \/ 
-
-
 
 
 class com_Stairs:
@@ -111,8 +105,8 @@ class com_Exitportal:
 
             render.draw_text(config.SURFACE_MAIN, "YOU WON!", screen_center, constants.COLOR_BLACK, center=True)
             render.draw_text(config.SURFACE_MAIN, "Your win was recorded in your win file",
-                      (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
-                      center=True)
+                             (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
+                             center=True)
 
             pygame.display.update()
 
@@ -127,22 +121,6 @@ class com_Exitportal:
 
             pygame.time.wait(6000)
 
-
-#   _____  .___
-#  /  _  \ |   |
-# /  /_\  \|   |
-# /    |    \   |
-# \____|__  /___|
-#        \/ 
-
-
-
-# o   o   O   o-o  o-O-o   o-o
-# |\ /|  / \ o       |    /
-# | O | o---o|  -o   |   O
-# |   | |   |o   |   |    \
-# o   o o   o o-o  o-O-o   o-o
-
 #  o         o   __o__
 # <|>       <|>    |
 # / \       / \   / \
@@ -152,20 +130,6 @@ class com_Exitportal:
 #  \         /     |
 #   o       o      o
 #   <\__ __/>    __|>_
-
-# .___  ___.  _______ .__   __.  __    __       _______.
-# |   \/   | |   ____||  \ |  | |  |  |  |     /       |
-# |  \  /  | |  |__   |   \|  | |  |  |  |    |   (----`
-# |  |\/|  | |   __|  |  . `  | |  |  |  |     \   \
-# |  |  |  | |  |____ |  |\   | |  `--'  | .----)   |
-# |__|  |__| |_______||__| \__|  \______/  |_______/
-
-#                                 _
-#  __ _  ___ _ __   ___ _ __ __ _| |_ ___
-# / _` |/ _ \ '_ \ / _ \ '__/ _` | __/ _ \
-# | (_| |  __/ | | |  __/ | | (_| | ||  __/
-# \__, |\___|_| |_|\___|_|  \__,_|\__\___|
-# |___/
 
 
 
@@ -183,7 +147,7 @@ def game_main_loop():
 
     while not game_quit:
 
-        player_action = game_handle_keys()
+        player_action = game_handle_keys(config.PLAYER)
 
         map.calculate_fov()
 
@@ -197,7 +161,7 @@ def game_main_loop():
             if obj.exitportal:
                 obj.exitportal.update()
 
-        if (config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN"):
+        if config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN":
             game_quit = True
 
         # draw the game
@@ -224,7 +188,7 @@ def game_initialize():
     pygame.key.set_repeat(200, 70)
 
     try:
-       preferences_load()
+        preferences_load()
     except:
         config.PREFERENCES = Preferences()
 
@@ -251,8 +215,7 @@ def game_initialize():
     # game_new()
 
 
-def game_handle_keys():
-
+def game_handle_keys(player):
     # get player input
     keys_list = pygame.key.get_pressed()
     events_list = pygame.event.get()
@@ -269,67 +232,67 @@ def game_handle_keys():
             if event.key == pygame.K_ESCAPE:
                 return "QUIT"
             if event.key == pygame.K_UP:
-                config.PLAYER.creature.move(0, -1)
+                player.move(0, -1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_DOWN:
-                config.PLAYER.creature.move(0, 1)
+                player.move(0, 1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_LEFT:
-                config.PLAYER.creature.move(-1, 0)
+                player.move(-1, 0)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_RIGHT:
-                config.PLAYER.creature.move(1, 0)
+                player.move(1, 0)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP1:
-                config.PLAYER.creature.move(-1, 1)
+                player.move(-1, 1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP2:
-                config.PLAYER.creature.move(0, 1)
+                player.move(0, 1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP3:
-                config.PLAYER.creature.move(1, 1)
+                player.move(1, 1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP4:
-                config.PLAYER.creature.move(-1, 0)
+                player.move(-1, 0)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP5:
-                config.PLAYER.creature.move(0, 0)
+                player.move(0, 0)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP6:
-                config.PLAYER.creature.move(1, 0)
+                player.move(1, 0)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP7:
-                config.PLAYER.creature.move(-1, -1)
+                player.move(-1, -1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP8:
-                config.PLAYER.creature.move(0, -1)
+                player.move(0, -1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
             if event.key == pygame.K_KP9:
-                config.PLAYER.creature.move(1, -1)
+                player.move(1, -1)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
@@ -338,11 +301,12 @@ def game_handle_keys():
 
                 for obj in objects_at_player:
                     if obj.item:
+                        print(obj.name_object)
                         obj.item.pick_up(config.PLAYER)
 
             if event.key == pygame.K_d:
-                if len(config.PLAYER.container.inventory) > 0:
-                    config.PLAYER.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
+                if len(player.container.inventory) > 0:
+                    player.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
 
             if event.key == pygame.K_p:
                 config.GAME.game_message("Game resumed", constants.COLOR_WHITE)
@@ -382,7 +346,6 @@ def game_handle_keys():
 
 
 def game_new():
-
     config.PLAYER = generator.gen_player((0, 0))
     # starts a nre game and map
     config.GAME = Game()
@@ -411,7 +374,6 @@ def game_save(display_message=False):
 
 
 def game_load():
-
     with gzip.open("data/userdata/savegame", "rb") as file:
         config.GAME, config.PLAYER = pickle.load(file)
 
@@ -429,13 +391,13 @@ def preferences_save():
 
 
 def preferences_load():
-
     with gzip.open("data/userdata/pref", "rb") as file:
         config.PREFERENCES = pickle.load(file)
 
 
 if __name__ == '__main__':
-    menu.menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, preferences_save)
+    config.PLAYER = None
+    menu.menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, preferences_save,config.PLAYER)
 
 #              .7
 #            .'/

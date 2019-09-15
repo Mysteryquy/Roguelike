@@ -67,10 +67,7 @@ class Creature:
                 self.death_function(self.owner, attacker)
 
     def heal(self, value):
-
-        self.hp = self.hp + value
-        if self.hp > self.maxhp:
-            self.hp = self.maxhp
+        self.hp = min(self.hp+value, self.maxhp)
 
     def get_xp(self, xp):
         self.current_xp = self.current_xp + xp

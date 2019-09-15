@@ -1,11 +1,13 @@
 import config
 import constants
+from item import Item
 
 
-class Equipment:
+class Equipment(Item):
 
-    def __init__(self, attack_bonus=None, defense_bonus=None, slot=None, equip_text=None):
-
+    def __init__(self, attack_bonus=None, defense_bonus=None, slot=None, equip_text=None, value=0, pickup_text=None,
+                 weight=0.0, volume=0.0):
+        Item.__init__(self, weight=weight, volume=volume, use_function=self.equip, value=value, pickup_text=pickup_text)
         self.attack_bonus = attack_bonus
         self.defense_bonus = defense_bonus
         self.slot = slot

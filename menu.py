@@ -7,7 +7,7 @@ import generator
 import map
 
 
-def menu_main(game_initialize,game_exit,game_load,game_new,game_main_loop,preferences_save):
+def menu_main(game_initialize,game_exit,game_load,game_new,game_main_loop,preferences_save,player):
     game_initialize()
 
     menu_running = True

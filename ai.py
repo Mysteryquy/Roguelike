@@ -29,36 +29,37 @@ class ai_Chase:
 
 
     def take_turn(self):
-        """
         monster = self.owner
-
-        # if tcod.map_is_in_fov(FOV_MAP, monster.x, monster.y):
-
-        if map.is_visible(monster.x, monster.y):
-            # Move to the player if far away
-            if monster.distance_to(config.PLAYER) >= 2:
-
-                self.owner.move_towards(config.PLAYER)
-
-            # if close enough, attack player
-            elif config.PLAYER.creature.hp > 0:
-                monster.creature.attack(config.PLAYER)
-        """
-        monster = self.owner
-        if map.is_visible(monster.x,monster.y):
-            pathing = map.get_path(monster.x, monster.y, config.PLAYER.x, config.PLAYER.y)
-
-            if pathing:
-                print(pathing)
-                x,y = pathing[0]
-
-                monster.move(x-monster.x,y-monster.y)
+        x,y = monster.x, monster.y
+        if map.is_visible(x,y):
+            player_x, player_y = config.PLAYER.x, config.PLAYER.y
+            dx = player_x - x
+            dy = player_y - y
+            if dx > 0 and map.is_walkable(x+1,y):
+                monster.move(1,0)
+            elif dx < 0 and map.is_walkable(x-1,y):
+                monster.move(-1,0)
+            elif dy > 0 and map.is_walkable(x,y+1):
+                monster.move(0,1)
+            elif dy < 0 and map.is_walkable(x,y-1):
+                monster.move(0,-1)
 
 
 class ai_Flee:
 
     def take_turn(self):
         monster = self.owner
+        x, y = monster.x, monster.y
+        if map.is_visible(x, y):
+            player_x, player_y = config.PLAYER.x, config.PLAYER.y
+            dx = player_x - x
+            dy = player_y - y
 
-        if tcod.map_is_in_fov(config.FOV_MAP, monster.x, monster.y):
-            self.owner.move_away(config.PLAYER)
+            if dx > 0 and map.is_walkable(x - 1, y):
+                monster.move(-1, 0)
+            elif dx < 0 and map.is_walkable(x + 1, y):
+                monster.move(1, 0)
+            elif dy > 0 and map.is_walkable(x, y - 1):
+                monster.move(0, -1)
+            elif dy < 0 and map.is_walkable(x, y + 1):
+                monster.move(0, 1)

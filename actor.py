@@ -41,9 +41,6 @@ class Actor:
         if self.equipment:
             self.equipment.owner = self
 
-            self.item = Item()
-            self.item.owner = self
-
         self.stairs = stairs
         if self.stairs:
             self.stairs.owner = self

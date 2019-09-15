@@ -231,8 +231,8 @@ def find_line(coords1, coords2, include_origin=False):
         return list(tmp)
 
 
-def check_for_wall(x, y):
-    return config.GAME.current_map[x][y].block_path
+def is_walkable(x, y):
+    return config.FOV_MAP.walkable[y,x]
 
 
 def find_radius(coords, radius):
