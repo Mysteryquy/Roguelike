@@ -87,7 +87,7 @@ class com_Exitportal:
         portal_open = self.owner.state == "OPEN"
 
         for obj in config.PLAYER.container.inventory:
-            if obj.name_object is "END_GAME_OBJECT":
+            if obj.name_object is constants.END_GAME_ITEM_NAME:
                 found_item = True
 
         if found_item and not portal_open:
@@ -225,10 +225,10 @@ def game_initialize():
 
     pygame.key.set_repeat(200, 70)
 
-    # try:
-    #   preferences_load()
-    # except:
-    config.PREFERENCES = Preferences()
+    try:
+       preferences_load()
+    except:
+        config.PREFERENCES = Preferences()
 
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
@@ -363,7 +363,7 @@ def game_handle_keys():
                 casting.cast_lightning(caster=config.PLAYER, T_damage_maxrange=5)
 
             if event.key == pygame.K_x:
-                casting.debug_tile_select()
+                menu.debug_tile_select()
 
             if event.key == pygame.K_s:
                 config.GAME.transition_next()

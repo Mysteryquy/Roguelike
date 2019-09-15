@@ -27,6 +27,9 @@ GAME_FPS = 60
 
 INVENTORY_TEXT_HEIGHT = 20
 
+END_GAME_ITEM_NAME = "Orb of Mystery" \
+                     ""
+
 
 #Color definitions
 COLOR_BLACK = (0, 0, 0)

@@ -15,7 +15,7 @@ class Creature:
 
     def move(self, dx, dy):
 
-        tile_is_wall = (config.GAME.current_map[self.owner.x + dx][self.owner.y + dy].block_path == True)
+        tile_is_wall = not config.FOV_MAP.walkable[self.owner.y + dy, self.owner.x + dx]
 
         target = map.check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 

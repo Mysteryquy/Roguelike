@@ -40,6 +40,9 @@ def is_visible(x, y):
     return config.FOV_MAP.fov[y, x]
 
 
+def get_path(start_x,start_y,goal_x,goal_y):
+    return config.GAME.pathing.get_path(start_x,start_y,goal_x,goal_y)
+
 def create():
     new_map = [[Tile(True) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
@@ -124,7 +127,7 @@ def place_objects(room_list):
             if final_level:
                 # gen_END_GAME_ITEM(room.center)
                 # gen_stairs(room.center,downwards=True)
-                generator.gen_END_GAME_ITEM(room.center)
+                generator.gen_end_game_item(room.center)
             else:
                 generator.gen_stairs(room.center, downwards=True)
 
@@ -192,8 +195,8 @@ def make_fov(incoming_map):
     for y in range(constants.MAP_HEIGHT):
         for x in range(constants.MAP_WIDTH):
             # same as before, but now we have array for walkable and transparent
-            config.FOV_MAP.walkable[x][y] = not incoming_map[x][y].block_path
-            config.FOV_MAP.transparent[y][x] = not incoming_map[x][y].block_path
+            config.FOV_MAP.walkable[y, x] = not incoming_map[x][y].block_path
+            config.FOV_MAP.transparent[y, x] = not incoming_map[x][y].block_path
 
 
 def calculate_fov():

@@ -1,6 +1,7 @@
 import config
 import constants
 
+
 class Equipment:
 
     def __init__(self, attack_bonus=None, defense_bonus=None, slot=None, equip_text=None):

@@ -8,6 +8,7 @@ import config
 import death
 import casting
 import ai
+import constants
 from equipment import Equipment
 
 ##PLAYER##
@@ -45,12 +46,12 @@ def gen_portal(coords):
     config.GAME.current_objects.append(portal)
 
 
-def gen_END_GAME_ITEM(coords):
+def gen_end_game_item(coords):
     x, y, = coords
 
-    item_com = Item()
+    item_com = Item(pickup_text=constants.END_GAME_ITEM_NAME)
 
-    return_object = Actor(x, y, "END_GAME_OBJECT", animation_key="S_END_GAME_ITEM", item=item_com)
+    return_object = Actor(x, y, constants.END_GAME_ITEM_NAME, animation_key="S_END_GAME_ITEM", item=item_com)
 
     config.GAME.current_objects.append(return_object)
 
@@ -170,7 +171,7 @@ def gen_snake_anaconda(coords):
     creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack)
     ai_com = ai.ai_Chase()
 
-    snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", creature=creature_com, ai=ai_com, )
+    snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", creature=creature_com, ai=ai_com )
 
     return snake
 
@@ -186,7 +187,7 @@ def gen_snake_cobra(coords):
     creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack)
     ai_com = ai.ai_Chase()
 
-    snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", creature=creature_com, ai=ai_com, )
+    snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", creature=creature_com, ai=ai_com )
 
     return snake
 
@@ -202,7 +203,7 @@ def gen_mouse(coords):
     creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack)
     ai_com = ai.ai_Flee()
 
-    item_com = Item(use_function=casting.cast_heal, value=2)
+    item_com = Item(use_function=casting.cast_heal, value=2,pickup_text="Rat Carcass")
 
     mouse = Actor(x, y, "Mouse", animation_key="A_MOUSE_01", creature=creature_com, ai=ai_com, item=item_com)
 

@@ -43,9 +43,11 @@ class Assets:
 
         ## ITEMS ##
         self.S_SWORD = [
-            pygame.transform.scale(pygame.image.load("data/sprites/sword.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+            pygame.transform.scale(pygame.image.load("data/sprites/sword.png"),
+                                   (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
         self.S_SHIELD = [
-            pygame.transform.scale(pygame.image.load("data/sprites/shield.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+            pygame.transform.scale(pygame.image.load("data/sprites/shield.png"),
+                                   (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
         self.S_SCROLL_01 = self.scrollspritesheet.get_image("a", 5, 16, 16, (32, 32))
         self.S_SCROLL_02 = self.scrollspritesheet.get_image("a", 2, 16, 16, (32, 32))
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
@@ -114,14 +116,14 @@ class Assets:
         pygame.mixer.music.set_volume(config.PREFERENCES.vol_music)
 
 
-
 class Spritesheet:  # Bilder von Spritesheets holen
+
+    tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
+                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16}
 
     def __init__(self, file_name):
         # Den Sheet laden.
         self.sprite_sheet = pygame.image.load(file_name).convert()
-        self.tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
-                         "l": 12, "m": 13, "n": 14, "o": 15, "p": 16}
 
         ###############
 
@@ -131,7 +133,7 @@ class Spritesheet:  # Bilder von Spritesheets holen
 
         image = pygame.Surface([width, height]).convert()
 
-        image.blit(self.sprite_sheet, (0, 0), (self.tiledict[column] * width, row * height, width, height))
+        image.blit(self.sprite_sheet, (0, 0), (Spritesheet.tiledict[column] * width, row * height, width, height))
 
         image.set_colorkey(constants.COLOR_BLACK)
 
@@ -154,7 +156,7 @@ class Spritesheet:  # Bilder von Spritesheets holen
 
             # copy image from sheet onto blank
             image.blit(self.sprite_sheet, (0, 0),
-                       (self.tiledict[column] * width + (width * i), row * height, width, height))
+                       (Spritesheet.tiledict[column] * width + (width * i), row * height, width, height))
 
             # set transparency to black
             image.set_colorkey(constants.COLOR_BLACK)

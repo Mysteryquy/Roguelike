@@ -2,7 +2,6 @@ import config
 
 
 class Item:
-    global GAME
 
     def __init__(self, weight=0.0, volume=0.0, use_function=None, value=None, pickup_text=None):
         self.weight = weight

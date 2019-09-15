@@ -276,12 +276,9 @@ def menu_inventory():
 
 
 def debug_tile_select():
-    global GAME, FOV_MAP
     (x, y) = menu_tile_select()
     objects = map.objects_at_coords(x, y)
-    for obj in objects:
-        print(obj.name_object)
-    generator.gen_portal((x, y))
+    print(str((x,y)) + str(config.FOV_MAP.walkable[y,x]))
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
