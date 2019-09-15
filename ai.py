@@ -51,8 +51,6 @@ class ai_Chase:
             if pathing:
                 print(pathing)
                 x,y = pathing[0]
-                if x == monster.x and y == monster.y:
-                    x,y = pathing[1]
 
                 monster.move(x-monster.x,y-monster.y)
 

@@ -43,16 +43,6 @@ COLOR_GREEN = (0, 255, 0)
 COLOR_DEFAULT_BG = COLOR_GREY
 
 
-#SPRITES
-
-S_PLAYER = pygame.image.load("data/sprites/python.png")
-S_ENEMY = pygame.image.load("data/sprites/enemy1.png")
-
-S_WALL = pygame.image.load("data/sprites/wall2.jpg")
-S_WALLEXPLORED = pygame.image.load("data/sprites/wallunseen.png")
-
-S_FLOOR = pygame.image.load("data/sprites/floor.jpg")
-S_FLOOREXPLORED = pygame.image.load("data/sprites/floorunseen.png")
 
 #FOV SETTINGS Er hat anstelle der Null "libcod.FOV_BASIC" da stehen
 FOV_ALGO = libtcodpy.FOV_RESTRICTIVE
