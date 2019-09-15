@@ -1,0 +1,13 @@
+
+ASSETS = None
+PLAYER = None
+PREFERENCES = None
+GAME = None
+FOV_CALCULATE=True
+CAMERA = None
+CLOCK = None
+FOV_MAP = None
+SURFACE_MAP = None
+RANDOM_ENGINE = None
+SURFACE_MAIN = None
+
