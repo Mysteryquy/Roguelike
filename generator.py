@@ -168,7 +168,7 @@ def gen_snake_anaconda(coords):
 
     creature_name = tcod.namegen_generate("Celtic female")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=40, base_evasion=0)
+    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=40, base_evasion=0, xp_gained=300)
     ai_com = ai.ai_Chase()
 
     snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com, ai=ai_com )
@@ -184,7 +184,7 @@ def gen_snake_cobra(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=80, base_evasion=10)
+    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=80, base_evasion=10, xp_gained=300)
     ai_com = ai.ai_Chase()
 
     snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com, ai=ai_com )

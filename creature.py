@@ -6,7 +6,7 @@ import tcod
 
 class Creature:
 
-    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70, base_evasion=0):
+    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70, base_evasion=0, level=1, xp_gained = 0, current_xp = 0 ):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -15,6 +15,9 @@ class Creature:
         self.death_function = death_function
         self.base_hit_chance = base_hit_chance
         self.base_evasion = base_evasion
+        self.level = level
+        self.xp_gained = xp_gained
+        self.current_xp = current_xp
 
     def move(self, dx, dy):
 
@@ -67,6 +70,34 @@ class Creature:
 
         if self.hp > self.maxhp:
             self.hp = self.maxhp
+
+    def get_exp(self):
+
+        PLAYER.creature.current_xp = PLAYER.creature.current_xp + self.creature.xp_gained
+
+    def level_up_check(self):
+
+        xp_needed = 99999999999
+        level = 1
+        if level == 1:
+            xp_needed = constants.XP_TO_LVL_1
+        elif level == 2:
+            xp_needed = constants.XP_TO_LVL_2
+        elif level == 3:
+            xp_needed = constants.XP_TO_LVL_3
+
+        if PLAYER.creature.current_xp >= xp_needed:
+            player_level_up()
+            PLAYER.creature.current_xp = xp_needed - PLAYER.creature.current_xp
+            level = level + 1
+
+    def player_level_up(self):
+
+        self.level = self.level + 1
+        config.GAME.game_message(self.PLAYER.name_instance + " leveled up! He/She/It is now Level  " + self.level)
+        # Here comes the things we eventually add upon level up
+
+
 
     @property
     def power(self):

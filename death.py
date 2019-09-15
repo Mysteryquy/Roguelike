@@ -14,6 +14,7 @@ def death_snake(monster):
     monster.creature = None
     monster.ai = None
     monster.depth = constants.DEPTH_CORPSE
+    creature.get_xp(PLAYER.creature)
 
 
 def death_mouse(mouse):
