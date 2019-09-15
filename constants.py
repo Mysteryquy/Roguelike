@@ -63,7 +63,10 @@ DEPTH_ITEM = 2
 DEPTH_CORPSE = 100
 DEPTH_STRUCTURES = 101
 
-# XP NEEDED
-XP_TO_LVL_1 = 400
-XP_TO_LVL_2 = 600
-XP_TO_LVL_3 = 1000
+#xp related stuff
+XP_NEEDED = {
+    1: 400,
+    2: 600,
+    3: 1000
+}
+MAX_LEVEL = 3

@@ -4,9 +4,11 @@ import pygame
 import constants
 import tcod
 
+
 class Creature:
 
-    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70, base_evasion=0, level=1, xp_gained = 0, current_xp = 0 ):
+    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70,
+                 base_evasion=0, level=1, xp_gained=0, current_xp=0):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -42,7 +44,6 @@ class Creature:
         else:
             config.GAME.game_message(self.name_instance + " misses " + target.creature.name_instance)
 
-
     def attack(self, target):
 
         damage_dealt = self.power - target.creature.defense
@@ -50,53 +51,38 @@ class Creature:
         config.GAME.game_message(
             self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage_dealt) + " damage!",
             constants.COLOR_WHITE)
-        target.creature.take_damage(damage_dealt)
+        target.creature.take_damage(damage_dealt,self)
 
         if damage_dealt > 0 and self.owner is config.PLAYER:
             pygame.mixer.Sound.play(config.RANDOM_ENGINE.choice(config.ASSETS.snd_list_hit))
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, attacker):
         self.hp -= damage
-        config.GAME.game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp), constants.COLOR_RED)
+        config.GAME.game_message(self.name_instance + "`s health is " + str(self.hp) + "/" + str(self.maxhp),
+                                 constants.COLOR_RED)
 
         if self.hp <= 0:
 
             if self.death_function is not None:
-                self.death_function(self.owner)
+                self.death_function(self.owner, attacker)
 
     def heal(self, value):
 
         self.hp = self.hp + value
-
         if self.hp > self.maxhp:
             self.hp = self.maxhp
 
-    def get_exp(self):
+    def get_xp(self, xp):
+        self.current_xp = self.current_xp + xp
+        if self.level is not constants.MAX_LEVEL:
+            xp_needed = constants.XP_NEEDED[self.level]
+            if self.current_xp >= xp_needed:
+                self.level_up()
 
-        config.PLAYER.creature.current_xp = config.PLAYER.creature.current_xp + self.creature.xp_gained
-
-    def level_up_check(self):
-
-        xp_needed = 99999999999
-        level = 1
-        if level == 1:
-            xp_needed = constants.XP_TO_LVL_1
-        elif level == 2:
-            xp_needed = constants.XP_TO_LVL_2
-        elif level == 3:
-            xp_needed = constants.XP_TO_LVL_3
-
-        if PLAYER.creature.current_xp >= xp_needed:
-            player_level_up()
-            PLAYER.creature.current_xp = xp_needed - PLAYER.creature.current_xp
-            level = level + 1
-
-    def player_level_up(self):
-
+    def level_up(self):
         self.level = self.level + 1
-        config.GAME.game_message(self.PLAYER.name_instance + " leveled up! He/She/It is now Level  " + self.level)
+        config.GAME.game_message(self.name_instance + " leveled up! He/She/It is now Level " + str(self.level),msg_color=constants.COLOR_GREEN)
         # Here comes the things we eventually add upon level up
-
 
 
     @property
@@ -126,4 +112,3 @@ class Creature:
                     total_defense += bonus
 
         return total_defense
-

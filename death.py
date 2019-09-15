@@ -5,21 +5,25 @@ import os
 import pygame
 import datetime
 
-def death_snake(monster):
+
+def death_snake(monster, killer):
     # On death, most monsters stop moving tho
-    config.GAME.game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!", constants.COLOR_GREY)
+    config.GAME.game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",
+                             constants.COLOR_GREY)
     # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
     monster.animation = config.ASSETS.S_FLESH_SNAKE
     monster.animation_key = "S_FLESH_SNAKE"
-    monster.creature.get_xp()
+    killer.get_xp(monster.creature.xp_gained)
     monster.creature = None
     monster.ai = None
     monster.depth = constants.DEPTH_CORPSE
 
 
-def death_mouse(mouse):
+
+def death_mouse(mouse, killer):
     # On death, most monsters stop moving tho
-    config.GAME.game_message(mouse.creature.name_instance + " is killed. Eat it to heal up a bit!", constants.COLOR_GREY)
+    config.GAME.game_message(mouse.creature.name_instance + " is killed. Eat it to heal up a bit!",
+                             constants.COLOR_GREY)
     # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
     mouse.animation = config.ASSETS.S_FLESH_EAT
     mouse.animation_key = "S_FLESH_EAT"
@@ -27,7 +31,7 @@ def death_mouse(mouse):
     mouse.ai = None
 
 
-def death_player(player):
+def death_player(player, killer):
     player.state = "STATUS_DEAD"
 
     config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
@@ -36,7 +40,8 @@ def death_player(player):
 
     render.draw_text(config.SURFACE_MAIN, "lol nibba u dead!", screen_center, constants.COLOR_WHITE, center=True)
     render.draw_text(config.SURFACE_MAIN, "Check the legacy file to know what beat yo ass up",
-              (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE, center=True)
+                     (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
+                     center=True)
 
     pygame.display.update()
 
@@ -58,6 +63,3 @@ def death_player(player):
     pygame.mixer.music.play()
 
     pygame.time.wait(12000)
-
-
-
