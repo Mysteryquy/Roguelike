@@ -13,6 +13,7 @@ class Equipment(Item):
         self.slot = slot
         self.equip_text = equip_text
         self.equipped = False
+        self.owner = None
 
     def toggle_equip(self):
 

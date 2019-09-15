@@ -7,6 +7,7 @@ class Container(object):
         self.inventory = inventory
         self.max_volume = volume
         self._volume = 0.0
+        self.owner = None
 
     @property
     def volume(self):

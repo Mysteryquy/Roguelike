@@ -54,7 +54,7 @@ class Game:
 
             map.make_fov(self.current_map)
 
-            FOV_CALCULATE = True
+            config.FOV_CALCULATE = True
 
             del self.maps_next[-1]
 

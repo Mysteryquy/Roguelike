@@ -4,6 +4,7 @@ import config
 import generator
 
 
+
 class Tile:
     def __init__(self, block_path):
         self.block_path = block_path
@@ -36,12 +37,12 @@ class obj_Room:
 
 
 def is_visible(x, y):
-
     return config.FOV_MAP.fov[y, x]
 
 
-def get_path(start_x,start_y,goal_x,goal_y):
-    return config.GAME.pathing.get_path(start_x,start_y,goal_x,goal_y)
+def get_path(start_x, start_y, goal_x, goal_y):
+    return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
+
 
 def create():
     new_map = [[Tile(True) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -99,7 +100,6 @@ def create_room(new_map, new_room):
 
 
 def place_objects(room_list):
-
     current_level = len(config.GAME.maps_previous) + 1
 
     top_level = current_level == 1
@@ -189,7 +189,6 @@ def check_for_creature(x, y, exclude_object=None):
 
 
 def make_fov(incoming_map):
-
     config.FOV_MAP = tcod.map.Map(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
     for y in range(constants.MAP_HEIGHT):
@@ -200,11 +199,10 @@ def make_fov(incoming_map):
 
 
 def calculate_fov():
-
     if config.FOV_CALCULATE:
         config.FOV_CALCULATE = False
         config.FOV_MAP.compute_fov(config.PLAYER.x, config.PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
-                            constants.FOV_ALGO)
+                                   constants.FOV_ALGO)
 
 
 def objects_at_coords(coords_x, coords_y):
@@ -232,7 +230,7 @@ def find_line(coords1, coords2, include_origin=False):
 
 
 def is_walkable(x, y):
-    return config.FOV_MAP.walkable[y,x]
+    return config.FOV_MAP.walkable[y, x]
 
 
 def find_radius(coords, radius):

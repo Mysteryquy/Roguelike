@@ -2,6 +2,7 @@ import constants
 import pygame
 import config
 
+
 def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False):
     # This function takes in some text and display
 
@@ -66,7 +67,6 @@ def helper_text_width(font):
 
 
 def draw_game():
-
     # clear the surface
     config.SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
     config.SURFACE_MAP.fill(constants.COLOR_BLACK)
@@ -76,7 +76,7 @@ def draw_game():
     # draw the map
     draw_map(config.GAME.current_map)
 
-    for obj in sorted(config.GAME.current_objects, key = lambda obj: obj.depth, reverse = True):
+    for obj in sorted(config.GAME.current_objects, key=lambda x: x.depth, reverse=True):
         obj.draw()
 
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
@@ -117,19 +117,23 @@ def draw_map(map_to_draw):
 
                     config.SURFACE_MAP.blit(config.ASSETS.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:
-                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOR, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOR,
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
             elif map_to_draw[x][y].explored:
 
                 if map_to_draw[x][y].block_path:  # Bruh was will der von mir
 
-                    config.SURFACE_MAP.blit(config.ASSETS.S_WALLEXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    config.SURFACE_MAP.blit(config.ASSETS.S_WALLEXPLORED,
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:
-                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOREXPLORED, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOREXPLORED,
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
 def draw_debug():
-    draw_text(config.SURFACE_MAIN, "fps: " + str(int(config.CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE, constants.COLOR_BLACK)
+    draw_text(config.SURFACE_MAIN, "fps: " + str(int(config.CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE,
+              constants.COLOR_BLACK)
 
 
 def draw_messages():

@@ -1,7 +1,7 @@
 from container import Container
 from actor import Actor
 from creature import Creature
-from main_game import com_Stairs, com_Exitportal
+from main_game import ExitPortal,Stairs
 import tcod
 from item import Item
 import config
@@ -30,11 +30,11 @@ def gen_player(coords):
 def gen_stairs(coords, downwards=True):
     x, y = coords
     if downwards:
-        stairs_com = com_Stairs()
+        stairs_com = Stairs()
         stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_DOWN", depth=constants.DEPTH_STRUCTURES,
                        stairs=stairs_com)
     else:
-        stairs_com = com_Stairs(downwards)
+        stairs_com = Stairs(downwards)
         stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_UP", depth=constants.DEPTH_STRUCTURES, stairs=stairs_com)
 
     config.GAME.current_objects.append(stairs)
@@ -43,7 +43,7 @@ def gen_stairs(coords, downwards=True):
 def gen_portal(coords):
     x, y = coords
 
-    port_com = com_Exitportal()
+    port_com = ExitPortal()
     portal = Actor(x, y, "exit portal", animation_key="S_END_GAME_PORTAL_CLOSED", depth=constants.DEPTH_STRUCTURES,
                    exitportal=port_com)
 
@@ -177,7 +177,7 @@ def gen_snake_anaconda(coords):
 
     creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
                             base_hit_chance=40, base_evasion=0, xp_gained=300)
-    ai_com = ai.ai_Chase()
+    ai_com = ai.AiChase()
 
     snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com,
                   ai=ai_com)
@@ -195,7 +195,7 @@ def gen_snake_cobra(coords):
 
     creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
                             base_hit_chance=80, base_evasion=10, xp_gained=300)
-    ai_com = ai.ai_Chase()
+    ai_com = ai.AiChase()
 
     snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com,
                   ai=ai_com)
@@ -213,7 +213,7 @@ def gen_mouse(coords):
 
     creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack,
                             base_evasion=60)
-    ai_com = ai.ai_Flee()
+    ai_com = ai.AiFlee()
 
     item_com = Item(use_function=casting.cast_heal, value=2, pickup_text="Rat Carcass")
 

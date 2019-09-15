@@ -1,24 +1,25 @@
 # 3rd party modules
+import ctypes
+import datetime
+import gzip
+import pickle
+import random
+
 import pygame
 import tcod
 import tcod.map
-import ctypes
-import pickle
-import gzip
-import random
-import datetime
+
 import assets
 import camera
 import casting
-import map
-import ui
-import menu
-from object_game import Game
+import config
 # gamefiles
 import constants
-import config
 import generator
+import map
+import menu
 import render
+from object_game import Game
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -35,23 +36,7 @@ class Preferences:
         self.vol_music = .25
 
 
-#  ______   .______          __   _______   ______ .___________.    _______.
-# /  __  \  |   _  \        |  | |   ____| /      ||           |   /       |
-# |  |  |  | |  |_)  |       |  | |  |__   |  ,----'`---|  |----`  |   (----`
-# |  |  |  | |   _  <  .--.  |  | |   __|  |  |         |  |        \   \
-# |  `--'  | |  |_)  | |  `--'  | |  |____ |  `----.    |  |    .----)   |
-# \______/  |______/   \______/  |_______| \______|    |__|    |_______/  
-
-
-#                                                         __
-#  ____  ____   _____ ______   ____   ____   ____   _____/  |_  ______
-# _/ ___\/  _ \ /     \\____ \ /  _ \ /    \_/ __ \ /    \   __\/  ___/
-# \  \__(  <_> )  Y Y  \  |_> >  <_> )   |  \  ___/|   |  \  |  \___ \
-# \___  >____/|__|_|  /   __/ \____/|___|  /\___  >___|  /__| /____  >
-#     \/            \/|__|               \/     \/     \/          \/ 
-
-
-class com_Stairs:
+class Stairs:
 
     def __init__(self, downwards=True):
 
@@ -65,11 +50,12 @@ class com_Stairs:
             config.GAME.transition_previous()
 
 
-class com_Exitportal:
+class ExitPortal:
     def __init__(self):
-        self.OPENANIMATION = "S_END_GAME_PORTAL_OPENED"
-        self.CLOSEDANIMATION = "S_END_GAME_PORTAL_CLOSED"
+        self.open_animation = "S_END_GAME_PORTAL_OPENED"
+        self.end_animation = "S_END_GAME_PORTAL_CLOSED"
         self.open = False
+        self.owner = None
 
     def update(self):
 

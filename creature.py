@@ -20,6 +20,7 @@ class Creature:
         self.level = level
         self.xp_gained = xp_gained
         self.current_xp = current_xp
+        self.owner = None
 
     def move(self, dx, dy):
 

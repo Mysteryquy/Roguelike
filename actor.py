@@ -1,7 +1,7 @@
 import math
-import constants
-from item import Item
+
 import config
+import constants
 
 
 class Actor:

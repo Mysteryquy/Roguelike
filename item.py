@@ -10,6 +10,7 @@ class Item:
         self.use_function = use_function
         self.pickup_text = pickup_text
         self.container = None
+        self.owner = None
 
     ## Pick up this item
     def pick_up(self, actor):

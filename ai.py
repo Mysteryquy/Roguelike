@@ -1,13 +1,18 @@
-import tcod.path as path
 import tcod
 import constants
 import config
 import map
+import tcod
 
-class ai_Confuse:
+import config
+import constants
+import map
+
+
+class AiConfuse:
 
     def __init__(self, old_ai, num_turns):
-
+        self.owner = None
         self.old_ai = old_ai
         self.num_turns = num_turns
 
@@ -23,10 +28,11 @@ class ai_Confuse:
             config.GAME.game_message(self.owner.display_name + " has broken free!", constants.COLOR_GREEN)
 
 
-class ai_Chase:
+class AiChase:
     # A basic AI which chases the player and tries to bump into him
     # TODO Let the creature move around walls
-
+    def __init__(self):
+        self.owner = None
 
     def take_turn(self):
         monster = self.owner
@@ -45,7 +51,10 @@ class ai_Chase:
                 monster.move(0,-1)
 
 
-class ai_Flee:
+class AiFlee:
+
+    def __init__(self):
+        self.owner = None
 
     def take_turn(self):
         monster = self.owner
