@@ -2,36 +2,39 @@ import pygame
 import constants
 import config
 
+
 class Assets:
+
     def __init__(self):
         self.load_assets()
         self.volume_adjust()
 
     def load_assets(self):
         # Sprite sheets#
-        self.charspritesheet = Spritesheet("data/Reptiles.png")
-        self.enemyspritesheet = Spritesheet("data/ROFL.png")
-        self.scrollspritesheet = Spritesheet("data/Scroll.png")
-        self.reptile = Spritesheet("data/Reptile0.png")
-        self.flesh = Spritesheet("data/Flesh.png")
-        self.tile = Spritesheet("data/Tile.png")
-        self.rodent = Spritesheet("data/Rodent0.png")
-        self.tool = Spritesheet("data/Tool.png")
-        self.doors = Spritesheet("data/Door0.png")
+        self.charspritesheet = Spritesheet("data/sprites/Reptiles.png")
+        self.enemyspritesheet = Spritesheet("data/sprites/ROFL.png")
+        self.scrollspritesheet = Spritesheet("data/sprites/Scroll.png")
+        self.reptile = Spritesheet("data/sprites/Reptile0.png")
+        self.flesh = Spritesheet("data/sprites/Flesh.png")
+        self.tile = Spritesheet("data/sprites/Tile.png")
+        self.rodent = Spritesheet("data/sprites/Rodent0.png")
+        self.tool = Spritesheet("data/sprites/Tool.png")
+        self.doors = Spritesheet("data/sprites/Door0.png")
+        self.demon1 = Spritesheet("data/sprites/Demon1.png")
 
         # ANIMATIONS#
-        self.A_PLAYER = self.charspritesheet.get_animation("m", 5, 16, 16, 4, (32, 32))
+        self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
         self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
         self.A_SNAKE_01 = self.reptile.get_animation("d", 4, 16, 16, 2, (32, 32))
         self.A_SNAKE_02 = self.reptile.get_animation("a", 4, 16, 16, 2, (32, 32))
-        self.A_MOUSE_01 = self.rodent.get_animation("a", 2, 16, 16, 2, (32, 32))
+        self.A_MOUSE_01 = self.rodent.get_animation("a", 1, 16, 16, 2, (32, 32))
 
         # SPRITES#
-        self.S_WALL = pygame.image.load("data/wall2.jpg")
-        self.S_WALLEXPLORED = pygame.image.load("data/wallunseen2.png")
+        self.S_WALL = pygame.image.load("data/sprites/wall2.jpg")
+        self.S_WALLEXPLORED = pygame.image.load("data/sprites/wallunseen2.png")
 
-        self.S_FLOOR = pygame.image.load("data/floor.jpg")
-        self.S_FLOOREXPLORED = pygame.image.load("data/floorunseen2.png")
+        self.S_FLOOR = pygame.image.load("data/sprites/floor.jpg")
+        self.S_FLOOREXPLORED = pygame.image.load("data/sprites/floorunseen2.png")
 
         # FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
@@ -40,23 +43,23 @@ class Assets:
 
         ## ITEMS ##
         self.S_SWORD = [
-            pygame.transform.scale(pygame.image.load("data/sword.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+            pygame.transform.scale(pygame.image.load("data/sprites/sword.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
         self.S_SHIELD = [
-            pygame.transform.scale(pygame.image.load("data/shield.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
+            pygame.transform.scale(pygame.image.load("data/sprites/shield.png"), (constants.CELL_WIDTH, constants.CELL_HEIGHT))]
         self.S_SCROLL_01 = self.scrollspritesheet.get_image("a", 5, 16, 16, (32, 32))
         self.S_SCROLL_02 = self.scrollspritesheet.get_image("a", 2, 16, 16, (32, 32))
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
         self.S_FLESH_SNAKE = self.flesh.get_image("a", 3, 16, 16, (32, 32))
-        self.S_FLESH_EAT = self.flesh.get_image("a", 1, 16, 16, (32, 32))
+        self.S_FLESH_EAT = self.flesh.get_image("c", 0, 16, 16, (32, 32))
 
         ## SPECIAL ##
 
         self.S_STAIRS_DOWN = self.tile.get_image("a", 1, 16, 16, (32, 32))
         self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
-        self.MAIN_MENU_BACKGROUND = pygame.image.load("data/mm.png")
+        self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
                                                            (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
-        self.S_END_GAME_ITEM = self.tool.get_image("a", 1, 16, 16, (32, 32))
+        self.S_END_GAME_ITEM = self.tool.get_image("a", 0, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
 

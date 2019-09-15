@@ -23,18 +23,6 @@ import generator
 import render
 
 
-# a88888b. dP     dP   .d888888  888888ba   .88888.   88888888b dP         .88888.   .88888.
-# d8'   `88 88     88  d8'    88  88    `8b d8'   `88  88        88        d8'   `8b d8'   `88
-# 88        88aaaaa88a 88aaaaa88a 88     88 88        a88aaaa    88        88     88 88
-# 88        88     88  88     88  88     88 88   YP88  88        88        88     88 88   YP88
-# Y8.   .88 88     88  88     88  88     88 Y8.   .88  88        88        Y8.   .8P Y8.   .88
-# Y88888P' dP     dP  88     88  dP     dP  `88888'   88888888P 88888888P  `8888P'   `88888'
-# ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-
-
-# TODO :
-# Fonts wieder zurück in constants legen
-# Bei der draw_text funktion ein font argument einbauen
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -237,16 +225,14 @@ def game_initialize():
 
     pygame.key.set_repeat(200, 70)
 
-    #try:
+    # try:
     #   preferences_load()
-    #except:
+    # except:
     config.PREFERENCES = Preferences()
 
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
     # looks for resolution of the display of the user
-    info = pygame.display.Info()
-    screen_width, screen_height = info.current_w, info.current_h
 
     config.SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
 
@@ -254,7 +240,6 @@ def game_initialize():
         (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
 
     config.CAMERA = camera.Camera()
-
 
     config.ASSETS = assets.Assets()
 
@@ -398,8 +383,6 @@ def game_handle_keys():
     return "no-action"
 
 
-
-
 def game_new():
 
     config.PLAYER = generator.gen_player((0, 0))
@@ -454,7 +437,7 @@ def preferences_load():
 
 
 if __name__ == '__main__':
-    menu.menu_main(game_initialize,game_exit,game_load,game_new,game_main_loop,preferences_save)
+    menu.menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, preferences_save)
 
 #              .7
 #            .'/
