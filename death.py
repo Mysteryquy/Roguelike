@@ -11,10 +11,10 @@ def death_snake(monster):
     # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
     monster.animation = config.ASSETS.S_FLESH_SNAKE
     monster.animation_key = "S_FLESH_SNAKE"
+    monster.creature.get_xp()
     monster.creature = None
     monster.ai = None
     monster.depth = constants.DEPTH_CORPSE
-    creature.get_xp(PLAYER.creature)
 
 
 def death_mouse(mouse):

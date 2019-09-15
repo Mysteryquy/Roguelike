@@ -73,7 +73,7 @@ class Creature:
 
     def get_exp(self):
 
-        PLAYER.creature.current_xp = PLAYER.creature.current_xp + self.creature.xp_gained
+        config.PLAYER.creature.current_xp = config.PLAYER.creature.current_xp + self.creature.xp_gained
 
     def level_up_check(self):
 
