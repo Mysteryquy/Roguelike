@@ -6,7 +6,7 @@ import config
 
 class Actor:
 
-    def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, creature=None, ai=None, container=None,
+    def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, depth = 0, creature=None, ai=None, container=None,
                  item=None, equipment=None, stairs=None, state=None, exitportal=None):
         self.x = round(x)
         self.y = round(y)
@@ -14,6 +14,7 @@ class Actor:
         self.animation_key = animation_key
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
         self.animation_speed = animation_speed / 1.0  # in seconds
+        self.depth = depth
 
         # animation flicker speed
         self.flicker_speed = self.animation_speed / len(self.animation)
@@ -54,6 +55,8 @@ class Actor:
         self.exitportal = exitportal
         if self.exitportal:
             self.exitportal.owner = self
+
+
 
     @property
     def display_name(self):

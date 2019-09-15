@@ -1,6 +1,4 @@
-# 3rd party modules#3rd party modules
-# capital bruh
-
+# 3rd party modules
 import pygame
 import tcod
 import tcod.map

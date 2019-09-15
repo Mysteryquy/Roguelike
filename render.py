@@ -76,7 +76,7 @@ def draw_game():
     # draw the map
     draw_map(config.GAME.current_map)
 
-    for obj in config.GAME.current_objects:
+    for obj in sorted(config.GAME.current_objects, key = lambda obj: obj.depth, reverse = True):
         obj.draw()
 
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)

@@ -13,6 +13,7 @@ def death_snake(monster):
     monster.animation_key = "S_FLESH_SNAKE"
     monster.creature = None
     monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
 
 
 def death_mouse(mouse):
