@@ -2,16 +2,19 @@ import config
 import map
 import pygame
 import constants
+import tcod
 
 class Creature:
 
-    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None):
+    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70, base_evasion=0):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
         self.maxhp = hp
         self.hp = hp
         self.death_function = death_function
+        self.base_hit_chance = base_hit_chance
+        self.base_evasion = base_evasion
 
     def move(self, dx, dy):
 
@@ -21,11 +24,21 @@ class Creature:
 
         if target:
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-            self.attack(target)
+            self.attack_new(target)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx
             self.owner.y += dy
+
+    def attack_new(self, target):
+
+        chance_to_hit = self.base_hit_chance - target.creature.base_evasion
+
+        if (chance_to_hit + tcod.random_get_int(None, 1, 100)) >= 100:
+            self.attack(target)
+        else:
+            config.GAME.game_message(self.name_instance + " misses " + target.creature.name_instance)
+
 
     def attack(self, target):
 

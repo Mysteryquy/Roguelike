@@ -17,7 +17,7 @@ def gen_player(coords):
     print(coords)
 
     container_com = Container()
-    creature_com = Creature("SPIELER", base_atk=666,base_def=100, death_function=death.death_player)
+    creature_com = Creature("SPIELER", base_atk=666,base_def=100, death_function=death.death_player, base_evasion=20, base_hit_chance=100)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                        container=container_com)
 
@@ -168,7 +168,7 @@ def gen_snake_anaconda(coords):
 
     creature_name = tcod.namegen_generate("Celtic female")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack)
+    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=40, base_evasion=0)
     ai_com = ai.ai_Chase()
 
     snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com, ai=ai_com )
@@ -184,7 +184,7 @@ def gen_snake_cobra(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack)
+    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack, base_hit_chance=80, base_evasion=10)
     ai_com = ai.ai_Chase()
 
     snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com, ai=ai_com )
@@ -200,7 +200,7 @@ def gen_mouse(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack)
+    creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack, base_evasion=60)
     ai_com = ai.ai_Flee()
 
     item_com = Item(use_function=casting.cast_heal, value=2,pickup_text="Rat Carcass")
