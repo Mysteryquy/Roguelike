@@ -60,12 +60,13 @@ def menu_main(game_initialize,game_exit,game_load,game_new,game_main_loop,prefer
             game_initialize()
 
         if new_game_button.update(game_input):
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(config.ASSETS.music_lvl_1)
-            pygame.mixer.music.play(-1)
-            game_new()
-            game_main_loop()
-            game_initialize()
+            render.text_box()
+            #pygame.mixer.music.stop()
+            #pygame.mixer.music.load(config.ASSETS.music_lvl_1)
+            #pygame.mixer.music.play(-1)
+            #game_new()
+            #game_main_loop()
+            #game_initialize()
 
         if options_button.update(game_input):
             menu_main_options(game_exit,preferences_save)
@@ -375,3 +376,61 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
         # tick the CLOCK
         config.CLOCK.tick(constants.GAME_FPS)
+
+
+def text_box():
+    screen = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+    font = pygame.font.Font(None, 32)
+    clock = pygame.time.Clock()
+    input_box = pygame.Rect(100, 100, 140, 32)
+    color_inactive = pygame.Color('lightskyblue3')
+    color_active = pygame.Color('dodgerblue2')
+    color = color_inactive
+    active = False
+    text = ''
+    done = False
+
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current color of the input box.
+                color = color_active if active else color_inactive
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        #print(text)
+                        text = creature.player_name_input
+                        text = ''
+                        pygame.mixer.music.stop()
+                        pygame.mixer.music.load(config.ASSETS.music_lvl_1)
+                        pygame.mixer.music.play(-1)
+                        game_new()
+                        game_main_loop()
+                        game_initialize()
+
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
+        screen.fill((30, 30, 30))
+        # Render the current text.
+        txt_surface = font.render(text, True, color)
+        # Resize the box if the text is too long.
+        width = max(200, txt_surface.get_width()+10)
+        input_box.w = width
+        # Blit the text.
+        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+        # Blit the input_box rect.
+        pygame.draw.rect(screen, color, input_box, 2)
+
+        pygame.display.flip()
+        clock.tick(30)

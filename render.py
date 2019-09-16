@@ -151,3 +151,5 @@ def draw_messages():
         draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
 
         i += 1
+
+
