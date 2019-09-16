@@ -1,9 +1,8 @@
-import menu
+import ai
 import config
 import constants
-import ai
-import render
 import map
+import menu
 
 
 def cast_heal(caster, value):

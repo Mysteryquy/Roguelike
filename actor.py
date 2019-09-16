@@ -1,7 +1,7 @@
 import math
-import constants
-from item import Item
+
 import config
+import constants
 
 
 class Actor:
@@ -40,9 +40,6 @@ class Actor:
         self.equipment = equipment
         if self.equipment:
             self.equipment.owner = self
-
-            self.item = Item()
-            self.item.owner = self
 
         self.stairs = stairs
         if self.stairs:

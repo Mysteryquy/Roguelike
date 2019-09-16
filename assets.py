@@ -6,10 +6,6 @@ import config
 class Assets:
 
     def __init__(self):
-        self.load_assets()
-        self.volume_adjust()
-
-    def load_assets(self):
         # Sprite sheets#
         self.charspritesheet = Spritesheet("data/sprites/Reptiles.png")
         self.enemyspritesheet = Spritesheet("data/sprites/ROFL.png")
@@ -101,6 +97,10 @@ class Assets:
         self.snd_hit_3 = self.sound_add("data/audio/hit_hurt3.wav")
 
         self.snd_list_hit = [self.snd_hit_1, self.snd_hit_2, self.snd_hit_3]
+
+        self.volume_adjust()
+
+
 
     def sound_add(self, file_address):
         new_sound = pygame.mixer.Sound(file_address)

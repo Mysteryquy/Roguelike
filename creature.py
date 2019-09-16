@@ -8,7 +8,7 @@ import tcod
 class Creature:
 
     def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70,
-                 base_evasion=0, level=1, xp_gained=0, current_xp=0, player_name_input = "Default"):
+                 base_evasion=0, level=1, xp_gained=0, current_xp=0):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -20,7 +20,6 @@ class Creature:
         self.level = level
         self.xp_gained = xp_gained
         self.current_xp = current_xp
-        self.player_name_input = player_name_input
 
     def move(self, dx, dy):
 
