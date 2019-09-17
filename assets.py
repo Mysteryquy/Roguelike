@@ -17,6 +17,7 @@ class Assets:
         self.tool = Spritesheet("data/sprites/Tool.png")
         self.doors = Spritesheet("data/sprites/Door0.png")
         self.demon1 = Spritesheet("data/sprites/Demon1.png")
+        self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
         # ANIMATIONS#
         self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
@@ -49,6 +50,9 @@ class Assets:
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
         self.S_FLESH_SNAKE = self.flesh.get_image("a", 3, 16, 16, (32, 32))
         self.S_FLESH_EAT = self.flesh.get_image("c", 0, 16, 16, (32, 32))
+        self.S_DEAD_SLIME = self.ground0.get_image("c", 5, 16, 16, (32, 32))
+        self.S_FLESH_SPIDER = self.flesh.get_image("a", 5, 16, 16, (32, 32))
+        self.S_FLESH_WORM = self.flesh.get_image("d", 0, 16, 16, (32, 32))
 
         ## SPECIAL ##
 
@@ -75,6 +79,9 @@ class Assets:
             "S_SCROLL_02": self.S_SCROLL_02,
             "S_SCROLL_03": self.S_SCROLL_03,
             "S_FLESH_SNAKE": self.S_FLESH_SNAKE,
+            "S_DEAD_SLIME" : self.S_DEAD_SLIME,
+            "S_FLESH_SPIDER" : self.S_FLESH_SPIDER,
+            "S_FLESH_WORM" : self.S_FLESH_WORM,
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
             "S_STAIRS_UP": self.S_STAIRS_UP,

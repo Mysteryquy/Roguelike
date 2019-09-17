@@ -19,7 +19,6 @@ def death_snake(monster, killer):
     monster.depth = constants.DEPTH_CORPSE
 
 
-
 def death_mouse(mouse, killer):
     # On death, most monsters stop moving tho
     config.GAME.game_message(mouse.creature.name_instance + " is killed. Eat it to heal up a bit!",
@@ -63,3 +62,60 @@ def death_player(player, killer):
     pygame.mixer.music.play()
 
     pygame.time.wait(12000)
+
+
+def death_slime(monster, killer):
+    # On death, most monsters stop moving tho
+    config.GAME.game_message(monster.creature.name_instance + " falls together in itself and leaves an slimey mess behind!",
+                             constants.COLOR_GREY)
+
+    monster.animation = config.ASSETS.S_DEAD_SLIME
+    monster.animation_key = "S_DEAD_SLIME"
+    killer.get_xp(monster.creature.xp_gained)
+    monster.creature = None
+    monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
+
+
+def death_spider(monster, killer):
+
+    config.GAME.game_message(monster.creature.name_instance + " is smashed to a bloody mess!",
+                             constants.COLOR_GREY)
+
+    monster.animation = config.ASSETS.S_FLESH_SPIDER
+    monster.animation_key = "S_FLESH_SPIDER"
+    killer.get_xp(monster.creature.xp_gained)
+    monster.creature = None
+    monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
+
+
+def death_worm(monster, killer,):
+
+    monster.animation = config.ASSETS.S_FLESH_WORM
+    monster.animation_key = "S_FLESH_WORM"
+    killer.get_xp(monster.creature.xp_gained)
+    monster.creature = None
+    monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
+    chance = tcod.random_get_int(None, 1, 3)
+    if chance < 2:
+        coords = self.x, self.y
+        monster.gen_pest_worm(coords)
+        config.GAME.game_message(monster.creature.name_instance + " has halved and its other half came to life!", constants.COLOR_GREY)
+    else:
+        config.GAME.game_message(monster.creature.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
+
+
+def death_humanoid(monster, killer):
+
+
+    config.GAME.game_message(monster.creature.name_instance + " is dead!",
+                             constants.COLOR_GREY)
+
+    monster.animation = config.ASSETS.S_FLESH_SPIDER # TODO: GIMME THAT FUCKING UPPER LEFT FLESH PICTURE PLS
+    monster.animation_key = "S_FLESH_SPIDER" # TODO: GIMME THAT FUCKING UPPER LEFT FLESH PICTURE PLS
+    killer.get_xp(monster.creature.xp_gained)
+    monster.creature = None
+    monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
