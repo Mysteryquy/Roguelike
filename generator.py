@@ -13,12 +13,12 @@ from equipment import Equipment
 
 
 ##PLAYER##
-def gen_player(coords):
+def gen_player(coords,player_name="Player"):
     x, y = coords
     print(coords)
 
     container_com = Container()
-    creature_com = Creature("SPIELER", base_atk=666, base_def=100, death_function=death.death_player, base_evasion=20,
+    creature_com = Creature(player_name, base_atk=666, base_def=100, death_function=death.death_player, base_evasion=20,
                             base_hit_chance=100)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                    container=container_com)

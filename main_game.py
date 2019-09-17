@@ -331,8 +331,8 @@ def game_handle_keys(player):
     return "no-action"
 
 
-def game_new():
-    config.PLAYER = generator.gen_player((0, 0))
+def game_new(player_name="Player"):
+    config.PLAYER = generator.gen_player((0, 0),player_name=player_name)
     # starts a nre game and map
     config.GAME = Game()
     config.GAME.current_objects.append(config.PLAYER)

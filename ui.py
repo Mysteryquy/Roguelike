@@ -60,8 +60,6 @@ class Button:
         draw_text(self.surface, self.button_text, self.center_coords, self.c_c_text, center=True)
 
 
-
-
 class Slider:
 
     def __init__(self, surface, size, center_coords, bg_color, fg_color, parameter_value):
@@ -100,3 +98,48 @@ class Slider:
         pygame.draw.rect(self.surface, self.fg_color, self.fg_rect)
         pygame.draw.rect(self.surface, constants.COLOR_BLACK, self.grip_tab)
 
+
+class Textfield:
+
+    def __init__(self,
+                 surface,
+                 rect,
+                 color_inactive,
+                 color_active,
+                 text_color,
+                 font=pygame.font.Font(None, 32)
+                 ):
+
+        self.rect = rect
+        self.surface = surface
+        self.color_inactive = color_inactive
+        self.color_active = color_active
+        self.font = font
+        self.text_color = text_color
+        self.color = color_inactive
+        self.active = False
+        self.text = ""
+
+    def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                if self.rect.collidepoint(x, y):
+                    self.active = not self.active
+                else:
+                    self.active = False
+                self.color = self.color_active if self.active else self.color_inactive
+            if event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_RETURN:
+                        return True
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                    else:
+                        self.text += event.unicode
+
+        return False
+
+    def draw(self):
+        pygame.draw.rect(self.surface, self.color, self.rect)
+        draw_text(self.surface, self.text, (self.rect.x +3,self.rect.y), self.text_color)
