@@ -24,7 +24,7 @@ def gen_snake_anaconda(coords):
                             )
     ai_com = ai.AiChase()
 
-    snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com,
+    snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_ANACONDA", depth=constants.DEPTH_CREATURE, creature=creature_com,
                   ai=ai_com)
 
     return snake
@@ -44,7 +44,7 @@ def gen_snake_cobra(coords):
                             dead_animation_key="S_FLESH_SNAKE")
     ai_com = ai.AiChase()
 
-    snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com,
+    snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_COBRA", depth=constants.DEPTH_CREATURE, creature=creature_com,
                   ai=ai_com)
 
     return snake
