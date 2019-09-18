@@ -19,12 +19,16 @@ class Assets:
         self.demon1 = Spritesheet("data/sprites/Demon1.png")
         self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
+
         # ANIMATIONS#
-        self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
+        #self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
+        self.A_PLAYER = get_animation_from_files(0,0,"TILESETS/Characters/Elemental",num_sprites=2)
         self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
         self.A_SNAKE_01 = self.reptile.get_animation("d", 4, 16, 16, 2, (32, 32))
         self.A_SNAKE_02 = self.reptile.get_animation("a", 4, 16, 16, 2, (32, 32))
         self.A_MOUSE_01 = self.rodent.get_animation("a", 1, 16, 16, 2, (32, 32))
+
+
 
         # SPRITES#
         self.S_WALL = pygame.image.load("data/sprites/wall2.jpg")
@@ -123,6 +127,34 @@ class Assets:
         pygame.mixer.music.set_volume(config.PREFERENCES.vol_music)
 
 
+def get_animation_from_files(column, row, file_prefix,
+                             width=constants.SPRITE_WIDTH, height = constants.SPRITE_HEIGHT, num_sprites=2,
+                             scale=(constants.CELL_WIDTH,constants.CELL_HEIGHT)):
+
+    image_list = []
+
+    for i in range(num_sprites):
+        # Create blank image
+        image = pygame.Surface([width, height]).convert()
+
+        sprite_sheet = pygame.image.load(file_prefix + str(i) + ".png")
+
+        image.blit(sprite_sheet, (0,0), (column*width, row*height, width, height))
+
+        # set transparency to black
+        image.set_colorkey(constants.COLOR_BLACK)
+
+        if scale:
+            (new_w, new_h) = scale
+            image = pygame.transform.scale(image, (new_w, new_h))
+
+        image_list.append(image)
+
+    return image_list
+
+
+
+
 class Spritesheet:  # Bilder von Spritesheets holen
 
     tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
@@ -133,6 +165,8 @@ class Spritesheet:  # Bilder von Spritesheets holen
         self.sprite_sheet = pygame.image.load(file_name).convert()
 
         ###############
+
+
 
     def get_image(self, column, row, width=constants.CELL_WIDTH, height=constants.CELL_HEIGHT, scale=None):
 
@@ -175,3 +209,5 @@ class Spritesheet:  # Bilder von Spritesheets holen
             image_list.append(image)
 
         return image_list
+
+
