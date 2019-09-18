@@ -22,7 +22,7 @@ class Assets:
 
         # ANIMATIONS#
         #self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
-        self.A_PLAYER = get_animation_from_files(0,0,"TILESETS/Characters/Elemental",num_sprites=2)
+        self.A_PLAYER = get_animation_from_files(1,3,"TILESETS/Characters/Elemental",num_sprites=2)
         self.A_ENEMY = self.enemyspritesheet.get_animation("k", 1, 16, 16, 2, (32, 32))
         self.A_SNAKE_01 = self.reptile.get_animation("d", 4, 16, 16, 2, (32, 32))
         self.A_SNAKE_02 = self.reptile.get_animation("a", 4, 16, 16, 2, (32, 32))

@@ -10,7 +10,7 @@ import casting
 import ai
 import constants
 from equipment import Equipment
-import monster
+import monster_death
 
 
 ##PLAYER##
@@ -19,7 +19,7 @@ def gen_player(coords,player_name="Player"):
     print(coords)
 
     container_com = Container()
-    creature_com = Creature(player_name, base_atk=666, base_def=100, death_function=death.death_player, base_evasion=20,
+    creature_com = Creature(player_name, base_atk=666, base_def=100, custom_death=death.death_player, base_evasion=20,
                             base_hit_chance=100)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                    container=container_com)
@@ -153,15 +153,27 @@ def gen_armor_shield(coords):
 
 ## ENEMYS ##
 
+
+gen_monster_dict = {
+    0: monster_death.gen_snake_anaconda,
+    1: monster_death.gen_mouse,
+    2: monster_death.gen_pest_worm,
+    3: monster_death.gen_critter_dog,
+    4: monster_death.gen_snake_cobra,
+    5: monster_death.gen_pest_snail,
+    6: monster_death.gen_slime_small
+}
+
+
+
+
 def gen_enemy(coords):
-    random_number = tcod.random_get_int(None, 0, 100)
+    random_number = tcod.random_get_int(None, 0, 200)
 
-    if random_number <= 15:
-        new_enemy = monster.gen_snake_anaconda(coords)
 
-    elif random_number <= 50:
-        new_enemy = monster.gen_mouse(coords)
-    else:
-        new_enemy = monster.gen_snake_cobra(coords)
+    gen_function = monster_death.gen_pest_worm
+    #gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
+
+    new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
