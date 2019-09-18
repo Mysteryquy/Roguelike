@@ -125,7 +125,6 @@ class Creature:
         if self.dead_animation:
             self.owner.animation = self.dead_animation
             self.owner.animation_key = self.dead_animation_key
-        self.owner.animation_key = "S_FLESH_SNAKE"
         killer.get_xp(self.xp_gained)
         self.owner.depth = constants.DEPTH_CORPSE
         if self.custom_death:
