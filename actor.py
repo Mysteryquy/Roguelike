@@ -134,3 +134,8 @@ class Actor:
     def animation_init(self):
 
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
+
+
+    def destroy(self):
+        self.creature = None
+        self.ai = None

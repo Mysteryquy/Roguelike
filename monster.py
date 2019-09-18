@@ -1,4 +1,12 @@
-
+import tcod
+from creature import Creature
+import death
+import constants
+import ai
+from actor import Actor
+import casting
+from item import Item
+import config
 
 
 
@@ -11,8 +19,11 @@ def gen_snake_anaconda(coords):
 
     creature_name = tcod.namegen_generate("Celtic female")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
-                            base_hit_chance=40, base_evasion=0, xp_gained=300)
+    creature_com = Creature(creature_name, death_function=None, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=40, base_evasion=0, xp_gained=300,
+                            dead_animation=config.ASSETS.S_FLESH_SNAKE,
+                            dead_animation_key = "S_FLESH_SNAKE"
+    )
     ai_com = ai.AiChase()
 
     snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com,
@@ -29,8 +40,10 @@ def gen_snake_cobra(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
-                            base_hit_chance=80, base_evasion=10, xp_gained=300)
+    creature_com = Creature(creature_name, death_function=None, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=80, base_evasion=10, xp_gained=300,
+                            dead_animation=config.ASSETS.S_FLESH_SNAKE,
+                            dead_animation_key ="S_FLESH_SNAKE")
     ai_com = ai.AiChase()
 
     snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com,
@@ -47,8 +60,10 @@ def gen_mouse(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack,
-                            base_evasion=60)
+    creature_com = Creature(creature_name, death_function=None, hp=max_health, base_atk=base_attack,
+                            base_evasion=60,
+                            dead_animation=config.ASSETS.S_FLESH_EAT,
+                            dead_animation_key="S_FLESH_EAT")
     ai_com = ai.AiFlee()
 
     item_com = Item(use_function=casting.cast_heal, value=2, pickup_text="Rat Carcass")

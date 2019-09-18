@@ -8,7 +8,9 @@ import tcod
 class Creature:
 
     def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, death_function=None, base_hit_chance=70,
-                 base_evasion=0, level=1, xp_gained=0, current_xp=0):
+                 base_evasion=0, level=1, xp_gained=0, current_xp=0, custom_death=None, death_text = " died horribly",
+                 dead_animation = None,
+                 dead_animation_key = None):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -20,6 +22,11 @@ class Creature:
         self.level = level
         self.xp_gained = xp_gained
         self.current_xp = current_xp
+        self.owner = None
+        self.custom_death = custom_death
+        self.death_text = death_text
+        self.dead_animation = dead_animation
+        self.dead_animation_key = dead_animation_key
 
     def move(self, dx, dy):
 
@@ -62,9 +69,7 @@ class Creature:
                                  constants.COLOR_RED)
 
         if self.hp <= 0:
-
-            if self.death_function is not None:
-                self.death_function(self.owner, attacker)
+            self.death(attacker)
 
     def heal(self, value):
 
@@ -112,3 +117,18 @@ class Creature:
                     total_defense += bonus
 
         return total_defense
+
+    def death(self, killer):
+        if self.death_text:
+            config.GAME.game_message(self.name_instance + self.death_text,
+                                     constants.COLOR_GREY)
+        # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
+        if self.dead_animation:
+            self.owner.animation = self.dead_animation
+            self.owner.animation_key = self.dead_animation_key
+        self.owner.animation_key = "S_FLESH_SNAKE"
+        killer.get_xp(self.xp_gained)
+        self.owner.depth = constants.DEPTH_CORPSE
+        if self.custom_death:
+            self.custom_death(self, killer)
+        self.owner.destroy()

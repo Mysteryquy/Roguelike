@@ -10,6 +10,7 @@ import casting
 import ai
 import constants
 from equipment import Equipment
+import monster
 
 
 ##PLAYER##
@@ -156,68 +157,11 @@ def gen_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 100)
 
     if random_number <= 15:
-        new_enemy = gen_snake_anaconda(coords)
+        new_enemy = monster.gen_snake_anaconda(coords)
 
     elif random_number <= 50:
-        new_enemy = gen_mouse(coords)
-
+        new_enemy = monster.gen_mouse(coords)
     else:
-        new_enemy = gen_snake_cobra(coords)
+        new_enemy = monster.gen_snake_cobra(coords)
 
     config.GAME.current_objects.append(new_enemy)
-
-
-def gen_snake_anaconda(coords):
-    x, y = coords
-
-    max_health = tcod.random_get_int(None, 15, 20)
-    base_attack = tcod.random_get_int(None, 3, 6)
-
-    creature_name = tcod.namegen_generate("Celtic female")
-
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
-                            base_hit_chance=40, base_evasion=0, xp_gained=300)
-    ai_com = ai.AiChase()
-
-    snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_01", depth=constants.DEPTH_CREATURE, creature=creature_com,
-                  ai=ai_com)
-
-    return snake
-
-
-def gen_snake_cobra(coords):
-    x, y = coords
-
-    max_health = tcod.random_get_int(None, 5, 10)
-    base_attack = tcod.random_get_int(None, 1, 3)
-
-    creature_name = tcod.namegen_generate("Celtic male")
-
-    creature_com = Creature(creature_name, death_function=death.death_snake, hp=max_health, base_atk=base_attack,
-                            base_hit_chance=80, base_evasion=10, xp_gained=300)
-    ai_com = ai.AiChase()
-
-    snake = Actor(x, y, "Cobra", animation_key="A_SNAKE_02", depth=constants.DEPTH_CREATURE, creature=creature_com,
-                  ai=ai_com)
-
-    return snake
-
-
-def gen_mouse(coords):
-    x, y = coords
-
-    max_health = 1
-    base_attack = 0
-
-    creature_name = tcod.namegen_generate("Celtic male")
-
-    creature_com = Creature(creature_name, death_function=death.death_mouse, hp=max_health, base_atk=base_attack,
-                            base_evasion=60)
-    ai_com = ai.AiFlee()
-
-    item_com = Item(use_function=casting.cast_heal, value=2, pickup_text="Rat Carcass")
-
-    mouse = Actor(x, y, "Mouse", animation_key="A_MOUSE_01", depth=constants.DEPTH_CREATURE, creature=creature_com,
-                  ai=ai_com, item=item_com)
-
-    return mouse

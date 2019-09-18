@@ -4,30 +4,9 @@ import render
 import os
 import pygame
 import datetime
+import tcod
 
 
-def death_snake(monster, killer):
-    # On death, most monsters stop moving tho
-    config.GAME.game_message(monster.creature.name_instance + " is slaughtered into ugly bits of flesh!",
-                             constants.COLOR_GREY)
-    # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
-    monster.animation = config.ASSETS.S_FLESH_SNAKE
-    monster.animation_key = "S_FLESH_SNAKE"
-    killer.get_xp(monster.creature.xp_gained)
-    monster.creature = None
-    monster.ai = None
-    monster.depth = constants.DEPTH_CORPSE
-
-
-def death_mouse(mouse, killer):
-    # On death, most monsters stop moving tho
-    config.GAME.game_message(mouse.creature.name_instance + " is killed. Eat it to heal up a bit!",
-                             constants.COLOR_GREY)
-    # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
-    mouse.animation = config.ASSETS.S_FLESH_EAT
-    mouse.animation_key = "S_FLESH_EAT"
-    mouse.creature = None
-    mouse.ai = None
 
 
 def death_player(player, killer):
@@ -85,6 +64,7 @@ def death_spider(monster, killer):
     monster.animation = config.ASSETS.S_FLESH_SPIDER
     monster.animation_key = "S_FLESH_SPIDER"
     killer.get_xp(monster.creature.xp_gained)
+
     monster.creature = None
     monster.ai = None
     monster.depth = constants.DEPTH_CORPSE
@@ -95,17 +75,18 @@ def death_worm(monster, killer,):
     monster.animation = config.ASSETS.S_FLESH_WORM
     monster.animation_key = "S_FLESH_WORM"
     killer.get_xp(monster.creature.xp_gained)
-    monster.creature = None
-    monster.ai = None
-    monster.depth = constants.DEPTH_CORPSE
+
     chance = tcod.random_get_int(None, 1, 3)
     if chance < 2:
-        coords = self.x, self.y
+        coords = monster.x, monster.y
         monster.gen_pest_worm(coords)
         config.GAME.game_message(monster.creature.name_instance + " has halved and its other half came to life!", constants.COLOR_GREY)
     else:
         config.GAME.game_message(monster.creature.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
 
+    monster.creature = None
+    monster.ai = None
+    monster.depth = constants.DEPTH_CORPSE
 
 def death_humanoid(monster, killer):
 
