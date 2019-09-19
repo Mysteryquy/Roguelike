@@ -83,7 +83,7 @@ class Assets:
             "A_SNAKE_COBRA": self.A_SNAKE_COBRA,
             "A_RODENT_MOUSE": self.A_RODENT_MOUSE,
             "A_SLIME_SMALL" : self.A_SLIME_SMALL,
-            "A_DOD_DOG" : self.A_DOG_DOG,
+            "A_DOG_DOG" : self.A_DOG_DOG,
             "A_SNAIL" : self.A_SNAIL,
             "A_PEST_SMALL_SPIDER" : self.A_PEST_SMALL_SPIDER,
             "A_PEST_SMALL_SCORPION" : self.A_PEST_SMALL_SCORPION,
