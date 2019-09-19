@@ -10,7 +10,7 @@ import casting
 import ai
 import constants
 from equipment import Equipment
-import monster_death
+import monster_gen
 
 
 ##PLAYER##
@@ -155,14 +155,14 @@ def gen_armor_shield(coords):
 
 
 gen_monster_dict = {
-    0: monster_death.gen_reptile_anaconda,
-    1: monster_death.gen_rodent_mouse,
-    2: monster_death.gen_pest_worm,
-    3: monster_death.gen_dog_dog,
-    4: monster_death.gen_reptile_cobra,
-    5: monster_death.gen_pest_snail,
-    6: monster_death.gen_slime_small,
-    7: monster_death.gen_pest_small_spider
+    0: monster_gen.gen_reptile_anaconda,
+    1: monster_gen.gen_rodent_mouse,
+    2: monster_gen.gen_pest_worm,
+    3: monster_gen.gen_dog_dog,
+    4: monster_gen.gen_reptile_cobra,
+    5: monster_gen.gen_pest_snail,
+    6: monster_gen.gen_slime_small,
+    7: monster_gen.gen_pest_small_spider
 }
 
 

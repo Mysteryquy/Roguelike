@@ -84,7 +84,8 @@ def gen_slime_small(coords):
     creature_name = tcod.namegen_generate("Celtic male")
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation= config.ASSETS.S_DEAD_SLIME, dead_animation_key="S_DEAD_SLIME")
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation=config.ASSETS.S_DEAD_SLIME, dead_animation_key="S_DEAD_SLIME")
     ai_com = ai.AiChase()
 
     small_slime = Actor(x, y, "Small slime", animation_key="A_SLIME_SMALL", depth=constants.DEPTH_CREATURE,
@@ -108,7 +109,9 @@ def gen_dog_dog(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted)
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation=config.ASSETS.S_FLESH_DOG,
+                            dead_animation_key="S_FLESH_DOG")
     ai_com = ai.AiChase()
 
     dog = Actor(x, y, "Dog", animation_key="A_DOG_DOG", depth=constants.DEPTH_CREATURE,
@@ -132,7 +135,9 @@ def gen_pest_snail(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted)
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation=config.ASSETS.S_FLESH_SNAIL,
+                            dead_animation_key="S_FLESH_SNAIL")
     ai_com = ai.AiChase()
 
     snail = Actor(x, y, "Snail", animation_key="A_SNAIL", depth=constants.DEPTH_CREATURE,

@@ -65,6 +65,8 @@ class Assets:
         self.S_FLESH_SPIDER = get_animation_from_files(2, 1, "TILESETS/Items/Flesh", num_sprites=1)
         self.S_FLESH_WORM = get_animation_from_files(2, 3, "TILESETS/Items/Flesh", num_sprites=1)
         self.S_FLESH_NORMAL = get_animation_from_files(0, 0, "TILESETS/Items/Flesh", num_sprites=1)
+        self.S_FLESH_DOG = get_animation_from_files(7,0, "TILESETS/Items/Flesh", num_sprites=1)
+        self.S_FLESH_SNAIL = get_animation_from_files(2,3,"TILESETS/Items/Flesh", num_sprites=1)
 
         ## SPECIAL ##
 
@@ -102,6 +104,8 @@ class Assets:
             "S_FLESH_SPIDER" : self.S_FLESH_SPIDER,
             "S_FLESH_WORM" : self.S_FLESH_WORM,
             "S_FLESH_NORMAL" : self.S_FLESH_NORMAL,
+            "S_FLESH_DOG": self.S_FLESH_DOG,
+            "S_FLESH_SNAIL": self.S_FLESH_SNAIL,
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
             "S_STAIRS_UP": self.S_STAIRS_UP,

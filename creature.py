@@ -26,6 +26,7 @@ class Creature:
         self.death_text = death_text
         self.dead_animation = dead_animation
         self.dead_animation_key = dead_animation_key
+        self.dead = False
 
     def move(self, dx, dy):
 
@@ -129,4 +130,5 @@ class Creature:
         self.owner.depth = constants.DEPTH_CORPSE
         if self.custom_death:
             self.custom_death(self, killer)
+        self.dead = True
         self.owner.destroy()

@@ -5,7 +5,7 @@ import os
 import pygame
 import datetime
 import tcod
-import monster_death
+import monster_gen
 
 
 
@@ -52,7 +52,7 @@ def death_worm(monster, killer,):
     if chance < 2:
 
         coords = monster.owner.x, monster.owner.y
-        new_mob = monster_death.gen_pest_worm(coords)
+        new_mob = monster_gen.gen_pest_worm(coords)
         config.GAME.current_objects.append(new_mob)
         config.GAME.game_message(monster.name_instance + " has halved and its other half came to life!", msg_color=constants.COLOR_RED)
     else:

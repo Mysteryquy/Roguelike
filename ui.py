@@ -101,13 +101,15 @@ class Slider:
 
 class Textfield:
 
-    def __init__(self,
-                 surface,
+    def __init__(self, surface,
                  rect,
                  color_inactive,
                  color_active,
                  text_color,
-                 font=pygame.font.Font(None, 32)
+                 font=pygame.font.Font(None, 32),
+                 auto_active=False,
+                 start_text=None,
+                 focus_enter=False
                  ):
 
         self.rect = rect
@@ -116,9 +118,11 @@ class Textfield:
         self.color_active = color_active
         self.font = font
         self.text_color = text_color
-        self.color = color_inactive
-        self.active = False
-        self.text = ""
+        self.active = auto_active
+        self.color = color_active if self.active else color_inactive
+        self.start_text = start_text
+        self.text = self.start_text if self.start_text else ""
+        self.focus_enter = focus_enter
 
     def update(self):
         for event in pygame.event.get():
@@ -136,10 +140,14 @@ class Textfield:
                     elif event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
                     else:
+                        if self.start_text and self.text == self.start_text:
+                            self.text=""
                         self.text += event.unicode
-
+                elif event.key == pygame.K_RETURN and self.focus_enter:
+                    self.active = True
+                    self.color = self.color_active
         return False
 
     def draw(self):
         pygame.draw.rect(self.surface, self.color, self.rect)
-        draw_text(self.surface, self.text, (self.rect.x +3,self.rect.y), self.text_color)
+        draw_text(self.surface, self.text, (self.rect.x + 3, self.rect.y), self.text_color)

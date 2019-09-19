@@ -90,8 +90,10 @@ DEPTH_STRUCTURES = 101
 
 #xp related stuff
 XP_NEEDED = {
-    1: 400,
-    2: 600,
-    3: 1000
+    1: 300,
+    2: 700,
+    3: 1200,
+    4: 1800,
+    5: 2500,
 }
-MAX_LEVEL = 3
+MAX_LEVEL = max(XP_NEEDED.keys())
