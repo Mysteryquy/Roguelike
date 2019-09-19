@@ -155,13 +155,14 @@ def gen_armor_shield(coords):
 
 
 gen_monster_dict = {
-    0: monster_death.gen_snake_anaconda,
-    1: monster_death.gen_mouse,
+    0: monster_death.gen_reptile_anaconda,
+    1: monster_death.gen_rodent_mouse,
     2: monster_death.gen_pest_worm,
-    3: monster_death.gen_critter_dog,
-    4: monster_death.gen_snake_cobra,
+    3: monster_death.gen_dog_dog,
+    4: monster_death.gen_reptile_cobra,
     5: monster_death.gen_pest_snail,
-    6: monster_death.gen_slime_small
+    6: monster_death.gen_slime_small,
+    7: monster_death.gen_pest_small_spider
 }
 
 
@@ -171,7 +172,7 @@ def gen_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
 
-    gen_function = monster_death.gen_snake_cobra
+    gen_function = monster_death.gen_slime_small
     #gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
 
     new_enemy = gen_function(coords)

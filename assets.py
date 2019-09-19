@@ -22,10 +22,18 @@ class Assets:
 
         # ANIMATIONS#
         #self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
-        self.A_PLAYER = get_animation_from_files(1,3,"TILESETS/Characters/Elemental",num_sprites=2)
+        self.A_PLAYER = get_animation_from_files(1,7,"TILESETS/Characters/Player",num_sprites=2)
         self.A_SNAKE_ANACONDA = get_animation_from_files(2,4,"TILESETS/Characters/Reptile",num_sprites=2)
         self.A_SNAKE_COBRA = get_animation_from_files(5,4,"TILESETS/Characters/Reptile",num_sprites=2)
-        self.A_MOUSE_01 = self.rodent.get_animation("a", 1, 16, 16, 2, (32, 32))
+        self.A_RODENT_MOUSE = get_animation_from_files(0,1,"TILESETS/Characters/Rodent",num_sprites=2)
+        self.A_SLIME_SMALL = get_animation_from_files(0, 4, "TILESETS/Characters/Slime", num_sprites=2)
+        self.A_DOG_DOG = get_animation_from_files(0, 3, "TILESETS/Characters/Dog", num_sprites=2)
+        self.A_SNAIL = get_animation_from_files(1, 7, "TILESETS/Characters/Pest", num_sprites=2)
+        self.A_PEST_SMALL_SPIDER = get_animation_from_files(1, 2, "TILESETS/Characters/Pest", num_sprites=2)
+        self.A_PEST_SMALL_SCORPION = get_animation_from_files(4, 2, "TILESETS/Characters/Pest", num_sprites=2)
+        self.A_PEST_WORM = get_animation_from_files(0, 3, "TILESETS/Characters/Pest", num_sprites=2)
+        self.A_HUMANOID_GOBLIN = get_animation_from_files(0, 8, "TILESETS/Characters/Humanoid", num_sprites=2)
+        self.A_MISC_MONKEY = get_animation_from_files(0, 3, "TILESETS/Characters/Misc", num_sprites=2)
 
 
 
@@ -53,9 +61,10 @@ class Assets:
         self.S_SCROLL_03 = self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32))
         self.S_FLESH_SNAKE = self.flesh.get_image("a", 3, 16, 16, (32, 32))
         self.S_FLESH_EAT = self.flesh.get_image("c", 0, 16, 16, (32, 32))
-        self.S_DEAD_SLIME = self.ground0.get_image("c", 5, 16, 16, (32, 32))
-        self.S_FLESH_SPIDER = self.flesh.get_image("a", 5, 16, 16, (32, 32))
-        self.S_FLESH_WORM = self.flesh.get_image("d", 0, 16, 16, (32, 32))
+        self.S_DEAD_SLIME = get_animation_from_files(2, 5, "TILESETS/Objects/Ground", num_sprites=1)
+        self.S_FLESH_SPIDER = get_animation_from_files(2, 1, "TILESETS/Items/Flesh", num_sprites=1)
+        self.S_FLESH_WORM = get_animation_from_files(2, 3, "TILESETS/Items/Flesh", num_sprites=1)
+        self.S_FLESH_NORMAL = get_animation_from_files(0, 0, "TILESETS/Items/Flesh", num_sprites=1)
 
         ## SPECIAL ##
 
@@ -72,7 +81,15 @@ class Assets:
             "A_PLAYER": self.A_PLAYER,
             "A_SNAKE_ANACONDA": self.A_SNAKE_ANACONDA,
             "A_SNAKE_COBRA": self.A_SNAKE_COBRA,
-            "A_MOUSE_01": self.A_MOUSE_01,
+            "A_RODENT_MOUSE": self.A_RODENT_MOUSE,
+            "A_SLIME_SMALL" : self.A_SLIME_SMALL,
+            "A_DOD_DOG" : self.A_DOG_DOG,
+            "A_SNAIL" : self.A_SNAIL,
+            "A_PEST_SMALL_SPIDER" : self.A_PEST_SMALL_SPIDER,
+            "A_PEST_SMALL_SCORPION" : self.A_PEST_SMALL_SCORPION,
+            "A_PEST_WORM" : self.A_PEST_WORM,
+            "A_HUMANOID_GOBLIN" : self.A_HUMANOID_GOBLIN,
+            "A_MISC_MONKEY" : self.A_MISC_MONKEY,
 
             ## ITEMS ##
             "S_SWORD": self.S_SWORD,
@@ -84,6 +101,7 @@ class Assets:
             "S_DEAD_SLIME" : self.S_DEAD_SLIME,
             "S_FLESH_SPIDER" : self.S_FLESH_SPIDER,
             "S_FLESH_WORM" : self.S_FLESH_WORM,
+            "S_FLESH_NORMAL" : self.S_FLESH_NORMAL,
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
             "S_STAIRS_UP": self.S_STAIRS_UP,
