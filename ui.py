@@ -126,7 +126,7 @@ class Textfield:
         self.previous_input = ""
 
     def update(self):
-        return any([self.update_event(event) for event in pygame.event.get()])
+        return any(self.update_event(event) for event in pygame.event.get())
 
 
     def update_event(self,event):
