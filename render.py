@@ -44,13 +44,13 @@ def draw_tile_rect(coords, color=None, tile_alpha=None, mark=None):
     config.SURFACE_MAP.blit(new_surface, (int(new_x), int(new_y)))
 
 
-def helper_text_objects(incoming_text, incoming_color, incoming_bg):
+def helper_text_objects(incoming_text, incoming_color, incoming_bg,font=config.ASSETS.FONT_DEBUG_MESSAGE):
     if incoming_bg:
-        Text_surface = config.ASSETS.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color, incoming_bg)
+        text_surface = font.render(incoming_text, False, incoming_color, incoming_bg)
     else:
-        Text_surface = config.ASSETS.FONT_DEBUG_MESSAGE.render(incoming_text, False, incoming_color)
+        text_surface = font.render(incoming_text, False, incoming_color)
 
-    return Text_surface, Text_surface.get_rect()
+    return text_surface, text_surface.get_rect()
 
 
 def helper_text_height(font):

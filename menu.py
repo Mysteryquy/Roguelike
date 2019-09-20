@@ -75,6 +75,7 @@ def menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, p
                 pygame.display.update()
 
             input_field.draw()
+            print(input_field.text)
             player_name = input_field.text
             pygame.mixer.music.stop()
             pygame.mixer.music.load(config.ASSETS.music_lvl_1)
