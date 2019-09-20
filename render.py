@@ -3,12 +3,12 @@ import pygame
 import config
 
 
-def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False,font=None):
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False, font=None):
     # This function takes in some text and display
 
     font = font if font else config.ASSETS.FONT_DEBUG_MESSAGE
 
-    text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color,font)
+    text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color, font)
     if not center:
         text_rect.topleft = T_coords
     else:
@@ -88,6 +88,7 @@ def draw_game():
     draw_messages()
     config.CONSOLE.draw()
 
+
 def draw_map(map_to_draw):
     cam_x, cam_y = config.CAMERA.map_address
     display_map_w = constants.CAMERA_WIDTH / constants.CELL_WIDTH
@@ -98,14 +99,10 @@ def draw_map(map_to_draw):
     render_w_max = int(cam_x + (display_map_w / 2))
     render_h_max = int(cam_y + (display_map_h / 2))
 
-    if render_w_min < 0:
-        render_w_min = 0
-    if render_h_min < 0:
-        render_h_min = 0
-    if render_w_max > constants.MAP_WIDTH:
-        render_w_max = constants.MAP_WIDTH
-    if render_h_max > constants.MAP_HEIGHT:
-        render_h_max = constants.MAP_HEIGHT
+    render_w_min = max(0, render_w_min)
+    render_h_min = max(0, render_h_min)
+    render_w_max = min(constants.MAP_WIDTH, render_w_max)
+    render_h_max = min(constants.MAP_HEIGHT, render_h_max)
 
     for x in range(render_w_min, render_w_max):
         for y in range(render_h_min, render_h_max):
@@ -146,16 +143,7 @@ def draw_messages():
 
     text_height = helper_text_height(config.ASSETS.FONT_MESSAGE_TEXT)
 
-    # info = pygame.display.Info()
-    # screen_height = info.current_h
-
     start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
-    i = 0
-
-    for message, color in to_draw:
+    for i, (message, color) in enumerate(to_draw):
         draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
-
-        i += 1
-
-

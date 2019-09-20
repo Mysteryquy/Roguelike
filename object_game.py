@@ -18,17 +18,15 @@ class Game:
         self.current_map, self.current_rooms = map.create()
         self.pathing = path.AStar(config.FOV_MAP.walkable.astype(int), 0)
 
-
-
     def transition_next(self):
-
 
         config.FOV_CALCULATE = True
 
         for obj in self.current_objects:
             obj.animation_destroy()
 
-        self.maps_previous.append((config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+        self.maps_previous.append(
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
 
         if len(self.maps_next) == 0:
 
@@ -38,13 +36,16 @@ class Game:
 
             self.current_map, self.current_rooms = map.create()
 
-            #self.pathing = path.AStar(self.current_map, 0)
+            # self.pathing = path.AStar(self.current_map, 0)
 
             map.place_objects(self.current_rooms)
 
         else:
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = self.maps_next[-1]
-            #self.pathing = path.AStar(self.current_map, 0)
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = \
+            self.maps_next[-1]
+            # self.pathing = path.AStar(self.current_map, 0)
+
+
 
             for obj in self.current_objects:
                 obj.animation_init()
@@ -62,10 +63,12 @@ class Game:
             for obj in self.current_objects:
                 obj.animation_destroy()
 
-            self.maps_next.append((config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+            self.maps_next.append(
+                (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
 
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = self.maps_previous[-1]
-            #gself.pathing = path.AStar(self.current_map, 0)
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = \
+            self.maps_previous[-1]
+            # gself.pathing = path.AStar(self.current_map, 0)
 
             for obj in self.current_objects:
                 obj.animation_init()

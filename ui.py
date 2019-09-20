@@ -128,8 +128,7 @@ class Textfield:
     def update(self):
         return any(self.update_event(event) for event in pygame.event.get())
 
-
-    def update_event(self,event):
+    def update_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
             self.active = self.rect.collidepoint(x, y)
@@ -153,19 +152,17 @@ class Textfield:
 
         return False
 
-    def update_activate(self,event):
-        if self.focus_key and event.type==pygame.KEYDOWN and event.key == self.focus_key:
+    def update_activate(self, event):
+        if self.focus_key and event.type == pygame.KEYDOWN and event.key == self.focus_key:
             self.active = True
             return True
         return False
-
 
     @property
     def text_ready(self):
         self.previous_input = self.text
         self.text = ""
         return self.previous_input
-
 
     @property
     def active(self):
@@ -178,4 +175,4 @@ class Textfield:
 
     def draw(self):
         pygame.draw.rect(self.surface, self.color, self.rect)
-        draw_text(self.surface, self.text, (self.rect.x + 3, self.rect.y), self.text_color,font=self.font)
+        draw_text(self.surface, self.text, (self.rect.x + 3, self.rect.y), self.text_color, font=self.font)
