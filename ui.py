@@ -126,28 +126,8 @@ class Textfield:
         self.previous_input = ""
 
     def update(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                self.active = self.rect.collidepoint(x, y)
-            if event.type == pygame.KEYDOWN:
-                if self.active:
-                    if event.key == pygame.K_RETURN:
-                        self.active = False
-                        return True
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.text = self.text[:-1]
-                    elif event.key == pygame.K_ESCAPE:
-                        self.active = False
-                    elif event.key == pygame.K_UP:
-                        self.text = self.previous_input
-                    else:
-                        if self.start_text and self.text == self.start_text:
-                            self.text = ""
-                        self.text += event.unicode
-                elif self.focus_key and event.key == self.focus_key:
-                    self.active = True
-        return False
+        return any([self.update_event(event) for event in pygame.event.get()])
+
 
     def update_event(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -170,6 +150,8 @@ class Textfield:
                     self.text += event.unicode
             elif self.focus_key and event.key == self.focus_key:
                 self.active = True
+
+        return False
 
     def update_activate(self,event):
         if self.focus_key and event.type==pygame.KEYDOWN and event.key == self.focus_key:

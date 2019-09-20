@@ -127,16 +127,13 @@ class ExitPortal:
 # \______| /__/     \__\ |__|  |__| |_______|
 
 
-
-
-
 def invoke_command(command):
     arguments = command.split()
+    for c in arguments:
+        print(c)
     if command[0] == "gen_enemy":
         generator.gen_enemy((int(arguments[1]), int(arguments[2])))
 
-    #func = command_dict[arguments[0]]
-    #
 
 def game_main_loop():
     game_quit = False
