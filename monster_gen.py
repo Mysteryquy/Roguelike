@@ -185,7 +185,8 @@ def gen_pest_small_scorpion(coords):
 
     creature_com = Creature(creature_name, custom_death=None, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation=config.ASSETS.S_FLESH_NORMAL, dead_animation_key="S_FLESH_NORMAL")
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation=config.ASSETS.S_FLESH_NORMAL, dead_animation_key="S_FLESH_NORMAL")
     ai_com = ai.AiChase()
 
     small_scorpion = Actor(x, y, "Small Scorpion", animation_key="A_PEST_SMALL_SCORPION", depth=constants.DEPTH_CREATURE,

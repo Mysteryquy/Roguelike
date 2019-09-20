@@ -34,7 +34,7 @@ def cast_lightning(caster, T_damage_maxrange):
             target = map.check_for_creature(x, y)
 
             if target:
-                target.creature.take_damage(damage)
+                target.creature.take_damage(damage,caster)
 
 
 def cast_fireball(caster, T_damage_radius_range):
@@ -56,7 +56,7 @@ def cast_fireball(caster, T_damage_radius_range):
         creature_to_damage = map.check_for_creature(x, y)
 
         if creature_to_damage:
-            creature_to_damage.creature.take_damage(damage)
+            creature_to_damage.creature.take_damage(damage,caster)
 
             if creature_to_damage is not config.PLAYER:
                 creature_hit = True
@@ -78,7 +78,7 @@ def cast_confusion(caster, effect_length):
         if target:
             # temporarily confuse monster
             old_ai = target.ai
-            target.ai = ai.ai_Confuse(old_ai, num_turns=effect_length)
+            target.ai = ai.AiConfuse(old_ai, num_turns=effect_length)
             target.ai.owner = target
 
             config.GAME.game_message("The creature is confused", constants.COLOR_GREEN)
