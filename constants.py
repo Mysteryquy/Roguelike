@@ -74,9 +74,6 @@ FOV_ALGO = libtcodpy.FOV_RESTRICTIVE
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 5
 
-#FONT SETTINGS
-FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
-FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 12)
 
 #MESSAGE DEFAULTS
 NUM_MESSAGES = 4

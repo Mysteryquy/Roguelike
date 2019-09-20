@@ -48,6 +48,11 @@ class Assets:
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_CURSOR_TEXT = pygame.font.Font("data/joystix.ttf", constants.CELL_HEIGHT)
+        self.FONT_FANTY = pygame.font.Font("data/fanty.ttf", constants.CELL_HEIGHT)
+        self.FONT_MAG1 = pygame.font.Font("data/mag1.ttf", constants.CELL_HEIGHT)
+        self.FONT_MAG2 = pygame.font.Font("data/mag2.ttf", constants.CELL_HEIGHT)
+        self.FONT_RED1 = pygame.font.Font("data/red1.ttf", constants.CELL_HEIGHT)
+        self.FONT_RED2 = pygame.font.Font("data/red2.ttf", constants.CELL_HEIGHT)
 
         ## ITEMS ##
         self.S_SWORD = [
