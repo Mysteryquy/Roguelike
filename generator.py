@@ -1,7 +1,7 @@
 from container import Container
 from actor import Actor
 from creature import Creature
-from main_game import ExitPortal,Stairs
+from main_game import ExitPortal, Stairs
 import tcod
 from item import Item
 import config
@@ -14,7 +14,7 @@ import monster_gen
 
 
 ##PLAYER##
-def gen_player(coords,player_name="Player"):
+def gen_player(coords, player_name="Player"):
     x, y = coords
     print(coords)
 
@@ -162,17 +162,12 @@ gen_monster_dict = {
     4: monster_gen.gen_reptile_cobra,
     5: monster_gen.gen_pest_snail,
     6: monster_gen.gen_slime_small,
-    7: monster_gen.gen_pest_small_spider
 }
-
-
 
 
 def gen_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-
-    #gen_function = monster_death.gen_slime_small
     gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
 
     new_enemy = gen_function(coords)
