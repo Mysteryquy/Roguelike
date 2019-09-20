@@ -7,9 +7,7 @@ import generator
 import map
 
 
-def menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, preferences_save, player):
-    game_initialize()
-
+def menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save, player):
     menu_running = True
 
     title_y = constants.CAMERA_HEIGHT / 2 - 40
@@ -53,21 +51,24 @@ def menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, p
             # try to load game, start new if problems
             try:
                 game_load()
-            except:
-                game_new()
+            except Exception as e :
+                print(e)
+            #except:
+            #    game_new()
 
             game_main_loop()
-            game_initialize()
+            #game_initialize()
 
         if new_game_button.update(game_input):
 
             config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT*2,constants.CAMERA_WIDTH*2)), (0, 0))
-            input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.CAMERA_WIDTH / 3,
-                                                                        constants.CAMERA_HEIGHT / 2, 400, 40),
+            input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.CAMERA_WIDTH / 4,
+                                                                        constants.CAMERA_HEIGHT / 2, 500, 60),
                                        constants.COLOR_GREY, constants.COLOR_WHITE,
                                        constants.COLOR_BLACK, auto_active=True,
                                        start_text="Please enter your name",
-                                       focus_enter=True)
+                                       focus_key=pygame.K_RETURN,
+                                       font=config.ASSETS.FONT_RED1)
             waiting = True
             while not input_field.update():
                 input_field.draw()
@@ -75,14 +76,13 @@ def menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, p
                 pygame.display.update()
 
             input_field.draw()
-            print(input_field.text)
-            player_name = input_field.text
+            player_name = input_field.text_ready
             pygame.mixer.music.stop()
             pygame.mixer.music.load(config.ASSETS.music_lvl_1)
             pygame.mixer.music.play(-1)
             game_new(player_name)
             game_main_loop()
-            game_initialize()
+
 
         if options_button.update(game_input):
             menu_main_options(game_exit, preferences_save)
@@ -295,7 +295,7 @@ def menu_inventory():
 def debug_tile_select():
     (x, y) = menu_tile_select()
     objects = map.objects_at_coords(x, y)
-    print(str((x, y)) + str(config.FOV_MAP.walkable[y, x]))
+    print((x,y))
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):

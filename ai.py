@@ -7,6 +7,7 @@ import tcod
 import config
 import constants
 import map
+import casting
 
 
 class AiConfuse:
@@ -72,3 +73,16 @@ class AiFlee:
                 monster.move(0, -1)
             elif dy < 0 and map.is_walkable(x, y + 1):
                 monster.move(0, 1)
+
+class AiCaster:
+
+    def __init__(self):
+        self.owner = None
+
+    def take_turn(self):
+        monster = self.owner
+        x, y = monster.x, monster.y
+        if map.is_visible(x, y):
+            player_x, player_y = config.PLAYER.x, config.PLAYER.y
+            print(monster)
+            casting.cast_lightning(monster,(1,3),(player_x,player_y))

@@ -130,16 +130,15 @@ class Actor:
     def animation_destroy(self):
 
         self.animation = None
-        if self.creature:
-            self.creature.dead_animation = None
 
     def animation_init(self):
 
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
-        if self.creature and self.creature.dead:
-            self.creature.dead_animation = config.ASSETS.animation_dict[self.creature.dead_animation_key]
-
 
     def destroy(self):
         self.creature = None
         self.ai = None
+
+    def set_animation(self,new_key):
+        self.animation_key=new_key
+        self.animation=config.ASSETS.animation_dict[self.animation_key]

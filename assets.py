@@ -20,9 +20,6 @@ class Assets:
         self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
 
-        # ANIMATIONS#
-        #self.A_PLAYER = self.demon1.get_animation("d", 1, 16, 16, 2, (32, 32))
-        self.A_PLAYER = get_animation_from_files(1,7,"TILESETS/Characters/Player",num_sprites=2)
         self.A_SNAKE_ANACONDA = get_animation_from_files(2,4,"TILESETS/Characters/Reptile",num_sprites=2)
         self.A_SNAKE_COBRA = get_animation_from_files(5,4,"TILESETS/Characters/Reptile",num_sprites=2)
         self.A_RODENT_MOUSE = get_animation_from_files(0,1,"TILESETS/Characters/Rodent",num_sprites=2)
@@ -51,7 +48,7 @@ class Assets:
         self.FONT_FANTY = pygame.font.Font("data/fanty.ttf", constants.CELL_HEIGHT)
         self.FONT_MAG1 = pygame.font.Font("data/mag1.ttf", constants.CELL_HEIGHT)
         self.FONT_MAG2 = pygame.font.Font("data/mag2.ttf", constants.CELL_HEIGHT)
-        self.FONT_RED1 = pygame.font.Font("data/red1.ttf", constants.CELL_HEIGHT)
+        self.FONT_RED1 = pygame.font.Font("data/red1.ttf", int(constants.CELL_HEIGHT*1.5))
         self.FONT_RED2 = pygame.font.Font("data/red2.ttf", constants.CELL_HEIGHT)
 
         ## ITEMS ##
@@ -70,7 +67,6 @@ class Assets:
         self.S_FLESH_SPIDER = get_animation_from_files(2, 1, "TILESETS/Items/Flesh", num_sprites=1)
         self.S_FLESH_WORM = get_animation_from_files(2, 3, "TILESETS/Items/Flesh", num_sprites=1)
         self.S_FLESH_NORMAL = get_animation_from_files(0, 0, "TILESETS/Items/Flesh", num_sprites=1)
-        self.S_FLESH_DOG = get_animation_from_files(7,0, "TILESETS/Items/Flesh", num_sprites=1)
         self.S_FLESH_SNAIL = get_animation_from_files(2,3,"TILESETS/Items/Flesh", num_sprites=1)
 
         ## SPECIAL ##
@@ -85,7 +81,7 @@ class Assets:
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
 
         self.animation_dict = {
-            "A_PLAYER": self.A_PLAYER,
+            "A_PLAYER": get_animation_from_files(1,7,"TILESETS/Characters/Player",num_sprites=2),
             "A_SNAKE_ANACONDA": self.A_SNAKE_ANACONDA,
             "A_SNAKE_COBRA": self.A_SNAKE_COBRA,
             "A_RODENT_MOUSE": self.A_RODENT_MOUSE,
@@ -109,7 +105,7 @@ class Assets:
             "S_FLESH_SPIDER" : self.S_FLESH_SPIDER,
             "S_FLESH_WORM" : self.S_FLESH_WORM,
             "S_FLESH_NORMAL" : self.S_FLESH_NORMAL,
-            "S_FLESH_DOG": self.S_FLESH_DOG,
+            "S_FLESH_DOG": get_animation_from_files(7,0, "TILESETS/Items/Flesh", num_sprites=1),
             "S_FLESH_SNAIL": self.S_FLESH_SNAIL,
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,

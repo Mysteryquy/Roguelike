@@ -8,17 +8,17 @@ import random
 import pygame
 import tcod
 import tcod.map
-
+import config
 import assets
 import camera
 import casting
-import config
 # gamefiles
 import constants
 import generator
 import map
 import menu
 import render
+from ui import Textfield
 from object_game import Game
 
 
@@ -107,6 +107,7 @@ class ExitPortal:
 
             pygame.time.wait(6000)
 
+
 #  o         o   __o__
 # <|>       <|>    |
 # / \       / \   / \
@@ -118,13 +119,24 @@ class ExitPortal:
 #   <\__ __/>    __|>_
 
 
-
 #  _______      ___      .___  ___.  _______
 # /  _____|    /   \     |   \/   | |   ____|
 # |  |  __     /  ^  \    |  \  /  | |  |__
 # |  | |_ |   /  /_\  \   |  |\/|  | |   __|
 # |  |__| |  /  _____  \  |  |  |  | |  |____
 # \______| /__/     \__\ |__|  |__| |_______|
+
+
+
+
+
+def invoke_command(command):
+    arguments = command.split()
+    if command[0] == "gen_enemy":
+        generator.gen_enemy((int(arguments[1]), int(arguments[2])))
+
+    #func = command_dict[arguments[0]]
+    #
 
 def game_main_loop():
     game_quit = False
@@ -142,7 +154,7 @@ def game_main_loop():
 
         for obj in config.GAME.current_objects:
             if obj.ai:
-                if player_action != "no-action":
+                if player_action != "no-action" and player_action != "console":
                     obj.ai.take_turn()
             if obj.exitportal:
                 obj.exitportal.update()
@@ -171,7 +183,7 @@ def game_initialize():
     pygame.init()
     pygame.display.set_caption("Roguelike")
 
-    pygame.key.set_repeat(200, 70)
+    pygame.key.set_repeat(50, 100)
 
     try:
         preferences_load()
@@ -187,9 +199,8 @@ def game_initialize():
     config.SURFACE_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
 
-    config.CAMERA = camera.Camera()
-
     config.ASSETS = assets.Assets()
+    config.CAMERA = camera.Camera()
 
     config.CLOCK = pygame.time.Clock()
 
@@ -197,6 +208,12 @@ def game_initialize():
     config.RANDOM_ENGINE = random.SystemRandom()
 
     config.FOV_CALCULATE = True
+
+    config.CONSOLE = Textfield(
+        config.SURFACE_MAIN, pygame.Rect(5, constants.CAMERA_HEIGHT - 30, constants.CAMERA_WIDTH / 1.2, 25),
+        constants.COLOR_GREY,
+        constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD, auto_active=False, focus_key=pygame.K_o
+    )
 
     # game_new()
 
@@ -210,7 +227,16 @@ def game_handle_keys(player):
     MOD_KEY = (keys_list[pygame.K_RSHIFT] or keys_list[pygame.K_LSHIFT])
 
     # process input
+
     for event in events_list:
+
+        if config.CONSOLE.active:
+            if config.CONSOLE.update_event(event):
+                command = config.CONSOLE.text_ready
+                invoke_command(command)
+            return "console"
+        if config.CONSOLE.update_activate(event):
+            return "console"
         if event.type == pygame.QUIT:
             return "QUIT"
 
@@ -308,7 +334,7 @@ def game_handle_keys(player):
                 casting.cast_confusion(caster=config.PLAYER, effect_length=2)
 
             if event.key == pygame.K_m:
-                casting.cast_lightning(caster=config.PLAYER, T_damage_maxrange=5)
+                generator.gen_enemy((player.x, player.y))
 
             if event.key == pygame.K_x:
                 menu.debug_tile_select()
@@ -332,7 +358,7 @@ def game_handle_keys(player):
 
 
 def game_new(player_name="Player"):
-    config.PLAYER = generator.gen_player((0, 0),player_name=player_name)
+    config.PLAYER = generator.gen_player((0, 0), player_name=player_name)
     # starts a nre game and map
     config.GAME = Game()
     config.GAME.current_objects.append(config.PLAYER)
@@ -383,7 +409,8 @@ def preferences_load():
 
 if __name__ == '__main__':
     config.PLAYER = None
-    menu.menu_main(game_initialize, game_exit, game_load, game_new, game_main_loop, preferences_save,config.PLAYER)
+    game_initialize()
+    menu.menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save, config.PLAYER)
 
 #              .7
 #            .'/

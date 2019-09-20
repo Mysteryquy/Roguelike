@@ -3,10 +3,12 @@ import pygame
 import config
 
 
-def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False):
+def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False,font=None):
     # This function takes in some text and display
 
-    text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color)
+    font = font if font else config.ASSETS.FONT_DEBUG_MESSAGE
+
+    text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color,font)
     if not center:
         text_rect.topleft = T_coords
     else:
@@ -44,7 +46,7 @@ def draw_tile_rect(coords, color=None, tile_alpha=None, mark=None):
     config.SURFACE_MAP.blit(new_surface, (int(new_x), int(new_y)))
 
 
-def helper_text_objects(incoming_text, incoming_color, incoming_bg,font=config.ASSETS.FONT_DEBUG_MESSAGE):
+def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
     if incoming_bg:
         text_surface = font.render(incoming_text, False, incoming_color, incoming_bg)
     else:
@@ -68,7 +70,7 @@ def helper_text_width(font):
 
 def draw_game():
     # clear the surface
-    config.SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
+    config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
     config.SURFACE_MAP.fill(constants.COLOR_BLACK)
 
     config.CAMERA.update()
@@ -84,7 +86,7 @@ def draw_game():
 
     draw_debug()
     draw_messages()
-
+    config.CONSOLE.draw()
 
 def draw_map(map_to_draw):
     cam_x, cam_y = config.CAMERA.map_address
@@ -147,7 +149,7 @@ def draw_messages():
     # info = pygame.display.Info()
     # screen_height = info.current_h
 
-    start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 5
+    start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
     i = 0
 

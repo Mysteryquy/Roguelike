@@ -19,7 +19,6 @@ def gen_reptile_anaconda(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
                             base_hit_chance=40, base_evasion=0, xp_gained=300,
-                            dead_animation=config.ASSETS.S_FLESH_SNAKE,
                             dead_animation_key="S_FLESH_SNAKE"
                             )
     ai_com = ai.AiChase()
@@ -40,7 +39,6 @@ def gen_reptile_cobra(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
                             base_hit_chance=80, base_evasion=10, xp_gained=300,
-                            dead_animation=config.ASSETS.S_FLESH_SNAKE,
                             dead_animation_key="S_FLESH_SNAKE")
     ai_com = ai.AiChase()
 
@@ -60,7 +58,6 @@ def gen_rodent_mouse(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
                             base_evasion=60,
-                            dead_animation=config.ASSETS.S_FLESH_EAT,
                             dead_animation_key="S_FLESH_EAT")
     ai_com = ai.AiFlee()
 
@@ -85,7 +82,7 @@ def gen_slime_small(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation=config.ASSETS.S_DEAD_SLIME, dead_animation_key="S_DEAD_SLIME")
+                            dead_animation_key="S_DEAD_SLIME")
     ai_com = ai.AiChase()
 
     small_slime = Actor(x, y, "Small slime", animation_key="A_SLIME_SMALL", depth=constants.DEPTH_CREATURE,
@@ -110,9 +107,8 @@ def gen_dog_dog(coords):
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation=config.ASSETS.S_FLESH_DOG,
                             dead_animation_key="S_FLESH_DOG")
-    ai_com = ai.AiChase()
+    ai_com = ai.AiCaster()
 
     dog = Actor(x, y, "Dog", animation_key="A_DOG_DOG", depth=constants.DEPTH_CREATURE,
                 creature=creature_com,
@@ -136,7 +132,6 @@ def gen_pest_snail(coords):
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation=config.ASSETS.S_FLESH_SNAIL,
                             dead_animation_key="S_FLESH_SNAIL")
     ai_com = ai.AiChase()
 
@@ -186,7 +181,7 @@ def gen_pest_small_scorpion(coords):
     creature_com = Creature(creature_name, custom_death=None, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation=config.ASSETS.S_FLESH_NORMAL, dead_animation_key="S_FLESH_NORMAL")
+                            dead_animation_key="S_FLESH_NORMAL")
     ai_com = ai.AiChase()
 
     small_scorpion = Actor(x, y, "Small Scorpion", animation_key="A_PEST_SMALL_SCORPION", depth=constants.DEPTH_CREATURE,
@@ -210,7 +205,8 @@ def gen_pest_worm(coords):
 
     creature_com = Creature(creature_name, custom_death=death.death_worm, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation_key="S_FLESH_WORM", dead_animation=config.ASSETS.S_FLESH_WORM)
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_WORM")
     ai_com = ai.AiChase()
 
     worm = Actor(x, y, "Worm", animation_key="A_PEST_WORM", depth=constants.DEPTH_CREATURE,
@@ -234,7 +230,8 @@ def gen_humanoid_goblin(coords):
 
     creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation=config.ASSETS.S_FLESH_NORMAL, dead_animation_key="S_FLESH_NORMAL")
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
     ai_com = ai.AiChase()
 
     goblin = Actor(x, y, "Goblin", animation_key="A_HUMANOID_GOBLIN", depth=constants.DEPTH_CREATURE,

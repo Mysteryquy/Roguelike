@@ -10,4 +10,5 @@ FOV_MAP = None
 SURFACE_MAP = None
 RANDOM_ENGINE = None
 SURFACE_MAIN = None
+CONSOLE = None
 

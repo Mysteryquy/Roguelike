@@ -4,12 +4,10 @@ import config
 import generator
 
 
-
 class Tile:
     def __init__(self, block_path):
         self.block_path = block_path
         self.explored = False
-
 
 class obj_Room:
     # This is a rectangle that lives on the map
@@ -54,12 +52,9 @@ def create():
 
         w = tcod.random_get_int(None, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
         h = tcod.random_get_int(None, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
-        if len(list_of_rooms) == 0:
-            x = 3
-            y = 2
-        else:
-            x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w - 2)
-            y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h - 2)
+
+        x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w -2)
+        y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h -2)
 
         # create the room
         new_room = obj_Room((x, y), (w, h))
@@ -115,7 +110,7 @@ def place_objects(room_list):
             config.PLAYER.x, config.PLAYER.y = int(x), int(y)
 
         if first_room and top_level:
-            # print(room.center)
+
             x, y = room.center
             generator.gen_portal(room.center)
 
@@ -249,3 +244,5 @@ def find_radius(coords, radius):
             tile_list.append((x, y))
 
     return tile_list
+
+

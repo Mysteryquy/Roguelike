@@ -18,13 +18,16 @@ def cast_heal(caster, value):
     return None
 
 
-def cast_lightning(caster, T_damage_maxrange):
+def cast_lightning(caster, T_damage_maxrange, coords=None):
     damage, m_range = T_damage_maxrange
 
     player_location = (caster.x, caster.y)
 
     # prompt player for a tile
-    point_selected = menu.menu_tile_select(coords_origin=player_location, max_range=m_range, penetrate_walls=False)
+    if not coords:
+        point_selected = menu.menu_tile_select(coords_origin=player_location, max_range=m_range, penetrate_walls=False)
+    else:
+        point_selected = coords
 
     if point_selected:
         list_of_tiles = map.find_line(player_location, point_selected)
@@ -34,7 +37,7 @@ def cast_lightning(caster, T_damage_maxrange):
             target = map.check_for_creature(x, y)
 
             if target:
-                target.creature.take_damage(damage,caster)
+                target.creature.take_damage(damage,caster.creature)
 
 
 def cast_fireball(caster, T_damage_radius_range):

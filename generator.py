@@ -83,6 +83,7 @@ def gen_item(coords):
     config.GAME.current_objects.append(new_item)
 
 
+
 def gen_scroll_lighning(coords):
     x, y = coords
 
@@ -168,7 +169,8 @@ gen_monster_dict = {
 def gen_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-    gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
+    gen_function = monster_gen.gen_dog_dog
+    #gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
 
     new_enemy = gen_function(coords)
 
