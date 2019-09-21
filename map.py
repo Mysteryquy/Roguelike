@@ -100,8 +100,10 @@ def place_objects(room_list):
     top_level = current_level == 1
     final_level = (current_level == constants.MAP_NUM_LEVELS)
 
+
     for room in room_list:
 
+        room_center = room.center
         first_room = (room == room_list[0])
         last_room = (room == room_list[-1])
 
@@ -134,7 +136,8 @@ def place_objects(room_list):
         x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
         y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
 
-        generator.gen_item((x, y))
+        if x and y != room_center:
+            generator.gen_item((x, y))
 
 
 def create_tunnels(coords1, coords2, new_map):
