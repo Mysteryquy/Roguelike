@@ -7,100 +7,116 @@ import generator
 import map
 
 
-def menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save, player):
-    menu_running = True
+class MainMenu:
+    def __init__(self, game_exit, game_load, game_new, game_main_loop, preferences_save):
+        self.game_new = game_new
+        self.game_load = game_load
+        self.game_exit = game_exit
+        self.game_main_loop = game_main_loop
+        self.preferences_save = preferences_save
 
-    title_y = constants.CAMERA_HEIGHT / 2 - 40
-    title_x = constants.CAMERA_WIDTH / 2
-    title_text = "Untitled (but very cool) Game "
+        self.menu_running = True
 
-    # Button Adresses
-    continue_game_button_y = title_y + 60
-    new_game_button_y = continue_game_button_y + 60
-    options_button_y = new_game_button_y + 60
-    quit_button_y = options_button_y + 60
+        self.title_y = constants.CAMERA_HEIGHT / 2 - 40
+        self.title_x = constants.CAMERA_WIDTH / 2
+        self.title_text = "Untitled (but very cool) Game "
 
-    continue_game_button = ui.Button(config.SURFACE_MAIN, "Continue", (200, 45), (title_x, continue_game_button_y))
+        # Button Adresses
+        continue_game_button_y = self.title_y + 60
+        new_game_button_y = continue_game_button_y + 60
+        options_button_y = new_game_button_y + 60
+        quit_button_y = options_button_y + 60
 
-    new_game_button = ui.Button(config.SURFACE_MAIN, "New Game", (200, 45), (title_x, new_game_button_y))
+        continue_game_button = ui.Button(config.SURFACE_MAIN, "Continue", (200, 45), "button_continue",
+                                         (self.title_x, continue_game_button_y))
 
-    options_button = ui.Button(config.SURFACE_MAIN, "Options", (200, 45), (title_x, options_button_y))
+        new_game_button = ui.Button(config.SURFACE_MAIN, "New Game", (200, 45), "button_new_game",
+                                    (self.title_x, new_game_button_y))
 
-    quit_button = ui.Button(config.SURFACE_MAIN, "QUIT GAME", (200, 45), (title_x, quit_button_y))
+        options_button = ui.Button(config.SURFACE_MAIN, "Options", (200, 45), "button_options",
+                                   (self.title_x, options_button_y))
 
-    pygame.mixer.music.load(config.ASSETS.music_main_menu)
-    pygame.mixer.music.play(-1)
+        quit_button = ui.Button(config.SURFACE_MAIN, "QUIT GAME", (200, 45), "button_quit",
+                                (self.title_x, quit_button_y))
 
-    while menu_running:
+        self.button_container = ui.UiContainer(config.SURFACE_MAIN,
+                                               constants.RECT_WHOLE_SCREEN,
+                                               "menu_container",
+                                               [continue_game_button, new_game_button, options_button, quit_button],
+                                               callbacks=[self.continue_button_callback,
+                                                          self.newgame_button_callback,
+                                                          self.options_button_callback,
+                                                          self.quit_button_callback], color=constants.COLOR_BLUE_LIGHT,
+                                               img=config.ASSETS.MAIN_MENU_BACKGROUND)
 
-        list_of_events = pygame.event.get()
-        mouse_position = pygame.mouse.get_pos()
+    def show_menu(self):
+        pygame.mixer.music.load(config.ASSETS.music_main_menu)
+        pygame.mixer.music.play(-1)
+        while self.menu_running:
+            list_of_events = pygame.event.get()
+            mouse_position = pygame.mouse.get_pos()
 
-        game_input = (list_of_events, mouse_position)
+            game_input = (list_of_events, mouse_position)
 
-        for event in list_of_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                game_exit()
+            for event in list_of_events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    self.game_exit()
 
-        # Button updates
-        if continue_game_button.update(game_input):
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(config.ASSETS.music_lvl_1)
-            pygame.mixer.music.play(-1)
-            # try to load game, start new if problems
-            try:
-                game_load()
-            except Exception as e :
-                print(e)
-            #except:
-            #    game_new()
+            self.button_container.react_multiple(game_input)
 
-            game_main_loop()
-            #game_initialize()
+            self.button_container.draw()
 
-        if new_game_button.update(game_input):
+            render.draw_text(config.SURFACE_MAIN, self.title_text, (self.title_x, self.title_y), constants.COLOR_RED,
+                             center=True)
 
-            config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT*2,constants.CAMERA_WIDTH*2)), (0, 0))
-            input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.CAMERA_WIDTH / 4,
-                                                                        constants.CAMERA_HEIGHT / 2, 500, 60),
-                                       constants.COLOR_GREY, constants.COLOR_WHITE,
-                                       constants.COLOR_BLACK, auto_active=True,
-                                       start_text="Please enter your name",
-                                       focus_key=pygame.K_RETURN,
-                                       font=config.ASSETS.FONT_RED1)
-            waiting = True
-            while not input_field.update():
-                input_field.draw()
-                config.CLOCK.tick(constants.GAME_FPS)
-                pygame.display.update()
+            pygame.display.update()
 
-            input_field.draw()
-            player_name = input_field.text_ready
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(config.ASSETS.music_lvl_1)
-            pygame.mixer.music.play(-1)
-            game_new(player_name)
-            game_main_loop()
+    def continue_button_callback(self, id):
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(config.ASSETS.music_lvl_1)
+        pygame.mixer.music.play(-1)
+        # try to load game, start new if problems
+        try:
+            self.game_load()
+        except Exception as e:
+            print(e)
 
+        self.game_main_loop()
 
-        if options_button.update(game_input):
-            menu_main_options(game_exit, preferences_save)
+    def newgame_button_callback(self, id):
+        config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT * 2, constants.CAMERA_WIDTH * 2)),
+                                 (0, 0))
+        input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.CAMERA_WIDTH / 4,
+                                                                    constants.CAMERA_HEIGHT / 2, 500, 60),
+                                   "name_input",
+                                   constants.COLOR_GREY, constants.COLOR_WHITE,
+                                   constants.COLOR_BLACK, auto_active=True,
+                                   start_text="Please enter your name",
+                                   focus_key=pygame.K_RETURN,
+                                   font=config.ASSETS.FONT_RED1)
 
-        if quit_button.update(game_input):
-            pygame.quit()
-            exit()
+        input_container = ui.UiContainer(config.SURFACE_MAIN,constants.RECT_WHOLE_SCREEN,"input_container",
+                                         [input_field],constants.COLOR_BLUE_LIGHT)
 
-        config.SURFACE_MAIN.blit(config.ASSETS.MAIN_MENU_BACKGROUND, (0, 0))
+        while not input_container.update(pygame.event.get()):
+            input_container.draw()
+            config.CLOCK.tick(constants.GAME_FPS)
+            pygame.display.update()
 
-        render.draw_text(config.SURFACE_MAIN, title_text, (title_x, title_y), constants.COLOR_RED, center=True)
+        player_name = input_field.text_ready
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(config.ASSETS.music_lvl_1)
+        pygame.mixer.music.play(-1)
+        self.game_new(player_name)
+        self.game_main_loop()
 
-        continue_game_button.draw()
-        new_game_button.draw()
-        options_button.draw()
-        quit_button.draw()
+    def options_button_callback(self, id):
+        menu_main_options(self.game_exit, self.preferences_save)
 
-        pygame.display.update()
+    def quit_button_callback(self, id):
+        pygame.quit()
+        exit()
 
 
 def menu_main_options(game_exit, preferences_save):
@@ -129,11 +145,13 @@ def menu_main_options(game_exit, preferences_save):
 
     menu_close = False
 
-    sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), (slider_x, sound_effect_slider_y),
+    sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
+                                    (slider_x, sound_effect_slider_y),
                                     constants.COLOR_RED,
                                     constants.COLOR_GREEN, config.PREFERENCES.vol_sound)
 
-    music_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), (slider_x, music_effect_slider_y),
+    music_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "music_effect_slider",
+                                    (slider_x, music_effect_slider_y),
                                     constants.COLOR_RED,
                                     constants.COLOR_GREEN, config.PREFERENCES.vol_music)
 
@@ -295,7 +313,7 @@ def menu_inventory():
 def debug_tile_select():
     (x, y) = menu_tile_select()
     objects = map.objects_at_coords(x, y)
-    print((x,y))
+    print((x, y))
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):

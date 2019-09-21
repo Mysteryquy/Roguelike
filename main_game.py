@@ -207,7 +207,7 @@ def game_initialize():
     config.FOV_CALCULATE = True
 
     config.CONSOLE = Textfield(
-        config.SURFACE_MAIN, pygame.Rect(5, constants.CAMERA_HEIGHT - 30, constants.CAMERA_WIDTH / 1.2, 25),
+        config.SURFACE_MAIN, pygame.Rect(5, constants.CAMERA_HEIGHT - 30, constants.CAMERA_WIDTH / 1.2, 25), "console",
         constants.COLOR_GREY,
         constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD, auto_active=False, focus_key=pygame.K_o
     )
@@ -228,7 +228,7 @@ def game_handle_keys(player):
     for event in events_list:
 
         if config.CONSOLE.active:
-            if config.CONSOLE.update_event(event):
+            if config.CONSOLE.react(event):
                 command = config.CONSOLE.text_ready
                 invoke_command(command)
             return "console"
@@ -407,7 +407,9 @@ def preferences_load():
 if __name__ == '__main__':
     config.PLAYER = None
     game_initialize()
-    menu.menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save, config.PLAYER)
+    main_menu = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
+    main_menu.show_menu()
+    #menu.menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save)
 
 #              .7
 #            .'/

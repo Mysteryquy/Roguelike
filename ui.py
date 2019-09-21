@@ -3,21 +3,80 @@ import pygame
 from render import draw_text
 
 
-class Button:
+class UiElement:
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id: str):
+        self.surface = surface
+        self.rect = rect
+        self.id = id
 
-    def __init__(self,
-                 surface,
-                 button_text,
-                 size,
-                 center_coords,
-                 color_box_mouseover=constants.COLOR_RED,
-                 color_box_default=constants.COLOR_GREEN,
-                 color_text_mouseover=constants.COLOR_WHITE,
+    def update(self, player_input) -> bool:
+        pass
+
+    def draw(self):
+        pass
+
+    def react(self, event: pygame.event.EventType) -> bool:
+        pass
+
+    def react_multiple(self, player_input):
+        pass
+
+
+class UiContainer(UiElement):
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, elements, color: pygame.Color, callbacks=None,
+                 img=None, transparent=False):
+        super().__init__(surface, rect, id)
+        self.elements = elements
+        self.color = color
+        self.callbacks = callbacks
+        self.img = img
+        self.transparent = transparent
+
+    def add(self, element, callback=None):
+        if self.callbacks:
+            self.callbacks[-1] = callback
+        self.elements.append(element)
+
+    def update(self, player_input):
+        return any(element.update(player_input) for element in self.elements)
+
+    def draw(self):
+        if not self.transparent:
+            if self.img:
+                self.surface.blit(self.img, self.rect.topleft)
+            else:
+                pygame.draw.rect(self.surface, self.color, self.rect)
+        for element in self.elements:
+            element.draw()
+
+    def react(self, event: pygame.event.EventType) -> bool:
+        if self.callbacks:
+            for i, element in enumerate(self.elements):
+                if element.react(event):
+                    self.callbacks[i](element.id)
+                    return True
+
+        return any(element.react(event) for element in self.elements)
+
+    def react_multiple(self, events) -> bool:
+        if self.callbacks:
+            for i, element in enumerate(self.elements):
+                if element.react_multiple(events):
+                    self.callbacks[i](element.id)
+                    return True
+            return False
+
+        return any(element.react_multiple(events) for element in self.elements)
+
+
+class Button(UiElement):
+
+    def __init__(self, surface, button_text, size, id, center_coords, color_box_mouseover=constants.COLOR_RED,
+                 color_box_default=constants.COLOR_GREEN, color_text_mouseover=constants.COLOR_WHITE,
                  color_text_default=constants.COLOR_GREY):
 
-        self.surface = surface
+        super().__init__(surface, pygame.Rect((0, 0), size), id)
         self.button_text = button_text
-        self.size = size
         self.center_coords = center_coords
 
         self.c_box_mo = color_box_mouseover
@@ -27,10 +86,9 @@ class Button:
         self.c_c_box = color_box_default
         self.c_c_text = color_text_default
 
-        self.rect = pygame.Rect((0, 0), size)
         self.rect.center = center_coords
 
-    def update(self, player_input):
+    def update(self, player_input: pygame.event):
 
         mouse_clicked = False
 
@@ -54,15 +112,18 @@ class Button:
             self.c_c_box = self.c_box_default
             self.c_c_text = self.c_text_default
 
-    def draw(self):
+    def react_multiple(self, player_input):
+        return self.update(player_input)
 
+    def draw(self):
         pygame.draw.rect(self.surface, self.c_c_box, self.rect)
         draw_text(self.surface, self.button_text, self.center_coords, self.c_c_text, center=True)
 
 
-class Slider:
+class Slider(UiElement):
 
-    def __init__(self, surface, size, center_coords, bg_color, fg_color, parameter_value):
+    def __init__(self, surface, size, id, center_coords, bg_color, fg_color, parameter_value):
+        super().__init__(surface, pygame.Rect((0, 0), size), id)
         self.surface = surface
         self.size = size
         self.bg_color = bg_color
@@ -99,21 +160,12 @@ class Slider:
         pygame.draw.rect(self.surface, constants.COLOR_BLACK, self.grip_tab)
 
 
-class Textfield:
+class Textfield(UiElement):
 
-    def __init__(self, surface,
-                 rect,
-                 color_inactive,
-                 color_active,
-                 text_color,
-                 font=pygame.font.Font(None, 32),
-                 auto_active=False,
-                 start_text=None,
-                 focus_key=None
-                 ):
+    def __init__(self, surface, rect, id, color_inactive, color_active, text_color, font=pygame.font.Font(None, 32),
+                 auto_active=False, start_text=None, focus_key=None):
 
-        self.rect = rect
-        self.surface = surface
+        super().__init__(surface, rect, id)
         self.color_inactive = color_inactive
         self.color_active = color_active
         self.font = font
@@ -125,10 +177,10 @@ class Textfield:
         self.focus_key = focus_key
         self.previous_input = ""
 
-    def update(self):
-        return any(self.update_event(event) for event in pygame.event.get())
+    def update(self, player_input):
+        return any(self.react(event) for event in player_input)
 
-    def update_event(self, event):
+    def react(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
             self.active = self.rect.collidepoint(x, y)
