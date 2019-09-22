@@ -133,6 +133,8 @@ def invoke_command(command):
         print(c)
     if command[0] == "gen_enemy":
         generator.gen_enemy((int(arguments[1]), int(arguments[2])))
+    elif command[0] == "gen_item":
+        generator.gen_item((int(arguments[1]), int(arguments[2])))
 
 
 def game_main_loop():
