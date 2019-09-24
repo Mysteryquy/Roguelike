@@ -108,26 +108,13 @@ def draw_map(map_to_draw):
         for y in range(render_h_min, render_h_max):
 
             is_visible = config.FOV_MAP.fov[y, x]
-            if is_visible:
-
+            if is_visible and not map_to_draw[x][y].explored:
                 map_to_draw[x][y].explored = True
+            if map_to_draw[x][y].explored:
+                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
+                                        (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
-                if map_to_draw[x][y].block_path:
 
-                    config.SURFACE_MAP.blit(config.ASSETS.S_WALL, (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
-                else:
-                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOR,
-                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
-
-            elif map_to_draw[x][y].explored:
-
-                if map_to_draw[x][y].block_path:  # Bruh was will der von mir
-
-                    config.SURFACE_MAP.blit(config.ASSETS.S_WALLEXPLORED,
-                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
-                else:
-                    config.SURFACE_MAP.blit(config.ASSETS.S_FLOOREXPLORED,
-                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
 def draw_debug():

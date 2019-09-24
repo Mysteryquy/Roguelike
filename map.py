@@ -5,9 +5,27 @@ import generator
 
 
 class Tile:
-    def __init__(self, block_path):
+    def __init__(self, block_path, texture):
         self.block_path = block_path
         self.explored = False
+        self._texture = texture
+        self._texture_explored = self._texture + "_EXPLORED"
+
+    @property
+    def texture(self):
+        return self._texture
+
+    @texture.setter
+    def texture(self, value):
+        self._texture = value
+        self._texture_explored = value + "_EXPLORED"
+
+    def get_texture(self, visible):
+        if visible:
+            return self._texture
+        else:
+            return self._texture_explored
+
 
 class obj_Room:
     # This is a rectangle that lives on the map
@@ -43,7 +61,7 @@ def get_path(start_x, start_y, goal_x, goal_y):
 
 
 def create():
-    new_map = [[Tile(True) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    new_map = [[Tile(True, "S_WALL") for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
     # generate new room
     list_of_rooms = []
@@ -53,8 +71,8 @@ def create():
         w = tcod.random_get_int(None, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
         h = tcod.random_get_int(None, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
 
-        x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w -2)
-        y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h -2)
+        x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w - 2)
+        y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h - 2)
 
         # create the room
         new_room = obj_Room((x, y), (w, h))
@@ -92,6 +110,7 @@ def create_room(new_map, new_room):
     for x in range(new_room.x1, new_room.x2):
         for y in range(new_room.y1, new_room.y2):
             new_map[x][y].block_path = False
+            new_map[x][y].texture = "S_FLOOR"
 
 
 def place_objects(room_list):
@@ -99,7 +118,6 @@ def place_objects(room_list):
 
     top_level = current_level == 1
     final_level = (current_level == constants.MAP_NUM_LEVELS)
-
 
     for room in room_list:
 
@@ -112,7 +130,6 @@ def place_objects(room_list):
             config.PLAYER.x, config.PLAYER.y = int(x), int(y)
 
         if first_room and top_level:
-
             x, y = room.center
             generator.gen_portal(room.center)
 
@@ -149,14 +166,18 @@ def create_tunnels(coords1, coords2, new_map):
     if coin_flip:
         for x in range(min(x1, x2), max(x1, x2)):
             new_map[x][y1].block_path = False
+            new_map[x][y1].texture = "S_FLOOR"
         for y in range(min(y1, y2), max(y1, y2)):
             new_map[x2][y].block_path = False
+            new_map[x2][y].texture = "S_FLOOR"
 
     else:
         for y in range(min(y1, y2), max(y1, y2) + 1):
             new_map[x1][y].block_path = False
+            new_map[x1][y].texture = "S_FLOOR"
         for x in range(min(x1, x2), max(x1, x2) + 1):
             new_map[x][y2].block_path = False
+            new_map[x][y2].texture = "S_FLOOR"
 
 
 def check_for_creature(x, y, exclude_object=None):
@@ -247,5 +268,3 @@ def find_radius(coords, radius):
             tile_list.append((x, y))
 
     return tile_list
-
-

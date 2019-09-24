@@ -19,12 +19,6 @@ class Assets:
         self.demon1 = Spritesheet("data/sprites/Demon1.png")
         self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
-        # SPRITES#
-        self.S_WALL = pygame.image.load("data/sprites/wall2.jpg")
-        self.S_WALLEXPLORED = pygame.image.load("data/sprites/wallunseen2.png")
-
-        self.S_FLOOR = pygame.image.load("data/sprites/floor.jpg")
-        self.S_FLOOREXPLORED = pygame.image.load("data/sprites/floorunseen2.png")
 
         # FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
@@ -48,6 +42,15 @@ class Assets:
         self.S_END_GAME_ITEM = self.tool.get_image("a", 0, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
+
+
+        self.tile_dict = {
+            "S_WALL" : pygame.image.load("data/sprites/wall2.jpg"),
+            "S_WALL_EXPLORED" : pygame.image.load("data/sprites/wallunseen2.png"),
+            "S_FLOOR" : pygame.image.load("data/sprites/floor.jpg"),
+            "S_FLOOR_EXPLORED" : pygame.image.load("data/sprites/floorunseen2.png")
+
+        }
 
         self.animation_dict = {
             "A_PLAYER": get_animation_from_files(1, 7, "data/tilesets/Characters/Player", num_sprites=2),
