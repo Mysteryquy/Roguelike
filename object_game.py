@@ -16,7 +16,7 @@ class Game:
         self.maps_next = []
 
         self.current_map, self.current_rooms = map.create()
-        self.pathing = path.AStar(config.FOV_MAP.walkable.astype(int), 0)
+
 
     def transition_next(self):
 
