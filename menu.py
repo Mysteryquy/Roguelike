@@ -28,26 +28,50 @@ class MainMenu:
         quit_button_y = options_button_y + 60
 
         continue_game_button = ui.Button(config.SURFACE_MAIN, "Continue", (200, 45), "button_continue",
-                                         (self.title_x, continue_game_button_y))
+                                         (self.title_x, continue_game_button_y), callback=self.continue_button_callback)
 
         new_game_button = ui.Button(config.SURFACE_MAIN, "New Game", (200, 45), "button_new_game",
-                                    (self.title_x, new_game_button_y))
+                                    (self.title_x, new_game_button_y), callback=self.newgame_button_callback)
 
         options_button = ui.Button(config.SURFACE_MAIN, "Options", (200, 45), "button_options",
-                                   (self.title_x, options_button_y))
+                                   (self.title_x, options_button_y), callback=self.options_button_callback)
 
         quit_button = ui.Button(config.SURFACE_MAIN, "QUIT GAME", (200, 45), "button_quit",
-                                (self.title_x, quit_button_y))
+                                (self.title_x, quit_button_y), callback=self.quit_button_callback)
 
         self.button_container = ui.UiContainer(config.SURFACE_MAIN,
                                                constants.RECT_WHOLE_SCREEN,
                                                "menu_container",
                                                [continue_game_button, new_game_button, options_button, quit_button],
-                                               callbacks=[self.continue_button_callback,
-                                                          self.newgame_button_callback,
-                                                          self.options_button_callback,
-                                                          self.quit_button_callback], color=constants.COLOR_BLUE_LIGHT,
+                                               color=constants.COLOR_BLUE_LIGHT,
                                                img=config.ASSETS.MAIN_MENU_BACKGROUND)
+
+        # Slider vars #
+        slider_x = constants.CAMERA_WIDTH / 2
+        sound_effect_slider_y = constants.CAMERA_HEIGHT / 2 - 60
+        sound_effect_vol = 0.5
+        music_effect_slider_y = sound_effect_slider_y + 70
+
+
+        self.sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
+                                        (slider_x, sound_effect_slider_y),
+                                        constants.COLOR_RED,
+                                        constants.COLOR_GREEN, config.PREFERENCES.vol_sound, "Sound Volume",
+                                             callback=self.sound_volume_adjust_callback)
+
+        self.music_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "music_effect_slider",
+                                        (slider_x, music_effect_slider_y),
+                                        constants.COLOR_RED,
+                                        constants.COLOR_GREEN, config.PREFERENCES.vol_music, "Music Volume",
+                                             callback=self.music_volume_adjust_callback)
+
+        self.effect_container = ui.UiContainer(config.SURFACE_MAIN,
+                                               pygame.Rect(constants.CAMERA_WIDTH / 2 - 200, constants.CAMERA_HEIGHT / 2 - 150,
+                                                           400, 400),
+                                               id="effect_container",
+                                               elements=[self.sound_effect_slider, self.music_effect_slider],
+                                               color=constants.COLOR_GREY)
+
 
     def show_menu(self):
         pygame.mixer.music.load(config.ASSETS.music_main_menu)
@@ -94,17 +118,19 @@ class MainMenu:
                                    constants.COLOR_BLACK, auto_active=True,
                                    start_text="Please enter your name",
                                    focus_key=pygame.K_RETURN,
-                                   font=config.ASSETS.FONT_RED1)
+                                   font=config.ASSETS.FONT_RED1,
+                                   callback=self.input_field_callback)
 
-        input_container = ui.UiContainer(config.SURFACE_MAIN,constants.RECT_WHOLE_SCREEN,"input_container",
-                                         [input_field],constants.COLOR_BLUE_LIGHT)
+        input_container = ui.UiContainer(config.SURFACE_MAIN, constants.RECT_WHOLE_SCREEN, "input_container",
+                                         [input_field], constants.COLOR_BLUE_LIGHT)
 
         while not input_container.update(pygame.event.get()):
             input_container.draw()
             config.CLOCK.tick(constants.GAME_FPS)
             pygame.display.update()
 
-        player_name = input_field.text_ready
+    def input_field_callback(self, id, text):
+        player_name = text
         pygame.mixer.music.stop()
         pygame.mixer.music.load(config.ASSETS.music_lvl_1)
         pygame.mixer.music.play(-1)
@@ -112,90 +138,49 @@ class MainMenu:
         self.game_main_loop()
 
     def options_button_callback(self, id):
-        menu_main_options(self.game_exit, self.preferences_save)
+        self.menu_options()
 
     def quit_button_callback(self, id):
         pygame.quit()
         exit()
 
 
-def menu_main_options(game_exit, preferences_save):
-    # MENU VARS#
-    settings_menu_width = 300
-    settings_menu_height = 200
-    settings_menu_background_color = constants.COLOR_GREY
+    def menu_options(self):
+        menu_close = False
+        while not menu_close:
+            list_of_events = pygame.event.get()
+            mouse_position = pygame.mouse.get_pos()
 
-    # Slider vars #
-    slider_x = constants.CAMERA_WIDTH / 2
-    sound_effect_slider_y = constants.CAMERA_HEIGHT / 2 - 60
-    sound_effect_vol = 0.5
-    music_effect_slider_y = sound_effect_slider_y + 70
+            game_input = (list_of_events, mouse_position)
 
-    # TEXT vars #
-    music_text_y = sound_effect_slider_y - 30
-    sound_text_y = music_effect_slider_y - 30
+            for event in list_of_events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    self.game_exit()
 
-    window_center = (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.preferences_save()
+                        menu_close = True
 
-    settings_menu_surface = pygame.Surface((settings_menu_width, settings_menu_height))
+            self.effect_container.update(game_input)
+            self.effect_container.draw()
+            pygame.display.update()
 
-    settings_menu_rect = pygame.Rect(0, 0, settings_menu_width, settings_menu_height)
 
-    settings_menu_rect.center = window_center
-
-    menu_close = False
-
-    sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
-                                    (slider_x, sound_effect_slider_y),
-                                    constants.COLOR_RED,
-                                    constants.COLOR_GREEN, config.PREFERENCES.vol_sound)
-
-    music_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "music_effect_slider",
-                                    (slider_x, music_effect_slider_y),
-                                    constants.COLOR_RED,
-                                    constants.COLOR_GREEN, config.PREFERENCES.vol_music)
-
-    while not menu_close:
-
-        list_of_events = pygame.event.get()
-        mouse_position = pygame.mouse.get_pos()
-
-        game_input = (list_of_events, mouse_position)
-
-        for event in list_of_events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                game_exit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    preferences_save()
-                    menu_close = True
-
+    def sound_volume_adjust_callback(self, id, current_val):
         current_sound_volume = config.PREFERENCES.vol_sound
+        if current_sound_volume is not current_val:
+            config.PREFERENCES.vol_sound = current_val
+            config.ASSETS.volume_adjust()
+
+
+    def music_volume_adjust_callback(self, id, current_val):
         current_music_volume = config.PREFERENCES.vol_music
-
-        if current_sound_volume is not sound_effect_slider.current_val:
-            config.PREFERENCES.vol_sound = sound_effect_slider.current_val
+        if current_music_volume is not current_val:
+            config.PREFERENCES.vol_music = current_val
             config.ASSETS.volume_adjust()
 
-        if current_music_volume is not music_effect_slider.current_val:
-            config.PREFERENCES.vol_music = music_effect_slider.current_val
-            config.ASSETS.volume_adjust()
-
-        sound_effect_slider.update(game_input)
-        music_effect_slider.update(game_input)
-
-        # Draw the menu
-        settings_menu_surface.fill(settings_menu_background_color)
-        config.SURFACE_MAIN.blit(settings_menu_surface, settings_menu_rect.topleft)
-        render.draw_text(config.SURFACE_MAIN, "Music Volume", (slider_x, sound_text_y), constants.COLOR_BLACK,
-                         center=True)
-        render.draw_text(config.SURFACE_MAIN, "Sound Volume", (slider_x, music_text_y), constants.COLOR_BLACK,
-                         center=True)
-        sound_effect_slider.draw()
-        music_effect_slider.draw()
-        pygame.display.update()
 
 
 def menu_pause():
