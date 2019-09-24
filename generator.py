@@ -175,3 +175,30 @@ def gen_enemy(coords):
     new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
+
+
+def amount_to_gen(room_size):
+
+    if room_size < 25:
+        what_to_gen(coords)
+    elif room_size < 50:
+        what_to_gen(coords) * 2
+    elif room_size < 75:
+        what_to_gen(coords) * 3
+    elif room_size < 100:
+        what_to_gen(coords) * 5
+    elif room_size < 120:
+        what_to_gen(coords) * 7
+    elif room_size < 150:
+        what_to_gen(coords) * 11
+
+
+def what_to_gen(coords):
+
+    RNG = tcod.random_get_int(None, 1, 2)
+
+    if RNG == 1:
+        gen_enemy(coords)
+    elif RNG == 2:
+        gen_item(coords)
+    # More stuff to come!
