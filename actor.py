@@ -1,5 +1,5 @@
 import math
-
+import game_map
 import config
 import constants
 
@@ -7,7 +7,7 @@ import constants
 class Actor:
 
     def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, depth = 0, creature=None, ai=None, container=None,
-                 item=None, equipment=None, stairs=None, state=None, exitportal=None):
+                 item=None, equipment=None, stairs=None, state=None, exitportal=None, draw_explored=False):
         self.x = round(x)
         self.y = round(y)
         self.name_object = name_object
@@ -15,6 +15,8 @@ class Actor:
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
         self.animation_speed = animation_speed / 1.0  # in seconds
         self.depth = depth
+
+        self.draw_explored = draw_explored
 
         # animation flicker speed
         self.flicker_speed = self.animation_speed / len(self.animation)
@@ -70,7 +72,7 @@ class Actor:
     def draw(self):
         is_visible = config.FOV_MAP.fov[self.y, self.x]
 
-        if is_visible:
+        if is_visible or (self.draw_explored and game_map.is_explored(self.x,self.y)):
             if len(self.animation) == 1:
                 config.SURFACE_MAP.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
 

@@ -1,4 +1,4 @@
-import map as mp
+import game_map as mp
 import numpy as np
 import random
 import pygame

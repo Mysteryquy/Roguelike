@@ -1,7 +1,7 @@
 import ai
 import config
 import constants
-import map
+import game_map
 import menu
 
 
@@ -30,11 +30,11 @@ def cast_lightning(caster, T_damage_maxrange, coords=None):
         point_selected = coords
 
     if point_selected:
-        list_of_tiles = map.find_line(player_location, point_selected)
+        list_of_tiles = game_map.find_line(player_location, point_selected)
 
         for i, (x, y) in enumerate(list_of_tiles):
 
-            target = map.check_for_creature(x, y)
+            target = game_map.check_for_creature(x, y)
 
             if target:
                 target.creature.take_damage(damage,caster.creature)
@@ -50,13 +50,13 @@ def cast_fireball(caster, T_damage_radius_range):
                                       pierce_creature=False, radius=local_radius)
 
     # get sequence of tiles
-    tiles_to_damage = map.find_radius(point_selected, local_radius)
+    tiles_to_damage = game_map.find_radius(point_selected, local_radius)
 
     creature_hit = False
 
     # damage all creatures in tiles
     for (x, y) in tiles_to_damage:
-        creature_to_damage = map.check_for_creature(x, y)
+        creature_to_damage = game_map.check_for_creature(x, y)
 
         if creature_to_damage:
             creature_to_damage.creature.take_damage(damage,caster)
@@ -76,7 +76,7 @@ def cast_confusion(caster, effect_length):
     # get target
     if point_selected:
         (tile_x, tile_y) = point_selected
-        target = map.check_for_creature(tile_x, tile_y)
+        target = game_map.check_for_creature(tile_x, tile_y)
 
         if target:
             # temporarily confuse monster

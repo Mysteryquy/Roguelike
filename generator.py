@@ -33,10 +33,11 @@ def gen_stairs(coords, downwards=True):
     if downwards:
         stairs_com = Stairs()
         stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_DOWN", depth=constants.DEPTH_STRUCTURES,
-                       stairs=stairs_com)
+                       stairs=stairs_com, draw_explored=True)
     else:
         stairs_com = Stairs(downwards)
-        stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_UP", depth=constants.DEPTH_STRUCTURES, stairs=stairs_com)
+        stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_UP", depth=constants.DEPTH_STRUCTURES,
+                       stairs=stairs_com, draw_explored=True)
 
     config.GAME.current_objects.append(stairs)
 
@@ -46,7 +47,7 @@ def gen_portal(coords):
 
     port_com = ExitPortal()
     portal = Actor(x, y, "exit portal", animation_key="S_END_GAME_PORTAL_CLOSED", depth=constants.DEPTH_STRUCTURES,
-                   exitportal=port_com)
+                   exitportal=port_com, draw_explored=True)
 
     config.GAME.current_objects.append(portal)
 

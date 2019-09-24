@@ -1,12 +1,12 @@
 import tcod
 import constants
 import config
-import map
+import game_map
 import tcod
 
 import config
 import constants
-import map
+import game_map
 import casting
 
 
@@ -38,17 +38,17 @@ class AiChase:
     def take_turn(self):
         monster = self.owner
         x,y = monster.x, monster.y
-        if map.is_visible(x,y):
+        if game_map.is_visible(x, y):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             dx = player_x - x
             dy = player_y - y
-            if dx > 0 and map.is_walkable(x+1,y):
+            if dx > 0 and game_map.is_walkable(x + 1, y):
                 monster.move(1,0)
-            elif dx < 0 and map.is_walkable(x-1,y):
+            elif dx < 0 and game_map.is_walkable(x - 1, y):
                 monster.move(-1,0)
-            elif dy > 0 and map.is_walkable(x,y+1):
+            elif dy > 0 and game_map.is_walkable(x, y + 1):
                 monster.move(0,1)
-            elif dy < 0 and map.is_walkable(x,y-1):
+            elif dy < 0 and game_map.is_walkable(x, y - 1):
                 monster.move(0,-1)
 
 
@@ -60,18 +60,18 @@ class AiFlee:
     def take_turn(self):
         monster = self.owner
         x, y = monster.x, monster.y
-        if map.is_visible(x, y):
+        if game_map.is_visible(x, y):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             dx = player_x - x
             dy = player_y - y
 
-            if dx > 0 and map.is_walkable(x - 1, y):
+            if dx > 0 and game_map.is_walkable(x - 1, y):
                 monster.move(-1, 0)
-            elif dx < 0 and map.is_walkable(x + 1, y):
+            elif dx < 0 and game_map.is_walkable(x + 1, y):
                 monster.move(1, 0)
-            elif dy > 0 and map.is_walkable(x, y - 1):
+            elif dy > 0 and game_map.is_walkable(x, y - 1):
                 monster.move(0, -1)
-            elif dy < 0 and map.is_walkable(x, y + 1):
+            elif dy < 0 and game_map.is_walkable(x, y + 1):
                 monster.move(0, 1)
 
 class AiCaster:
@@ -82,7 +82,7 @@ class AiCaster:
     def take_turn(self):
         monster = self.owner
         x, y = monster.x, monster.y
-        if map.is_visible(x, y):
+        if game_map.is_visible(x, y):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             print(monster)
             casting.cast_lightning(monster,(1,3),(player_x,player_y))

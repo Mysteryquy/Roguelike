@@ -28,31 +28,6 @@ class Tile:
             return self._texture_explored
 
 
-class obj_Room:
-    # This is a rectangle that lives on the map
-
-    def __init__(self, coords, size):
-        self.x1, self.y1 = coords
-        self.w, self.h = size
-
-        self.x2 = self.x1 + self.w
-        self.y2 = self.y1 + self.h
-
-    @property
-    def center(self):
-        center_x = (self.x1 + self.x2) / 2
-        center_y = (self.y1 + self.y2) / 2
-
-        return center_x, center_y
-
-    def intercept(self, other):
-        # return True if other obj intersects with this one
-        objects_intersect = (
-                self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and self.y2 >= other.y1)
-
-        return objects_intersect
-
-
 def is_visible(x, y):
     return config.FOV_MAP.fov[y, x]
 
@@ -64,57 +39,7 @@ def create():
     gen = DungeonGenerator()
     new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
     return new_map
-"""
-def create():
-    new_map = [[Tile(True, "S_WALL") for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
-    # generate new room
-    list_of_rooms = []
-
-    for i in range(constants.MAP_MAX_NUM_ROOMS):
-
-        w = tcod.random_get_int(None, constants.ROOM_MIN_WIDTH, constants.ROOM_MAX_WIDTH)
-        h = tcod.random_get_int(None, constants.ROOM_MIN_HEIGHT, constants.ROOM_MAX_HEIGHT)
-
-        x = tcod.random_get_int(None, 2, constants.MAP_WIDTH - w - 2)
-        y = tcod.random_get_int(None, 2, constants.MAP_HEIGHT - h - 2)
-
-        # create the room
-        new_room = obj_Room((x, y), (w, h))
-
-        failed = False
-
-        # TODO check for interference
-        for other_room in list_of_rooms:
-            if new_room.intercept(other_room):
-                failed = True
-                break
-
-        if not failed:
-
-            create_room(new_map, new_room)
-            current_center = new_room.center
-            (x, y) = current_center
-            current_center = (int(round(x)), int(round(y)))
-
-            if len(list_of_rooms) != 0:
-                previous_center = list_of_rooms[-1].center
-
-                (x, y) = previous_center
-                previous_center = (int(round(x)), int(round(y)))
-                create_tunnels(current_center, previous_center, new_map)
-
-            list_of_rooms.append(new_room)
-
-
-    return new_map, list_of_rooms
-"""
-
-def create_room(new_map, new_room):
-    for x in range(new_room.x1, new_room.x2):
-        for y in range(new_room.y1, new_room.y2):
-            new_map[x][y].block_path = False
-            new_map[x][y].texture = "S_FLOOR"
 
 
 def place_objects(room_list):
@@ -169,29 +94,6 @@ def place_objects(room_list):
 
         #if x and y != room_center:
             #generator.gen_item((x, y))
-
-
-def create_tunnels(coords1, coords2, new_map):
-    coin_flip = (tcod.random_get_int(None, 0, 1) == 1)
-
-    (x1, y1) = coords1
-    (x2, y2) = coords2
-
-    if coin_flip:
-        for x in range(min(x1, x2), max(x1, x2)):
-            new_map[x][y1].block_path = False
-            new_map[x][y1].texture = "S_FLOOR"
-        for y in range(min(y1, y2), max(y1, y2)):
-            new_map[x2][y].block_path = False
-            new_map[x2][y].texture = "S_FLOOR"
-
-    else:
-        for y in range(min(y1, y2), max(y1, y2) + 1):
-            new_map[x1][y].block_path = False
-            new_map[x1][y].texture = "S_FLOOR"
-        for x in range(min(x1, x2), max(x1, x2) + 1):
-            new_map[x][y2].block_path = False
-            new_map[x][y2].texture = "S_FLOOR"
 
 
 def check_for_creature(x, y, exclude_object=None):
@@ -305,5 +207,5 @@ def how_much_to_place(room_size,room):
         generator.what_to_gen((x,y))
 
 
-
-
+def is_explored(x, y):
+    return config.GAME.current_map[x][y].explored

@@ -15,7 +15,7 @@ import casting
 # gamefiles
 import constants
 import generator
-import map
+import game_map
 import menu
 import render
 from ui import Textfield
@@ -146,7 +146,7 @@ def game_main_loop():
 
         player_action = game_handle_keys(config.PLAYER)
 
-        map.calculate_fov()
+        game_map.calculate_fov()
 
         if player_action == "QUIT":
             game_exit()
@@ -308,7 +308,7 @@ def game_handle_keys(player):
                 return "player moved"
 
             if event.key == pygame.K_g:
-                objects_at_player = map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
+                objects_at_player = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
 
                 for obj in objects_at_player:
                     if obj.item:
@@ -346,7 +346,7 @@ def game_handle_keys(player):
                 game_load()
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
-                list_of_objs = map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
+                list_of_objs = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
                 for obj in list_of_objs:
                     if obj.stairs:
                         obj.stairs.use()
@@ -363,7 +363,7 @@ def game_new(player_name="Player"):
     config.PLAYER = generator.gen_player((0, 0), player_name=player_name)
     config.GAME.current_objects.append(config.PLAYER)
 
-    map.place_objects(config.GAME.current_rooms)
+    game_map.place_objects(config.GAME.current_rooms)
 
 
 def game_exit():
@@ -392,9 +392,9 @@ def game_load():
     for obj in config.GAME.current_objects:
         obj.animation_init()
 
-    map.make_fov(config.GAME.current_map)
+    game_map.make_fov(config.GAME.current_map)
     config.FOV_CALCULATE = True
-    map.calculate_fov()
+    game_map.calculate_fov()
 
 
 def preferences_save():

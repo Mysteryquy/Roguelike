@@ -4,7 +4,7 @@ import config
 import pygame
 import render
 import generator
-import map
+import game_map
 
 
 class MainMenu:
@@ -297,7 +297,7 @@ def menu_inventory():
 
 def debug_tile_select():
     (x, y) = menu_tile_select()
-    objects = map.objects_at_coords(x, y)
+    objects = game_map.objects_at_coords(x, y)
     print((x, y))
 
 
@@ -330,15 +330,15 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         valid_tiles = []
 
         if coords_origin:
-            full_list_tiles = map.find_line(coords_origin, (int_x, int_y))
+            full_list_tiles = game_map.find_line(coords_origin, (int_x, int_y))
             for i, (x, y) in enumerate(full_list_tiles):
 
                 valid_tiles.append((x, y))
 
-                if not penetrate_walls and not map.is_walkable(x, y):
+                if not penetrate_walls and not game_map.is_walkable(x, y):
                     break
 
-                if not pierce_creature and map.check_for_creature(x, y):
+                if not pierce_creature and game_map.check_for_creature(x, y):
                     break
 
             if max_range:
@@ -379,7 +379,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         render.draw_tile_rect((last_tile_x, last_tile_y), constants.COLOR_RED, mark="X")
 
         if radius:
-            area_effect = map.find_radius(valid_tiles[-1], radius)
+            area_effect = game_map.find_radius(valid_tiles[-1], radius)
 
             for (tile_x, tile_y) in area_effect:
                 render.draw_tile_rect((tile_x, tile_y))

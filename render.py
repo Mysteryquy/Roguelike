@@ -96,15 +96,16 @@ def draw_debug_map(map_to_draw):
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
 
 
+DISPLAY_MAP_W = constants.CAMERA_WIDTH/ constants.CELL_WIDTH
+DISPLAY_MAP_H = constants.CAMERA_HEIGHT / constants.CELL_HEIGHT
+
 def draw_map(map_to_draw):
     cam_x, cam_y = config.CAMERA.map_address
-    display_map_w = constants.CAMERA_WIDTH / constants.CELL_WIDTH
-    display_map_h = constants.CAMERA_HEIGHT / constants.CELL_HEIGHT
 
-    render_w_min = int(cam_x - (display_map_w / 2))
-    render_h_min = int(cam_y - (display_map_h / 2))
-    render_w_max = int(cam_x + (display_map_w / 2))
-    render_h_max = int(cam_y + (display_map_h / 2))
+    render_w_min = int(cam_x - (DISPLAY_MAP_W / 2))
+    render_h_min = int(cam_y - (DISPLAY_MAP_H / 2))
+    render_w_max = int(cam_x + (DISPLAY_MAP_W / 2))
+    render_h_max = int(cam_y + (DISPLAY_MAP_H / 2))
 
     render_w_min = max(0, render_w_min)
     render_h_min = max(0, render_h_min)

@@ -1,5 +1,5 @@
 import config
-import map
+import game_map
 import pygame
 import constants
 import tcod
@@ -30,7 +30,7 @@ class Creature:
 
         tile_is_wall = not config.FOV_MAP.walkable[self.owner.y + dy, self.owner.x + dx]
 
-        target = map.check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
+        target = game_map.check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
         if target:
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem

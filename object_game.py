@@ -1,5 +1,5 @@
 import config
-import map
+import game_map
 import constants
 import tcod.path as path
 
@@ -15,7 +15,7 @@ class Game:
 
         self.maps_next = []
 
-        self.current_map, self.current_rooms = map.create()
+        self.current_map, self.current_rooms = game_map.create()
 
 
     def transition_next(self):
@@ -34,11 +34,11 @@ class Game:
 
             config.PLAYER.animation_init()
 
-            self.current_map, self.current_rooms = map.create()
+            self.current_map, self.current_rooms = game_map.create()
 
             # self.pathing = path.AStar(self.current_map, 0)
 
-            map.place_objects(self.current_rooms)
+            game_map.place_objects(self.current_rooms)
 
         else:
             (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = \
@@ -50,7 +50,7 @@ class Game:
             for obj in self.current_objects:
                 obj.animation_init()
 
-            map.make_fov(self.current_map)
+            game_map.make_fov(self.current_map)
 
             config.FOV_CALCULATE = True
 
@@ -73,7 +73,7 @@ class Game:
             for obj in self.current_objects:
                 obj.animation_init()
 
-            map.make_fov(self.current_map)
+            game_map.make_fov(self.current_map)
             config.FOV_CALCULATE = True
 
             del self.maps_previous[-1]
