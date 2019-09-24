@@ -20,8 +20,8 @@ class DungeonGenerator:
     def generate(self, map_width, map_height):
         self.map = [[map.Tile(True, "S_WALL") for y in range(0, map_height)] for x in range(0, map_width)]
         self.regions = np.zeros((map_width, map_height))
-        self.map_width = map_width
-        self.map_height = map_height
+        self.map_width = map_width - 1
+        self.map_height = map_height - 1
         self.add_rooms()
         map.make_fov(self.map)
         print(self.map)
@@ -33,8 +33,8 @@ class DungeonGenerator:
     def carve(self, rect, tile):
         for y in range(rect.height):
             for x in range(rect.width):
-                self.map[x+rect.left][y+rect.top].block_path = False
-                self.map[x+rect.left][y+rect.top].texture = tile
+                self.map[x + rect.left][y + rect.top].block_path = False
+                self.map[x + rect.left][y + rect.top].texture = tile
 
     def add_rooms(self):
         for i in range(self.num_room_tries):
@@ -47,18 +47,14 @@ class DungeonGenerator:
             else:
                 height += rectangularity
 
-            x = random.randint(1, int((self.map_width - width) / 2)) * 2 + 1
-            y = random.randint(1, int((self.map_height - height) / 2)) * 2 + 1
+            x = random.randint(1, int((self.map_width - width - 1) / 2)) * 2 + 1
+            y = random.randint(1, int((self.map_height - height - 1) / 2)) * 2 + 1
 
             room = pygame.Rect(x, y, width, height)
 
-            def intersect(other):
-                return room.left <= other.right and room.right >= other.left and room.top <= other.bottom and room.bottom >= other.top
+            overlaps = room.collidelist(self.rooms) != -1
 
-            overlaps = any(intersect(other) for other in self.rooms)
-            print(overlaps)
             if not overlaps:
                 self.rooms.append(room)
                 self.start_region()
-
-            self.carve(room, "S_FLOOR")
+                self.carve(room, "S_FLOOR")
