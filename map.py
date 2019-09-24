@@ -2,6 +2,7 @@ import tcod
 import constants
 import config
 import generator
+from dungeon_generator import DungeonGenerator
 
 
 class Tile:
@@ -59,7 +60,11 @@ def is_visible(x, y):
 def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
 
-
+def create():
+    gen = DungeonGenerator()
+    new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+    return new_map
+"""
 def create():
     new_map = [[Tile(True, "S_WALL") for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
@@ -101,10 +106,9 @@ def create():
 
             list_of_rooms.append(new_room)
 
-    make_fov(new_map)
 
     return new_map, list_of_rooms
-
+"""
 
 def create_room(new_map, new_room):
     for x in range(new_room.x1, new_room.x2):
@@ -145,13 +149,13 @@ def place_objects(room_list):
             else:
                 generator.gen_stairs(room.center, downwards=True)
 
-        x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
-        y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
+        x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
         generator.gen_enemy((x, y))
 
-        x = tcod.random_get_int(None, room.x1 + 1, room.x2 - 1)
-        y = tcod.random_get_int(None, room.y1 + 1, room.y2 - 1)
+        x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
         if x and y != room_center:
             generator.gen_item((x, y))

@@ -110,8 +110,8 @@ def draw_map(map_to_draw):
             is_visible = config.FOV_MAP.fov[y, x]
             if is_visible and not map_to_draw[x][y].explored:
                 map_to_draw[x][y].explored = True
-            if map_to_draw[x][y].explored:
-                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
+            #if map_to_draw[x][y].explored:
+            config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
                                         (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
