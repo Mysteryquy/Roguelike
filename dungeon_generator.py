@@ -2,19 +2,26 @@ import map as mp
 import numpy as np
 import random
 import pygame
+import render
+from time import sleep
+import config
 
+"""
+This is basically a Python version of Bob Nystrom's Dungeon Generator written in Dart.
+See https://github.com/munificent/hauberk/ for his project and source code 
+"""
 
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
     def __init__(self):
-        self.num_room_tries = 200
-        self.extra_connector_chance = 2
+        self.num_room_tries = 50
+        self.extra_connector_chance = 3
         self.room_extra_size = 0
-        self.winding_percent = 0
+        self.winding_percent = 20
         self.rooms = []
         self.regions = []
-        self.current_region = 1
+        self.current_region = 0
         self.current_map = None
         self.current_map_width = 0
         self.current_map_height = 0
@@ -31,6 +38,7 @@ class DungeonGenerator:
                     self.grow_maze(x, y)
 
         self.connect_regions()
+        self.remove_dead_ends()
         mp.make_fov(self.current_map)
         return self.current_map, self.rooms
 
@@ -114,6 +122,9 @@ class DungeonGenerator:
         return self.current_map[x + di_x * 2][y + di_y * 2].block_path
 
     def connect_regions(self):
+        for i,room in enumerate(self.rooms):
+            x,y = room.center
+            print("Raum"+ str(i) + " :"+ str(self.regions[x][y]))
         connector_regions = {}
         for y in range(0, self.current_map_height - 1):
             for x in range(0, self.current_map_width - 1):
@@ -128,22 +139,27 @@ class DungeonGenerator:
                         connector_regions[(x, y)] = regions
 
         connectors = list(connector_regions)
+        print("Connectors:" + str(connectors))
         merged = {}
         open_regions = set()
-        for i in range(0, self.current_region + 1):
+        for i in range(1, self.current_region + 1):
             merged[i] = i
             open_regions.add(i)
 
+        print(open_regions)
         while len(open_regions) > 1:
+            # connector = random.choice(connectors)
             connector = random.choice(connectors)
             self.add_junction(connector)
 
-            regions = list(map(lambda i: merged[i], connector_regions[connector]))
-            print(regions)
-            dest = regions[0]
-            sources = regions[1:]
+            regions = map(lambda i: merged[i], connector_regions[connector])
+            dest = next(regions)
+            sources = set(regions)
+            if dest in sources:
+                sources.remove(dest)
 
-            for i in range(0, self.current_region + 1):
+
+            for i in range(1, self.current_region + 1):
                 if merged[i] in sources:
                     merged[i] = dest
 
@@ -154,10 +170,11 @@ class DungeonGenerator:
             for conn in connectors:
                 c_x, c_y = conn
                 x, y = connector
-                if abs(c_x - x) < 2 or abs(c_y - y) < 2:
-                    connectors.remove(conn)
+                regions = set(map(lambda reg: merged[reg], connector_regions[(c_x, c_y)]))
 
-                regions = set(map(lambda region: merged[region], connector_regions[(x, y)]))
+                if abs(c_x - x) < 2 and abs(c_y - y) < 2:
+                    connectors.remove(conn)
+                    continue
 
                 if len(regions) > 1:
                     continue
@@ -172,3 +189,21 @@ class DungeonGenerator:
         x, y = pos
         self.current_map[x][y].block_path = False
         self.current_map[x][y].texture = "S_FLOOR"
+
+    def remove_dead_ends(self):
+        done = False
+        while not done:
+            done = True
+            for y in range(1, self.current_map_width):
+                for x in range(1, self.current_map_height):
+                    if not self.current_map[x][y].block_path:
+                        exits = 0
+                        for direction in DungeonGenerator.directions:
+                            dx, dy = direction
+                            if not self.current_map[x + dx][y + dy].block_path:
+                                exits = exits + 1
+
+                        if exits == 1:
+                            done = False
+                            self.current_map[x][y].block_path = True
+                            self.current_map[x][y].texture = "S_WALL"

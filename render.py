@@ -88,6 +88,13 @@ def draw_game():
     draw_messages()
     config.CONSOLE.draw()
 
+def draw_debug_map(map_to_draw):
+    config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
+    config.SURFACE_MAP.fill(constants.COLOR_BLACK)
+    draw_map(map_to_draw)
+    config.CAMERA.update()
+    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
+
 
 def draw_map(map_to_draw):
     cam_x, cam_y = config.CAMERA.map_address
@@ -110,8 +117,8 @@ def draw_map(map_to_draw):
             is_visible = config.FOV_MAP.fov[y, x]
             if is_visible and not map_to_draw[x][y].explored:
                 map_to_draw[x][y].explored = True
-            #if map_to_draw[x][y].explored:
-            config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
+            if map_to_draw[x][y].explored:
+                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
                                         (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 

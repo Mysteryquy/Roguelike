@@ -357,9 +357,10 @@ def game_handle_keys(player):
 
 
 def game_new(player_name="Player"):
-    config.PLAYER = generator.gen_player((0, 0), player_name=player_name)
+
     # starts a nre game and map
     config.GAME = Game()
+    config.PLAYER = generator.gen_player((0, 0), player_name=player_name)
     config.GAME.current_objects.append(config.PLAYER)
 
     map.place_objects(config.GAME.current_rooms)

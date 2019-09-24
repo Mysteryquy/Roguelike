@@ -156,7 +156,7 @@ def place_objects(room_list):
                 generator.gen_stairs(room.center, downwards=True)
 
 
-        how_much_to_place(room_size)
+        how_much_to_place(room_size,room)
         #x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         #y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
@@ -284,7 +284,7 @@ def find_radius(coords, radius):
     return tile_list
 
 
-def how_much_to_place(room_size):
+def how_much_to_place(room_size,room):
 
     if room_size <= 20:
         fuckingree = 3
@@ -294,7 +294,8 @@ def how_much_to_place(room_size):
         fuckingree = 5
     elif room_size <= 50:
         fuckingree = 6
-
+    else:
+        fuckingree = 2
     for i in range(0, fuckingree):
 
 

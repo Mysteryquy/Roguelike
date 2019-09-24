@@ -180,9 +180,10 @@ def gen_enemy(coords):
 def what_to_gen(coords):
 
     RNG = tcod.random_get_int(None, 1, 2)
+    x,y = coords
 
     if RNG == 1:
-        generator.gen_enemy((x, y))
+        gen_enemy((x, y))
     elif RNG == 2:
-        generator.gen_item((x, y))
+        gen_item((x, y))
     # More stuff to come!
