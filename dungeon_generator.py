@@ -18,7 +18,7 @@ class DungeonGenerator:
         self.num_room_tries = 50
         self.extra_connector_chance = 3
         self.room_extra_size = 0
-        self.winding_percent = 20
+        self.winding_percent = 70
         self.rooms = []
         self.regions = []
         self.current_region = 0
