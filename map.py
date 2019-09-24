@@ -125,6 +125,12 @@ def place_objects(room_list):
 
     for room in room_list:
 
+        # Tobias room tile calculation
+        cal_x = room.right - room.left
+        cal_y = room.bottom - room.top
+        room_size = cal_x * cal_y
+
+
         room_center = room.center
         first_room = (room == room_list[0])
         last_room = (room == room_list[-1])
@@ -149,16 +155,20 @@ def place_objects(room_list):
             else:
                 generator.gen_stairs(room.center, downwards=True)
 
-        x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
-        generator.gen_enemy((x, y))
+        how_much_to_place(room_size)
+        #x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        #y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
-        x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
+        #generator.amount_to_gen(room_size)
 
-        if x and y != room_center:
-            generator.gen_item((x, y))
+        #generator.gen_enemy((x, y))
+
+        #x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        #y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
+
+        #if x and y != room_center:
+            #generator.gen_item((x, y))
 
 
 def create_tunnels(coords1, coords2, new_map):
@@ -272,3 +282,27 @@ def find_radius(coords, radius):
             tile_list.append((x, y))
 
     return tile_list
+
+
+def how_much_to_place(room_size):
+
+    if room_size <= 20:
+        fuckingree = 3
+    elif room_size <= 30:
+        fuckingree = 4
+    elif room_size <= 40:
+        fuckingree = 5
+    elif room_size <= 50:
+        fuckingree = 6
+
+    for i in range(0, fuckingree):
+
+
+        x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
+
+        generator.what_to_gen((x,y))
+
+
+
+
