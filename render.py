@@ -70,8 +70,8 @@ def helper_text_width(font):
 
 def draw_game():
     # clear the surface
-    config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
-    config.SURFACE_MAP.fill(constants.COLOR_BLACK)
+    config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
+    config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
 
     config.CAMERA.update()
 

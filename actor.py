@@ -72,9 +72,14 @@ class Actor:
     def draw(self):
         is_visible = config.FOV_MAP.fov[self.y, self.x]
 
-        if is_visible or (self.draw_explored and game_map.is_explored(self.x,self.y)):
+        explored_draw = self.draw_explored and game_map.is_explored(self.x,self.y) and not is_visible
+        special_flags = constants.EXPLORED_DRAW_FLAGS if explored_draw else 0
+
+        if is_visible or explored_draw:
             if len(self.animation) == 1:
-                config.SURFACE_MAP.blit(self.animation[0], (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+                config.SURFACE_MAP.blit(self.animation[0],
+                                        (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT),
+                                        special_flags=special_flags)
 
             elif len(self.animation) > 1:
                 if config.CLOCK.get_fps() > 0.0:
@@ -90,7 +95,9 @@ class Actor:
                         self.sprite_image += 1
 
                 config.SURFACE_MAP.blit(self.animation[self.sprite_image],
-                                 (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT))
+                                 (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT),
+                                        special_flags=special_flags)
+
 
     def distance_to(self, other):
 

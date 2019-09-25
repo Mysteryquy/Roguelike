@@ -1,5 +1,6 @@
 import pygame
 import tcod as libtcodpy
+import random
 
 pygame.init()
 
@@ -9,6 +10,7 @@ CELL_WIDTH = 32
 CELL_HEIGHT = 32
 SPRITE_WIDTH = 16
 SPRITE_HEIGHT = 16
+
 
 #Map limitations
 MAP_WIDTH = 25
@@ -96,3 +98,7 @@ XP_NEEDED = {
     5: 2500,
 }
 MAX_LEVEL = max(XP_NEEDED.keys())
+
+
+EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
+

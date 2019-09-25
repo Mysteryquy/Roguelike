@@ -34,7 +34,7 @@ class Assets:
 
         ## SPECIAL ##
 
-        self.S_STAIRS_DOWN = self.tile.get_image("a", 1, 16, 16, (32, 32))
+        self.S_STAIRS_DOWN = self.tile.get_image("c", 1, 16, 16, (32, 32))
         self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
@@ -148,7 +148,7 @@ def get_animation_from_files(column, row, file_prefix,
 class Spritesheet:  # Bilder von Spritesheets holen
 
     tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
-                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16}
+                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16, "z":0}
 
     def __init__(self, file_name):
         # Den Sheet laden.
