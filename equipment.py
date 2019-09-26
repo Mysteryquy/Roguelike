@@ -45,3 +45,16 @@ class Equipment(Item):
         self.equipped = False
 
         config.GAME.game_message("Item uneqipped")
+
+
+
+class Gold(Item):
+
+    def __init__(self, pickup_text = None, value = 0):
+        self.pickup_text = pickup_text
+        self.value = value
+
+    def pickup_function(self):
+
+        actor.gold = actor.gold + self.value
+        config.GAME.game_message("Picked up Gold. You now have " + actor.gold + " Gold")

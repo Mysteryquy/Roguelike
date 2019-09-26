@@ -50,6 +50,7 @@ class Assets:
             "S_FLOOR" : pygame.image.load("data/sprites/floor.jpg"),
             "S_FLOOR_EXPLORED" : pygame.image.load("data/sprites/floorunseen2.png")
 
+
         }
 
         self.animation_dict = {
@@ -71,9 +72,24 @@ class Assets:
                                                (constants.CELL_WIDTH, constants.CELL_HEIGHT))],
             "S_SHIELD": [pygame.transform.scale(pygame.image.load("data/sprites/shield.png"),
                                                 (constants.CELL_WIDTH, constants.CELL_HEIGHT))],
+            "S_WEP_LONGSWORD_1" : get_animation_from_files(0, 0, "data/tilesets/Items/MedWep", num_sprites =1),
+            "S_WEP_LONGSWORD_2": get_animation_from_files(1, 0, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_WEP_LONGSWORD_3": get_animation_from_files(2, 0, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_WEP_LONGSWORD_4": get_animation_from_files(3, 0, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_WEP_LONGSWORD_5": get_animation_from_files(4, 0, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_WEP_LONGAXE_1": get_animation_from_files(0, 0, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_WEP_LONGAXE_2": get_animation_from_files(0, 1, "data/tilesets/Items/MedWep", num_sprites=1),
+            "S_ARM_SHIELD_1": get_animation_from_files(0, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_2": get_animation_from_files(1, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_3": get_animation_from_files(2, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_4": get_animation_from_files(3, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_5": get_animation_from_files(4, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_6": get_animation_from_files(5, 0, "data/tilesets/Items/Shield", num_sprites=1),
+            "S_ARM_SHIELD_7": get_animation_from_files(6, 0, "data/tilesets/Items/Shield", num_sprites=1),
             "S_SCROLL_01": self.scrollspritesheet.get_image("a", 5, 16, 16, (32, 32)),
             "S_SCROLL_02": self.scrollspritesheet.get_image("a", 2, 16, 16, (32, 32)),
             "S_SCROLL_03": self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32)),
+            "S_MONEY_SMALL": get_animation_from_files(0, 2, "data/tilesets/Items/Money", num_sprites=1),
             "S_FLESH_SNAKE": self.flesh.get_image("a", 3, 16, 16, (32, 32)),
             "S_DEAD_SLIME": get_animation_from_files(2, 5, "data/tilesets/Objects/Ground", num_sprites=1),
             "S_FLESH_SPIDER": get_animation_from_files(2, 1, "data/tilesets/Items/Flesh", num_sprites=1),

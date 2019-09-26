@@ -7,7 +7,7 @@ import constants
 class Actor:
 
     def __init__(self, x, y, name_object, animation_key, animation_speed=1.0, depth = 0, creature=None, ai=None, container=None,
-                 item=None, equipment=None, stairs=None, state=None, exitportal=None, draw_explored=False):
+                 item=None, equipment=None, stairs=None, state=None, exitportal=None, draw_explored=False, gold=0):
         self.x = round(x)
         self.y = round(y)
         self.name_object = name_object
@@ -54,6 +54,10 @@ class Actor:
         self.exitportal = exitportal
         if self.exitportal:
             self.exitportal.owner = self
+
+        self.gold = gold
+        if self.gold:
+            self.gold.owner = self
 
 
 

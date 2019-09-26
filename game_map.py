@@ -209,3 +209,15 @@ def how_much_to_place(room_size,room):
 
 def is_explored(x, y):
     return config.GAME.current_map[x][y].explored
+
+
+#def auto_explore():
+
+    #if room.center in room_list is not is_explored():
+
+        # find a path from current position to any unexplored center of every room
+        # tcod.get_path(PLAYER.x, PLAYER.y, room.center)
+
+        # Actually move the player there
+
+        # Stop if the player encounters a enemy (or item) for example it could stop if something from the actor class is drawn that the player can define.
