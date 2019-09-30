@@ -102,3 +102,21 @@ MAX_LEVEL = max(XP_NEEDED.keys())
 
 EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
 
+
+MOVEMENT_DICT = {
+    pygame.K_UP : (0,-1),
+    pygame.K_DOWN : (0,1),
+    pygame.K_LEFT: (-1,0),
+    pygame.K_RIGHT: (1,0),
+    pygame.K_KP1: (-1,1),
+    pygame.K_KP2: (0,1),
+    pygame.K_KP3: (1,1),
+    pygame.K_KP4: (-1,0),
+    pygame.K_KP5: (0,0),
+    pygame.K_KP6: (1,0),
+    pygame.K_KP7: (-1,-1),
+    pygame.K_KP8: (0,-1),
+    pygame.K_KP9: (1,-1),
+
+
+}

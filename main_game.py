@@ -145,6 +145,9 @@ def game_main_loop():
     while not game_quit:
 
         player_action = game_handle_keys(config.PLAYER)
+        if player_action != "player autoexplored":
+            config.AUTO_EXPLORING = False
+
 
         game_map.calculate_fov()
 
@@ -217,6 +220,9 @@ def game_initialize():
     # game_new()
 
 
+
+
+
 def game_handle_keys(player):
     # get player input
     keys_list = pygame.key.get_pressed()
@@ -242,70 +248,16 @@ def game_handle_keys(player):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return "QUIT"
-            if event.key == pygame.K_UP:
-                player.move(0, -1)
+
+            if event.key in constants.MOVEMENT_DICT.keys():
+                dx,dy = constants.MOVEMENT_DICT[event.key]
+                player.move(dx,dy)
                 config.FOV_CALCULATE = True
                 return "player moved"
 
-            if event.key == pygame.K_DOWN:
-                player.move(0, 1)
-                config.FOV_CALCULATE = True
-                return "player moved"
+            if event.key == pygame.K_a:
+                menu.debug_tile_select_pathing()
 
-            if event.key == pygame.K_LEFT:
-                player.move(-1, 0)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_RIGHT:
-                player.move(1, 0)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP1:
-                player.move(-1, 1)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP2:
-                player.move(0, 1)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP3:
-                player.move(1, 1)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP4:
-                player.move(-1, 0)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP5:
-                player.move(0, 0)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP6:
-                player.move(1, 0)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP7:
-                player.move(-1, -1)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP8:
-                player.move(0, -1)
-                config.FOV_CALCULATE = True
-                return "player moved"
-
-            if event.key == pygame.K_KP9:
-                player.move(1, -1)
-                config.FOV_CALCULATE = True
-                return "player moved"
 
             if event.key == pygame.K_g:
                 objects_at_player = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
@@ -314,6 +266,7 @@ def game_handle_keys(player):
                     if obj.item:
                         print(obj.name_object)
                         obj.item.pick_up(config.PLAYER)
+                return "picked up"
 
             if event.key == pygame.K_d:
                 if len(player.container.inventory) > 0:
@@ -325,15 +278,15 @@ def game_handle_keys(player):
 
             if event.key == pygame.K_i:
                 menu.menu_inventory()
+                return "inventory"
 
             if event.key == pygame.K_l:
                 menu.menu_tile_select()
+                return "tile select"
 
-            if event.key == pygame.K_k:
-                casting.cast_confusion(caster=config.PLAYER, effect_length=2)
 
             if event.key == pygame.K_m:
-                generator.gen_enemy((player.x, player.y))
+                generator.gen_and_append_enemy((player.x, player.y))
 
             if event.key == pygame.K_x:
                 menu.debug_tile_select()
@@ -352,6 +305,25 @@ def game_handle_keys(player):
                         obj.stairs.use()
                     elif obj.exitportal:
                         obj.exitportal.use()
+
+            if event.key == pygame.K_BACKQUOTE:
+                game_map.start_auto_explore()
+
+
+
+    if config.AUTO_EXPLORING:
+
+        x,y = next(config.GAME.auto_explore_path, (0,0))
+        if (x,y) == (0,0):
+            config.AUTO_EXPLORING = False
+        else:
+            player.move_towards_point(x,y)
+            config.FOV_CALCULATE = True
+            return "player autoexplored"
+
+
+
+
 
     return "no-action"
 

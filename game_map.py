@@ -211,9 +211,40 @@ def is_explored(x, y):
     return config.GAME.current_map[x][y].explored
 
 
-#def auto_explore():
 
-    #if room.center in room_list is not is_explored():
+def get_path_from_player(goal_x:int, goal_y:int):
+    return config.GAME.pathing.get_path(config.PLAYER.x, config.PLAYER.y, goal_x, goal_y)
+
+def start_auto_explore():
+    #check if every room was explored
+    goal_x, goal_y = config.PLAYER.x, config.PLAYER.y
+
+
+    for room in config.GAME.current_rooms:
+        x,y = room.center
+        if not is_explored(x,y):
+            goal_x,goal_y = x,y
+
+
+    #maybe do some more stuff here
+    config.AUTO_EXPLORING = goal_x != config.PLAYER.x or goal_y != config.PLAYER.y
+
+    if not config.AUTO_EXPLORING:
+        for x in range(0,constants.MAP_WIDTH):
+            for y in range(0, constants.MAP_HEIGHT):
+                if not is_explored(x,y):
+                    goal_x,goal_y = x,y
+
+    config.AUTO_EXPLORING = goal_x != config.PLAYER.x or goal_y != config.PLAYER.y
+
+
+    if config.AUTO_EXPLORING:
+        config.GAME.auto_explore_path = iter(get_path_from_player(goal_x, goal_y))
+
+
+
+
+#if room.center in room_list is not is_explored():
 
         # find a path from current position to any unexplored center of every room
         # tcod.get_path(PLAYER.x, PLAYER.y, room.center)

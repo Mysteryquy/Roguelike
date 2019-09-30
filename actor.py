@@ -122,6 +122,18 @@ class Actor:
 
         self.creature.move(dx, dy)
 
+    def move_towards_point(self,x,y):
+        dx = x - self.x
+        dy = y - self.y
+
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
+
+        self.creature.move(dx, dy)
+
+
     def move(self,dx,dy):
         self.creature.move(dx,dy)
 

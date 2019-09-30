@@ -298,7 +298,11 @@ def menu_inventory():
 def debug_tile_select():
     (x, y) = menu_tile_select()
     objects = game_map.objects_at_coords(x, y)
-    print("Objects at " + str((x,y)) + ": " + str(objects) )
+    print("Objects at " + str((x,y)) + "(walkable=" + str(game_map.is_walkable(x,y)) +": " + str(objects) )
+
+def debug_tile_select_pathing():
+    (x, y) = menu_tile_select()
+    print("Path from" + str( (config.PLAYER.x, config.PLAYER.y))  + " to " + str((x,y)) +" :" + str(game_map.get_path_from_player(x,y)))
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
