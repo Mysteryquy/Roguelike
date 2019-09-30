@@ -298,7 +298,7 @@ def menu_inventory():
 def debug_tile_select():
     (x, y) = menu_tile_select()
     objects = game_map.objects_at_coords(x, y)
-    print((x, y))
+    print("Objects at " + str((x,y)) + ": " + str(objects) )
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):

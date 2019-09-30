@@ -73,6 +73,14 @@ class AiFlee:
                 monster.move(0, -1)
             elif dy < 0 and game_map.is_walkable(x, y + 1):
                 monster.move(0, 1)
+            elif dx == 0 and dy != 0 and game_map.is_walkable(x+1,y):
+                monster.move(1,0)
+            elif dx == 0 and dy != 0 and game_map.is_walkable(x-1,y):
+                monster.move(-1,0)
+            elif dy == 0 and dx != 0 and game_map.is_walkable(x,y+1):
+                monster.move(0,1)
+            elif dy == 0 and dx != 0 and game_map.is_walkable(x,y-1):
+                monster.move(0,-1)
 
 class AiCaster:
 

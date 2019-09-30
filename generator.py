@@ -3,7 +3,7 @@ from actor import Actor
 from creature import Creature
 from main_game import ExitPortal, Stairs
 import tcod
-from item import Item
+from item import Item, Gold
 import config
 import death
 import casting
@@ -11,14 +11,17 @@ import ai
 import constants
 from equipment import Equipment
 import monster_gen
+import random
 
 
 ##PLAYER##
 def gen_player(coords, player_name="Player"):
     x, y = coords
     print(coords)
-
-    container_com = Container()
+    gold = Actor(x, y, "Gold(0)", animation_key="S_MONEY_SMALL", depth=constants.DEPTH_ITEM,
+                          item=Gold(0))
+    gold.animation_destroy()
+    container_com = Container(inventory=[gold])
     creature_com = Creature(player_name, base_atk=666, base_def=100, custom_death=death.death_player, base_evasion=20,
                             base_hit_chance=100)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
@@ -65,7 +68,7 @@ def gen_end_game_item(coords):
 
 ##ITEMS##
 
-def gen_item(coords):
+def gen_and_append_item(coords):
     random_number = tcod.random_get_int(None, 1, 3)
 
     if random_number == 1:
@@ -73,11 +76,9 @@ def gen_item(coords):
     elif random_number == 2:
         new_item = gen_scroll(coords)
     else:
-        new_item = gen_armor(coords)
-
+        new_item = gen_armor_shield(coords)
+    print(new_item.name_object)
     config.GAME.current_objects.append(new_item)
-
-
 
 
 def gen_scroll_lighning(coords):
@@ -135,66 +136,26 @@ def gen_weapon_sword(coords):
     return return_object
 
 
-def gen_weapon_longsword_1(coords):
+longsword_name_dict = {
+    1: "Silver Longsword",
+    2: "Moonlight Sword",
+    3: "Rediron Sword",
+    4: "Black Sword",
+    5: "Royal Sword"
+}
+
+
+def gen_weapon_longsword(coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
+    n = tcod.random_get_int(None, 1, len(longsword_name_dict))
+    name = longsword_name_dict[n]
 
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="Longsword Type 1", value=100, pickup_text="Longsword Type 1")
+    equipment_com = Equipment(attack_bonus=bonus, equip_text=name, value=100, pickup_text=name)
 
-    return_object = Actor(x, y, "Longsword Type 1", animation_key="S_WEP_LONGSWORD_1", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_weapon_longsword_2(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="Longsword Type 2", value=100, pickup_text="Longsword Type 2")
-
-    return_object = Actor(x, y, "Longsword Type 2", animation_key="S_WEP_LONGSWORD_2", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_weapon_longsword_3(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="Longsword Type 3", value=100, pickup_text="Longsword Type 3")
-
-    return_object = Actor(x, y, "Longsword Type 3", animation_key="S_WEP_LONGSWORD_3", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_weapon_longsword_4(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="Longsword Type 4", value=100, pickup_text="Longsword Type 4")
-
-    return_object = Actor(x, y, "Longsword Type 4", animation_key="S_WEP_LONGSWORD_4", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_weapon_longsword_5(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="Longsword Type 5", value=100, pickup_text="Longsword Type 5")
-
-    return_object = Actor(x, y, "Longsword Type 5", animation_key="S_WEP_LONGSWORD_5", depth=constants.DEPTH_ITEM, equipment=equipment_com,
+    return_object = Actor(x, y, name, animation_key="S_WEP_LONGSWORD_" + str(n), depth=constants.DEPTH_ITEM,
+                          equipment=equipment_com,
                           item=equipment_com)
 
     return return_object
@@ -205,9 +166,11 @@ def gen_weapon_longaxe_1(coords):
 
     bonus = tcod.random_get_int(None, 1, 2)
 
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="2 Handed Axe Type 1", value=100, pickup_text="2 Handed Axe Type 1")
+    equipment_com = Equipment(attack_bonus=bonus, equip_text="2 Handed Axe Type 1", value=100,
+                              pickup_text="2 Handed Axe Type 1")
 
-    return_object = Actor(x, y, "2 Handed Axe Type 1", animation_key="S_WEP_LONGAXE_1", depth=constants.DEPTH_ITEM, equipment=equipment_com,
+    return_object = Actor(x, y, "2 Handed Axe Type 1", animation_key="S_WEP_LONGAXE_1", depth=constants.DEPTH_ITEM,
+                          equipment=equipment_com,
                           item=equipment_com)
 
     return return_object
@@ -218,142 +181,71 @@ def gen_weapon_longaxe_2(coords):
 
     bonus = tcod.random_get_int(None, 1, 2)
 
-    equipment_com = Equipment(attack_bonus=bonus, equip_text="2 Handed Axe Type 2", value=100, pickup_text="2 Handed Axe Type 2")
+    equipment_com = Equipment(attack_bonus=bonus, equip_text="2 Handed Axe Type 2", value=100,
+                              pickup_text="2 Handed Axe Type 2")
 
-    return_object = Actor(x, y, "2 Handed Axe Type 2", animation_key="S_WEP_LONGAXE_2", depth=constants.DEPTH_ITEM, equipment=equipment_com,
+    return_object = Actor(x, y, "2 Handed Axe Type 2", animation_key="S_WEP_LONGAXE_2", depth=constants.DEPTH_ITEM,
+                          equipment=equipment_com,
                           item=equipment_com)
 
     return return_object
 
 
-def gen_armor_shield_1(coords):
+shield_name_dict = {
+    1 : "Shield of Thorns",
+    2: "Rediron Shield",
+    3: "Mithril Shield",
+    4: "Wooden Shield",
+    5: "Silver Shield",
+    6: "Shield of the Wolves",
+    7: "Slimey Shield"
+
+}
+
+def gen_armor_shield(coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
+    n = tcod.random_get_int(None, 1, len(shield_name_dict))
+    random_name = shield_name_dict[n]
 
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 1", value=100, pickup_text="Shield 1")
+    equipment_com = Equipment(defense_bonus=bonus, equip_text=random_name, value=100,
+                              pickup_text=random_name)
 
-    return_object = Actor(x, y, "shield 1", animation_key="S_ARM_SHIELD_1", depth=constants.DEPTH_ITEM, equipment=equipment_com,
+    return_object = Actor(x, y, random_name, animation_key="S_ARM_SHIELD_" + str(n), depth=constants.DEPTH_ITEM,
+                          equipment=equipment_com,
                           item=equipment_com)
 
     return return_object
 
 
-def gen_armor_shield_2(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 2", value=100, pickup_text="Shield 2")
-
-    return_object = Actor(x, y, "shield 2", animation_key="S_ARM_SHIELD_2", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_armor_shield_3(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 3", value=100, pickup_text="Shield 3")
-
-    return_object = Actor(x, y, "shield 3", animation_key="S_ARM_SHIELD_3", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_armor_shield_4(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 4", value=100, pickup_text="Shield 4")
-
-    return_object = Actor(x, y, "shield 4", animation_key="S_ARM_SHIELD_4", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_armor_shield_5(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 5", value=100, pickup_text="Shield 5")
-
-    return_object = Actor(x, y, "shield 5", animation_key="S_ARM_SHIELD_5", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_armor_shield_6(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 6", value=100, pickup_text="Shield 6")
-
-    return_object = Actor(x, y, "shield 6", animation_key="S_ARM_SHIELD_6", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_armor_shield_7(coords):
-    x, y = coords
-
-    bonus = tcod.random_get_int(None, 1, 2)
-
-    equipment_com = Equipment(defense_bonus=bonus, equip_text="Shield 7", value=100, pickup_text="Shield 7")
-
-    return_object = Actor(x, y, "shield 7", animation_key="S_ARM_SHIELD_7", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
-
-    return return_object
-
-
-def gen_gold(coords):
-
+def gen_and_append_gold(coords):
     x, y = coords
 
     value = tcod.random_get_int(None, 1, 100)
 
-    equipment_com = Gold(value=value)
 
-    return_object = Actor(x, y, "Gold", animation_key="S_MONEY_SMALL", depth=constants.DEPTH_ITEM, equipment=equipment_com,
-                          item=equipment_com)
+    return_object = Actor(x, y, "Gold", animation_key="S_MONEY_SMALL", depth=constants.DEPTH_ITEM,
+                          item=Gold(value))
 
-    return return_object
+    config.GAME.current_objects.append(return_object)
+
+
+
 
 
 def what_to_gen(coords):
-
-
-    #Change to 3 to see buggy gold
-    RNG = tcod.random_get_int(None, 1, 2)
-    x,y = coords
+    # Change to 3 to see buggy gold
+    RNG = tcod.random_get_int(None, 1, 3)
+    x, y = coords
 
     if RNG == 1:
-        gen_enemy((x, y))
+        gen_and_append_enemy((x, y))
     elif RNG == 2:
-        gen_item((x, y))
+        gen_and_append_item((x, y))
     elif RNG == 3:
-        gen_gold((x,y))
+        gen_and_append_gold((x, y))
     # More stuff to come!
-
-
-
-
-
-
-
-
-
 
 
 gen_monster_dict = {
@@ -367,9 +259,8 @@ gen_monster_dict = {
 }
 
 
-def gen_enemy(coords):
+def gen_and_append_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
-
 
     gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
 
@@ -379,20 +270,15 @@ def gen_enemy(coords):
 
 
 gen_weapon_dict = {
-    0: gen_weapon_longsword_1,
-    1: gen_weapon_longsword_2,
-    2: gen_weapon_longsword_3,
-    3: gen_weapon_longsword_4,
-    4: gen_weapon_longsword_5,
-    5: gen_weapon_sword,
-    6: gen_weapon_longaxe_1,
-    7: gen_weapon_longaxe_2,
+    0: gen_weapon_longsword,
+    1: gen_weapon_sword,
+    2: gen_weapon_longaxe_1,
+    3: gen_weapon_longaxe_2,
 }
 
 
 def gen_weapon(coords):
     random_number = tcod.random_get_int(None, 0, 200)
-
 
     gen_function = gen_weapon_dict[random_number % len(gen_weapon_dict)]
 
@@ -411,33 +297,9 @@ gen_scroll_dict = {
 def gen_scroll(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-
     gen_function = gen_scroll_dict[random_number % len(gen_scroll_dict)]
 
     new_item = gen_function(coords)
 
     return new_item
-
-
-gen_armor_dict = {
-    0: gen_armor_shield_1,
-    1: gen_armor_shield_2,
-    2: gen_armor_shield_3,
-    3: gen_armor_shield_4,
-    4: gen_armor_shield_5,
-    5: gen_armor_shield_6,
-    6: gen_armor_shield_7,
-}
-
-
-def gen_armor(coords):
-    random_number = tcod.random_get_int(None, 0, 200)
-
-
-    gen_function = gen_armor_dict[random_number % len(gen_armor_dict)]
-
-    new_item = gen_function(coords)
-
-    return new_item
-
 

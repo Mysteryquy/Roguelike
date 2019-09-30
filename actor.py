@@ -56,8 +56,6 @@ class Actor:
             self.exitportal.owner = self
 
         self.gold = gold
-        if self.gold:
-            self.gold.owner = self
 
 
 
