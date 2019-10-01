@@ -16,17 +16,17 @@ class Tile:
     @property
     def texture(self):
         return self._texture
+    
+    @property
+    def texture_explored(self):
+        return self._texture_explored
 
     @texture.setter
     def texture(self, value):
         self._texture = value
         self._texture_explored = value + "_EXPLORED"
 
-    def get_texture(self, visible):
-        if visible:
-            return self._texture
-        else:
-            return self._texture_explored
+
 
 
 def is_visible(x, y):
@@ -199,8 +199,8 @@ def how_much_to_place(room_size, room):
     for i in range(0, fuckingree):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-
-        generator.what_to_gen((x, y))
+        if len(objects_at_coords(x,y)) == 0:
+            generator.what_to_gen((x, y))
 
 
 def is_explored(x, y):

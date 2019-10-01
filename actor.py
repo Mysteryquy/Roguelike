@@ -19,10 +19,10 @@ class Actor:
                  animation_speed: float = 1.0, depth: int = 0,
                  creature=None, ai: Optional[Ai] = None, container: Optional[Container] = None,
                  item: Optional[Item] = None, equipment: Optional[Equipment] = None,
-                 state: Optional[str] = None, structure: Optional[Structure] =None,
+                 state: Optional[str] = None, structure: Optional[Structure] = None,
                  draw_explored: bool = False):
-        self.x = round(x)
-        self.y = round(y)
+        self.x = x
+        self.y = y
         self.name_object = name_object
         self.animation_key = animation_key
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
@@ -60,12 +60,9 @@ class Actor:
         if self.structure:
             self.structure.owner = self
 
-
         self.state = state
         if self.state:
             self.state.owner = self
-
-
 
     @property
     def display_name(self):
@@ -108,26 +105,26 @@ class Actor:
                                         (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT),
                                         special_flags=special_flags)
 
-    def distance_to(self, other):
+    def distance_to(self, other: Actor):
 
         dx = other.x - self.x
         dy = other.y - self.y
 
         return math.sqrt(dx ** 2 + dy ** 2)
 
-    def move_towards(self, other):
+    def move_towards(self, other: Actor) -> None:
+        """
+        moves this actor towards another actor
+        :param other: the actor this actor moves towards
+        """
+        self.move_towards_point(other.x, other.y)
 
-        dx = other.x - self.x
-        dy = other.y - self.y
-
-        distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        dx = int(round(dx / distance))
-        dy = int(round(dy / distance))
-
-        self.creature.move(dx, dy)
-
-    def move_towards_point(self, x, y):
+    def move_towards_point(self, x: int, y: int) -> None:
+        """
+        moves this actor towards a point
+        :param x: x of the point
+        :param y: y of the point
+        """
         dx = x - self.x
         dy = y - self.y
 
@@ -138,11 +135,23 @@ class Actor:
 
         self.creature.move(dx, dy)
 
-    def move(self, dx, dy):
-        self.creature.move(dx, dy)
+    def move(self, dx: int, dy: int) -> None:
+        """
+        moves this actor by given values. This does not validate the values. Triggers attacks if actor is a creature
+        :param dx: how much to move in x direction
+        :param dy: how much to move in y direction
+        """
+        if self.creature:
+            self.creature.move(dx, dy)
+        else:
+            self.x += dx
+            self.y += dy
 
-    def move_away(self, other):
-
+    def move_away(self, other: Actor) -> None:
+        """
+        moves this actor away from the given actor
+        :param other: actor this actor should move away from
+        """
         dx = self.x - other.x
         dy = self.y - other.y
 
@@ -154,19 +163,28 @@ class Actor:
         self.creature.move(dx, dy)
 
     def animation_destroy(self):
-
+        """
+        destroys this actors animation. used to be able to use pickle for saving and loading
+        """
         self.animation = None
 
     def animation_init(self):
-
+        """
+        init this actors animation. used to be able to use pickle for saving and loading
+        """
         self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
 
     def destroy(self):
+        """
+        destroys this actor as a moving creature. so removes its ai and creature component
+        """
         self.creature = None
         self.ai = None
 
-    def set_animation(self, new_key):
+    def set_animation(self, new_key: str):
+        """
+        sets this characters animation. used e.g. for dying creatures
+        :param new_key: new animation key
+        """
         self.animation_key = new_key
         self.animation = config.ASSETS.animation_dict[self.animation_key]
-
-

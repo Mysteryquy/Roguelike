@@ -26,6 +26,7 @@ class AiConfuse(Ai):
     """
     AI that is moving randomly
     """
+
     def __init__(self, old_ai: Ai, num_turns: int):
         super().__init__()
         self.old_ai = old_ai
@@ -44,25 +45,35 @@ class AiConfuse(Ai):
 
 
 class AiChase(Ai):
-    # A basic AI which chases the player and tries to bump into him
-    # TODO Let the creature move around walls
+    """
+    This AI chases and bumps into the player
+    """
     def __init__(self):
         super().__init__()
 
-    def take_turn(self):
+    def take_turn(self) -> None:
+        """
+        this ai takes its turn by chasing the player if he is in vision
+        """
         monster = self.owner
         x, y = monster.x, monster.y
-        if game_map.is_visible(x,y):
-            path = iter(game_map.get_path_to_player(x,y))
-            next_x, next_y = next(path, (0,0))
-            monster.move(next_x-x, next_y-y)
+        if game_map.is_visible(x, y):
+            path = iter(game_map.get_path_to_player(x, y))
+            next_x, next_y = next(path, (0, 0))
+            monster.move(next_x - x, next_y - y)
+
 
 class AiFlee(Ai):
-
+    """
+    This AI flees from the player
+    """
     def __init__(self):
         super().__init__()
 
     def take_turn(self):
+        """
+        if visible this ai tries to increase the distance between the player and itself
+        """
         monster = self.owner
         x, y = monster.x, monster.y
         if game_map.is_visible(x, y):

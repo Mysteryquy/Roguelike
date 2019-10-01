@@ -120,7 +120,11 @@ def draw_map(map_to_draw):
             if is_visible and not map_to_draw[x][y].explored:
                 map_to_draw[x][y].explored = True
             if map_to_draw[x][y].explored:
-                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].get_texture(is_visible)],
+                if is_visible:
+                    texture = map_to_draw[x][y].texture
+                else:
+                    texture = map_to_draw[x][y].texture_explored
+                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[texture],
                                         (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
 
