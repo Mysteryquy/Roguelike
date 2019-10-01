@@ -1,6 +1,8 @@
-import constants
-import config
 import pygame
+
+import config
+import constants
+
 
 class Camera:
 

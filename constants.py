@@ -1,6 +1,5 @@
 import pygame
 import tcod as libtcodpy
-import random
 
 pygame.init()
 

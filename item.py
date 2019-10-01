@@ -1,9 +1,16 @@
+# coding=utf-8
+from __future__ import annotations
+
+from typing import Optional, Any, Callable
+
 import config
 
 
 class Item:
 
-    def __init__(self, weight=0.0, volume=0.0, use_function=None, value=None, pickup_text=None):
+    def __init__(self, weight: float = 0.0, volume: float = 0.0,
+                 use_function: Callable[[Actor, Optional[Any]], Optional[Any]] = None,
+                 value: Optional[Any] = None, pickup_text: Optional[str] = None):
         self.weight = weight
         self.volume = volume
         self.value = value
@@ -13,7 +20,8 @@ class Item:
         self.owner = None
 
     ## Pick up this item
-    def pick_up(self, actor):
+    # pycharm does not understand __future__
+    def pick_up(self, actor: Actor):
 
         if actor.container:
             if actor.container.volume + self.volume > actor.container.max_volume:
@@ -30,7 +38,7 @@ class Item:
                 self.container = actor.container
 
     ## Drop Item
-    def drop(self, new_x, new_y):
+    def drop(self, new_x: int, new_y: int):
         config.GAME.current_objects.append(self.owner)
         self.owner.animation_init()
         self.container.inventory.remove(self.owner)
@@ -57,7 +65,7 @@ class Item:
 
 class Gold(Item):
 
-    def __init__(self, amount):
+    def __init__(self, amount: int):
         super().__init__(weight=0, volume=0, use_function=None, value=amount, pickup_text="Gold(" + str(amount) + ")")
 
     def pick_up(self, actor):

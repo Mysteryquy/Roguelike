@@ -1,12 +1,13 @@
 import tcod
-from creature import Creature
-import death
-import constants
+
 import ai
-from actor import Actor
 import casting
-from item import Item
 import config
+import constants
+import death
+from actor import Actor
+from creature import Creature
+from item import Item
 
 
 def gen_reptile_anaconda(coords):

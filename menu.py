@@ -1,10 +1,10 @@
-import constants
-import ui
-import config
 import pygame
-import render
-import generator
+
+import config
+import constants
 import game_map
+import render
+import ui
 
 
 class MainMenu:

@@ -1,32 +1,35 @@
-import game_map as mp
-import numpy as np
+# coding=utf-8
+from __future__ import annotations
 import random
+from typing import List, Tuple
+
+import numpy as np
 import pygame
-import render
-from time import sleep
-import config
+
+import game_map as mp
 
 """
 This is basically a Python version of Bob Nystrom's Dungeon Generator written in Dart.
 See https://github.com/munificent/hauberk/ for his project and source code 
 """
 
+
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
     def __init__(self):
-        self.num_room_tries = 50
-        self.extra_connector_chance = 3
-        self.room_extra_size = 0
-        self.winding_percent = 70
-        self.rooms = []
+        self.num_room_tries: int = 50
+        self.extra_connector_chance: int = 3
+        self.room_extra_size: int = 0
+        self.winding_percent: int = 70
+        self.rooms: List[pygame.Rect] = []
         self.regions = []
-        self.current_region = 0
+        self.current_region: int = 0
         self.current_map = None
-        self.current_map_width = 0
-        self.current_map_height = 0
+        self.current_map_width: int = 0
+        self.current_map_height: int = 0
 
-    def generate(self, map_width, map_height):
+    def generate(self, map_width: int, map_height: int) -> Tuple[List[List[Tile]], List[pygame.Rect]]:
         self.current_map = [[mp.Tile(True, "S_WALL") for y in range(0, map_height)] for x in range(0, map_width)]
         self.regions = np.zeros((map_width, map_height))
         self.current_map_width = map_width
@@ -42,23 +45,41 @@ class DungeonGenerator:
         mp.make_fov(self.current_map)
         return self.current_map, self.rooms
 
-    def start_region(self):
-        self.current_region = self.current_region + 1
+    def start_region(self) -> None:
+        """
+        starts a new region
+        :rtype: None
+        """
+        self.current_region += 1
 
-    def carve_single(self, pos, tile):
+    def carve_single(self, pos: Tuple[int, int], tile: str) -> None:
+        """
+        carves a single Tile
+        :param pos: position where to carve
+        :param tile: what to replace the Wall with
+        """
         x, y = pos
         self.current_map[x][y].block_path = False
         self.current_map[x][y].texture = tile
         self.regions[x][y] = self.current_region
 
-    def carve(self, rect, tile):
+    def carve(self, rect: pygame.Rect, tile: str) -> None:
+        """
+        Carves a whole rectangle
+        :param rect: the rectangle that needs to be carved, Note that this rectangle has to
+        checked to be in the boundaries before. this Method would otherwise crash
+        :param tile: what to replace the wall with
+        """
         for y in range(rect.height):
             for x in range(rect.width):
                 self.current_map[x + rect.left][y + rect.top].block_path = False
                 self.current_map[x + rect.left][y + rect.top].texture = tile
                 self.regions[x + rect.left][y + rect.top] = self.current_region
 
-    def add_rooms(self):
+    def add_rooms(self) -> None:
+        """
+        adds rooms to the map
+        """
         for i in range(self.num_room_tries):
             size = random.randint(1, 3 + self.room_extra_size) * 2 + 1
             rectangularity = random.randint(0, int(1 + size / 2)) * 2
@@ -81,7 +102,12 @@ class DungeonGenerator:
                 self.start_region()
                 self.carve(room, "S_FLOOR")
 
-    def grow_maze(self, x, y):
+    def grow_maze(self, x: int, y: int) -> None:
+        """
+        grow maze from position
+        :param x: x and y are the position where the maze starts to grow
+        :param y: see above
+        """
         cells = []
         last_dir = None
         self.start_region()
@@ -112,7 +138,13 @@ class DungeonGenerator:
                 del cells[-1]
                 last_dir = None
 
-    def can_carve(self, pos, direction):
+    def can_carve(self, pos: Tuple[int, int], direction: Tuple[int, int]) -> bool:
+        """
+        checks whether carving is possible
+        :param pos: position
+        :param direction: which direction to carve
+        :return: true iff the position is atleast some tiles away from the wall
+        """
         x, y = pos
         di_x, di_y = direction
         if x + di_x * 3 >= self.current_map_width - 1 or x + di_x * 3 <= 0:
@@ -121,10 +153,12 @@ class DungeonGenerator:
             return False
         return self.current_map[x + di_x * 2][y + di_y * 2].block_path
 
-    def connect_regions(self):
-        for i,room in enumerate(self.rooms):
-            x,y = room.center
-            print("Raum"+ str(i) + " :"+ str(self.regions[x][y]))
+    def connect_regions(self) -> None:
+        """
+        connects all regions in the map so that every point is reachable
+        """
+        for i, room in enumerate(self.rooms):
+            x, y = room.center
         connector_regions = {}
         for y in range(0, self.current_map_height - 1):
             for x in range(0, self.current_map_width - 1):
@@ -139,25 +173,21 @@ class DungeonGenerator:
                         connector_regions[(x, y)] = regions
 
         connectors = list(connector_regions)
-        print("Connectors:" + str(connectors))
         merged = {}
         open_regions = set()
         for i in range(1, self.current_region + 1):
             merged[i] = i
             open_regions.add(i)
 
-        print(open_regions)
         while len(open_regions) > 1:
-            # connector = random.choice(connectors)
             connector = random.choice(connectors)
-            self.add_junction(connector)
+            self.add_junction(connector, "S_FLOOR")
 
             regions = map(lambda i: merged[i], connector_regions[connector])
             dest = next(regions)
             sources = set(regions)
             if dest in sources:
                 sources.remove(dest)
-
 
             for i in range(1, self.current_region + 1):
                 if merged[i] in sources:
@@ -180,17 +210,25 @@ class DungeonGenerator:
                     continue
 
                 if random.randint(1, 100) < self.extra_connector_chance:
-                    self.add_junction(conn)
+                    self.add_junction(conn, "S_FLOOR")
 
                 if conn in connectors:
                     connectors.remove(conn)
 
-    def add_junction(self, pos):
+    def add_junction(self, pos: Tuple[int, int], new_tile: str) -> None:
+        """
+        adds a junction at a given position
+        :param new_tile: what to replace the wall with
+        :param pos: position of the junction
+        """
         x, y = pos
         self.current_map[x][y].block_path = False
-        self.current_map[x][y].texture = "S_FLOOR"
+        self.current_map[x][y].texture = new_tile
 
-    def remove_dead_ends(self):
+    def remove_dead_ends(self) -> None:
+        """
+        after all rooms have been connected this removes any dead ends left in the map
+        """
         done = False
         while not done:
             done = True

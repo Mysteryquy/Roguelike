@@ -1,23 +1,37 @@
-import tcod
-import constants
-import config
-import game_map
+# coding=utf-8
+from abc import ABC, abstractmethod
+
 import tcod
 
-import config
-import constants
-import game_map
 import casting
+import config
+import constants
+import game_map
 
 
-class AiConfuse:
-
-    def __init__(self, old_ai, num_turns):
+class Ai(ABC):
+    def __init__(self):
         self.owner = None
+        super().__init__()
+
+    @abstractmethod
+    def take_turn(self) -> None:
+        """
+        method where the AI takes its turn
+        """
+        pass
+
+
+class AiConfuse(Ai):
+    """
+    AI that is moving randomly
+    """
+    def __init__(self, old_ai: Ai, num_turns: int):
+        super().__init__()
         self.old_ai = old_ai
         self.num_turns = num_turns
 
-    def take_turn(self):
+    def take_turn(self) -> None:
         if self.num_turns > 0:
             self.owner.creature.move(tcod.random_get_int(None, -1, 1), tcod.random_get_int(None, -1, 1))
 
@@ -29,33 +43,24 @@ class AiConfuse:
             config.GAME.game_message(self.owner.display_name + " has broken free!", constants.COLOR_GREEN)
 
 
-class AiChase:
+class AiChase(Ai):
     # A basic AI which chases the player and tries to bump into him
     # TODO Let the creature move around walls
     def __init__(self):
-        self.owner = None
+        super().__init__()
 
     def take_turn(self):
         monster = self.owner
-        x,y = monster.x, monster.y
-        if game_map.is_visible(x, y):
-            player_x, player_y = config.PLAYER.x, config.PLAYER.y
-            dx = player_x - x
-            dy = player_y - y
-            if dx > 0 and game_map.is_walkable(x + 1, y):
-                monster.move(1,0)
-            elif dx < 0 and game_map.is_walkable(x - 1, y):
-                monster.move(-1,0)
-            elif dy > 0 and game_map.is_walkable(x, y + 1):
-                monster.move(0,1)
-            elif dy < 0 and game_map.is_walkable(x, y - 1):
-                monster.move(0,-1)
+        x, y = monster.x, monster.y
+        if game_map.is_visible(x,y):
+            path = iter(game_map.get_path_to_player(x,y))
+            next_x, next_y = next(path, (0,0))
+            monster.move(next_x-x, next_y-y)
 
-
-class AiFlee:
+class AiFlee(Ai):
 
     def __init__(self):
-        self.owner = None
+        super().__init__()
 
     def take_turn(self):
         monster = self.owner
@@ -73,18 +78,20 @@ class AiFlee:
                 monster.move(0, -1)
             elif dy < 0 and game_map.is_walkable(x, y + 1):
                 monster.move(0, 1)
-            elif dx == 0 and dy != 0 and game_map.is_walkable(x+1,y):
-                monster.move(1,0)
-            elif dx == 0 and dy != 0 and game_map.is_walkable(x-1,y):
-                monster.move(-1,0)
-            elif dy == 0 and dx != 0 and game_map.is_walkable(x,y+1):
-                monster.move(0,1)
-            elif dy == 0 and dx != 0 and game_map.is_walkable(x,y-1):
-                monster.move(0,-1)
+            elif dx == 0 and dy != 0 and game_map.is_walkable(x + 1, y):
+                monster.move(1, 0)
+            elif dx == 0 and dy != 0 and game_map.is_walkable(x - 1, y):
+                monster.move(-1, 0)
+            elif dy == 0 and dx != 0 and game_map.is_walkable(x, y + 1):
+                monster.move(0, 1)
+            elif dy == 0 and dx != 0 and game_map.is_walkable(x, y - 1):
+                monster.move(0, -1)
 
-class AiCaster:
+
+class AiCaster(Ai):
 
     def __init__(self):
+        super().__init__()
         self.owner = None
 
     def take_turn(self):
@@ -93,4 +100,4 @@ class AiCaster:
         if game_map.is_visible(x, y):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             print(monster)
-            casting.cast_lightning(monster,(1,3),(player_x,player_y))
+            casting.cast_lightning(monster, (1, 3), (player_x, player_y))

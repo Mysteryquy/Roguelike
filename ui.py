@@ -1,5 +1,6 @@
-import constants
 import pygame
+
+import constants
 from render import draw_text
 
 

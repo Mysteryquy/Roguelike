@@ -1,8 +1,9 @@
-import config
-import game_map
 import pygame
-import constants
 import tcod
+
+import config
+import constants
+import game_map
 
 
 class Creature:

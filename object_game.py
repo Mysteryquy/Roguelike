@@ -1,8 +1,8 @@
-import config
-import game_map
-import constants
 import tcod.path as path
-import numpy as np
+
+import config
+import constants
+import game_map
 
 
 class Game:

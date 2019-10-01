@@ -1,6 +1,7 @@
-import constants
 import pygame
+
 import config
+import constants
 
 
 def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False, font=None):

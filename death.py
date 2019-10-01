@@ -1,13 +1,13 @@
+import datetime
+import os
+
+import pygame
+import tcod
+
 import config
 import constants
-import render
-import os
-import pygame
-import datetime
-import tcod
 import monster_gen
-
-
+import render
 
 
 def death_player(player, killer):

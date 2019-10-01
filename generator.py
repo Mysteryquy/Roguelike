@@ -1,17 +1,16 @@
-from container import Container
-from actor import Actor
-from creature import Creature
-from main_game import ExitPortal, Stairs
 import tcod
-from item import Item, Gold
-import config
-import death
+
 import casting
-import ai
+import config
 import constants
-from equipment import Equipment
+import death
 import monster_gen
-import random
+from actor import Actor
+from container import Container
+from creature import Creature
+from equipment import Equipment
+from item import Item, Gold
+from structure import ExitPortal, Stairs
 
 
 ##PLAYER##
@@ -33,14 +32,11 @@ def gen_player(coords, player_name="Player"):
 ##STRUCTURES##
 def gen_stairs(coords, downwards=True):
     x, y = coords
-    if downwards:
-        stairs_com = Stairs()
-        stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_DOWN", depth=constants.DEPTH_STRUCTURES,
-                       stairs=stairs_com, draw_explored=True)
-    else:
-        stairs_com = Stairs(downwards)
-        stairs = Actor(x, y, "stairs", animation_key="S_STAIRS_UP", depth=constants.DEPTH_STRUCTURES,
-                       stairs=stairs_com, draw_explored=True)
+    stairs_com = Stairs() if downwards else Stairs(downwards)
+    animation_key = "S_STAIRS_DOWN"  if downwards else "S_STAIRS_UP"
+    stairs = Actor(x, y, "stairs", animation_key=animation_key, depth=constants.DEPTH_STRUCTURES,
+                   structure=stairs_com, draw_explored=True)
+
 
     config.GAME.current_objects.append(stairs)
 
@@ -50,7 +46,7 @@ def gen_portal(coords):
 
     port_com = ExitPortal()
     portal = Actor(x, y, "exit portal", animation_key="S_END_GAME_PORTAL_CLOSED", depth=constants.DEPTH_STRUCTURES,
-                   exitportal=port_com, draw_explored=True)
+                   structure=port_com, draw_explored=True)
 
     config.GAME.current_objects.append(portal)
 

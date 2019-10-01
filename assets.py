@@ -1,6 +1,7 @@
 import pygame
-import constants
+
 import config
+import constants
 
 
 class Assets:

@@ -1,6 +1,7 @@
 import tcod
-import constants
+
 import config
+import constants
 import generator
 from dungeon_generator import DungeonGenerator
 
@@ -35,11 +36,11 @@ def is_visible(x, y):
 def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
 
+
 def create():
     gen = DungeonGenerator()
     new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
     return new_map
-
 
 
 def place_objects(room_list):
@@ -54,7 +55,6 @@ def place_objects(room_list):
         cal_x = room.right - room.left
         cal_y = room.bottom - room.top
         room_size = cal_x * cal_y
-
 
         room_center = room.center
         first_room = (room == room_list[0])
@@ -80,20 +80,19 @@ def place_objects(room_list):
             else:
                 generator.gen_stairs(room.center, downwards=True)
 
+        how_much_to_place(room_size, room)
+        # x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        # y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
-        how_much_to_place(room_size,room)
-        #x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        #y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
+        # generator.amount_to_gen(room_size)
 
-        #generator.amount_to_gen(room_size)
+        # generator.gen_enemy((x, y))
 
-        #generator.gen_enemy((x, y))
+        # x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+        # y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
-        #x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        #y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-
-        #if x and y != room_center:
-            #generator.gen_item((x, y))
+        # if x and y != room_center:
+        # generator.gen_item((x, y))
 
 
 def check_for_creature(x, y, exclude_object=None):
@@ -186,8 +185,7 @@ def find_radius(coords, radius):
     return tile_list
 
 
-def how_much_to_place(room_size,room):
-
+def how_much_to_place(room_size, room):
     if room_size <= 20:
         fuckingree = 3
     elif room_size <= 30:
@@ -199,56 +197,43 @@ def how_much_to_place(room_size,room):
     else:
         fuckingree = 2
     for i in range(0, fuckingree):
-
-
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
 
-        generator.what_to_gen((x,y))
+        generator.what_to_gen((x, y))
 
 
 def is_explored(x, y):
     return config.GAME.current_map[x][y].explored
 
 
-
-def get_path_from_player(goal_x:int, goal_y:int):
+def get_path_from_player(goal_x: int, goal_y: int):
     return config.GAME.pathing.get_path(config.PLAYER.x, config.PLAYER.y, goal_x, goal_y)
 
+
 def start_auto_explore():
-    #check if every room was explored
+    # check if every room was explored
     goal_x, goal_y = config.PLAYER.x, config.PLAYER.y
 
-
     for room in config.GAME.current_rooms:
-        x,y = room.center
-        if not is_explored(x,y):
-            goal_x,goal_y = x,y
+        x, y = room.center
+        if not is_explored(x, y):
+            goal_x, goal_y = x, y
 
-
-    #maybe do some more stuff here
+    # maybe do some more stuff here
     config.AUTO_EXPLORING = goal_x != config.PLAYER.x or goal_y != config.PLAYER.y
 
     if not config.AUTO_EXPLORING:
-        for x in range(0,constants.MAP_WIDTH):
+        for x in range(0, constants.MAP_WIDTH):
             for y in range(0, constants.MAP_HEIGHT):
-                if not is_explored(x,y):
-                    goal_x,goal_y = x,y
+                if not is_explored(x, y):
+                    goal_x, goal_y = x, y
 
     config.AUTO_EXPLORING = goal_x != config.PLAYER.x or goal_y != config.PLAYER.y
-
 
     if config.AUTO_EXPLORING:
         config.GAME.auto_explore_path = iter(get_path_from_player(goal_x, goal_y))
 
 
-
-
-#if room.center in room_list is not is_explored():
-
-        # find a path from current position to any unexplored center of every room
-        # tcod.get_path(PLAYER.x, PLAYER.y, room.center)
-
-        # Actually move the player there
-
-        # Stop if the player encounters a enemy (or item) for example it could stop if something from the actor class is drawn that the player can define.
+def get_path_to_player(start_x, start_y):
+    return config.GAME.pathing.get_path(start_x, start_y, config.PLAYER.x, config.PLAYER.y)
