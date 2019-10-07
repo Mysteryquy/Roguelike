@@ -281,7 +281,7 @@ def game_save(display_message=False):
     for obj in config.GAME.current_objects:
         obj.animation_destroy()
 
-    with gzip.open("data/userdata/savegame", "wb") as file:
+    with gzip.open("data/userdata/savegame", "w+b") as file:
         pickle.dump([config.GAME, config.PLAYER], file)
 
 
