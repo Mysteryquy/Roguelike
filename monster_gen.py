@@ -59,7 +59,7 @@ def gen_rodent_mouse(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
                             base_evasion=60,
-                            dead_animation_key="S_FLESH_EAT")
+                            dead_animation_key="S_FLESH_EAT", alignment=Creature.CreatureAlignment.NEUTRAL)
     ai_com = ai.AiFlee()
 
     item_com = Item(use_function=casting.cast_heal, value=2, pickup_text="Rat Carcass")

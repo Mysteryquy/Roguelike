@@ -15,7 +15,7 @@ SPRITE_HEIGHT = 16
 MAP_WIDTH = 25
 MAP_HEIGHT = 25
 MAP_MAX_NUM_ROOMS = 10
-MAP_NUM_LEVELS = 2
+MAP_NUM_LEVELS = 3
 
 
 #Room limitations
@@ -96,6 +96,7 @@ XP_NEEDED = {
     4: 1800,
     5: 2500,
 }
+
 MAX_LEVEL = max(XP_NEEDED.keys())
 
 
@@ -116,6 +117,4 @@ MOVEMENT_DICT = {
     pygame.K_KP7: (-1,-1),
     pygame.K_KP8: (0,-1),
     pygame.K_KP9: (1,-1),
-
-
 }

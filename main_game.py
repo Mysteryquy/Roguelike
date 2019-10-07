@@ -147,8 +147,6 @@ def game_initialize():
         constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD, auto_active=False, focus_key=pygame.K_o
     )
 
-    # game_new()
-
 
 
 
@@ -187,6 +185,7 @@ def game_handle_keys(player):
 
             if event.key == pygame.K_a:
                 menu.debug_tile_select_pathing()
+                return "debug"
 
 
             if event.key == pygame.K_g:
@@ -201,10 +200,12 @@ def game_handle_keys(player):
             if event.key == pygame.K_d:
                 if len(player.container.inventory) > 0:
                     player.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
+                return "drop"
 
             if event.key == pygame.K_p:
                 config.GAME.game_message("Game resumed", constants.COLOR_WHITE)
                 menu.menu_pause()
+                return "pause"
 
             if event.key == pygame.K_i:
                 menu.menu_inventory()
@@ -217,22 +218,27 @@ def game_handle_keys(player):
 
             if event.key == pygame.K_m:
                 generator.gen_and_append_enemy((player.x, player.y))
+                return "debug"
 
             if event.key == pygame.K_x:
                 menu.debug_tile_select()
+                return "debug"
 
             if event.key == pygame.K_s:
                 config.GAME.transition_next()
+                return "debug"
 
             if event.key == pygame.K_b:
                 game_save(display_message=True)
                 game_load()
+                return "debug"
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
                 list_of_objs = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
                 for obj in list_of_objs:
                     if obj.structure:
                         obj.structure.use()
+                return "used"
 
             if event.key == pygame.K_BACKQUOTE:
                 game_map.start_auto_explore()
@@ -242,12 +248,21 @@ def game_handle_keys(player):
     if config.AUTO_EXPLORING:
 
         x,y = next(config.GAME.auto_explore_path, (0,0))
+
+        config.AUTO_EXPLORING = game_map.check_contine_autoexplore()
+        if not config.AUTO_EXPLORING:
+            return "stopped autoexploring"
         if (x,y) == (0,0):
-            config.AUTO_EXPLORING = False
-        else:
-            player.move_towards_point(x,y)
-            config.FOV_CALCULATE = True
-            return "player autoexplored"
+            if game_map.autoexplore_new_goal():
+                 x, y = next(config.GAME.auto_explore_path, (0, 0))
+            else:
+                return "stopped autoexploring"
+
+
+
+        player.move_towards_point(x,y)
+        config.FOV_CALCULATE = True
+        return "player autoexplored"
 
 
 
@@ -310,9 +325,8 @@ def preferences_load():
 if __name__ == '__main__':
     config.PLAYER = None
     game_initialize()
-    main_menu = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
-    main_menu.show_menu()
-    #menu.menu_main(game_exit, game_load, game_new, game_main_loop, preferences_save)
+    config.MAIN_MENU = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
+    config.MAIN_MENU.show_menu()
 
 #              .7
 #            .'/

@@ -4,6 +4,8 @@ import config
 import constants
 import generator
 from dungeon_generator import DungeonGenerator
+import inspect
+from structure import Structure
 
 
 class Tile:
@@ -213,11 +215,33 @@ def get_path_from_player(goal_x: int, goal_y: int):
 
 def start_auto_explore():
     # check if every room was explored
+
+
+    for obj in config.GAME.current_objects:
+        if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
+            config.GAME.game_message("ENEMY NEARBY! Cannot autoexplore", constants.COLOR_RED_LIGHT)
+            return
+
+    autoexplore_new_goal()
+
+
+def get_path_to_player(start_x, start_y):
+    return config.GAME.pathing.get_path(start_x, start_y, config.PLAYER.x, config.PLAYER.y)
+
+def check_contine_autoexplore():
+    for obj in config.GAME.current_objects:
+        if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
+            config.GAME.game_message("ENEMY NEARBY! Stopped autoexploring", constants.COLOR_RED_LIGHT)
+            return False
+    return True
+
+def autoexplore_new_goal():
     goal_x, goal_y = config.PLAYER.x, config.PLAYER.y
 
     for room in config.GAME.current_rooms:
         x, y = room.center
         if not is_explored(x, y):
+            print("HALlo")
             goal_x, goal_y = x, y
 
     # maybe do some more stuff here
@@ -226,14 +250,28 @@ def start_auto_explore():
     if not config.AUTO_EXPLORING:
         for x in range(0, constants.MAP_WIDTH):
             for y in range(0, constants.MAP_HEIGHT):
-                if not is_explored(x, y):
+                if not is_explored(x, y) and is_walkable(x, y):
                     goal_x, goal_y = x, y
 
     config.AUTO_EXPLORING = goal_x != config.PLAYER.x or goal_y != config.PLAYER.y
 
     if config.AUTO_EXPLORING:
+        print((goal_x, goal_y))
         config.GAME.auto_explore_path = iter(get_path_from_player(goal_x, goal_y))
+        return True
+    else:
+        if config.CANNOT_AUTOEXPLORE_FURTHER:
+            config.CANNOT_AUTOEXPLORE_FURTHER = False
+            for obj in sorted(config.GAME.stairs, key=lambda x: x.structure.downwards, reverse=True):
+                if obj.structure and isinstance(obj.structure,Structure) and not (obj.x == config.PLAYER.x and obj.y == config.PLAYER.y ):
+
+                    goal_x, goal_y = obj.x, obj.y
+                    print((goal_x, goal_y))
+                    config.GAME.auto_explore_path = iter(get_path_from_player(goal_x, goal_y))
+                    config.AUTO_EXPLORING = True
+                    return True
+        config.GAME.game_message("Cannot autoexplore further", constants.COLOR_BLUE_LIGHT)
+        config.CANNOT_AUTOEXPLORE_FURTHER = True
+        return False
 
 
-def get_path_to_player(start_x, start_y):
-    return config.GAME.pathing.get_path(start_x, start_y, config.PLAYER.x, config.PLAYER.y)

@@ -10,7 +10,7 @@ from container import Container
 from creature import Creature
 from equipment import Equipment
 from item import Item, Gold
-from structure import ExitPortal, Stairs
+from structure import ExitPortal, Stairs, Structure
 
 
 ##PLAYER##
@@ -22,7 +22,7 @@ def gen_player(coords, player_name="Player"):
     gold.animation_destroy()
     container_com = Container(inventory=[gold])
     creature_com = Creature(player_name, base_atk=666, base_def=100, custom_death=death.death_player, base_evasion=20,
-                            base_hit_chance=100)
+                            base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                    container=container_com)
 
@@ -39,7 +39,9 @@ def gen_stairs(coords, downwards=True):
 
 
     config.GAME.current_objects.append(stairs)
-
+    print("dddd")
+    config.GAME.stairs.append(stairs)
+    print(len(config.GAME.stairs))
 
 def gen_portal(coords):
     x, y = coords

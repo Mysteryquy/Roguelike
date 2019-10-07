@@ -4,13 +4,21 @@ import tcod
 import config
 import constants
 import game_map
+from enum import Enum
+
 
 
 class Creature:
 
+    class CreatureAlignment(Enum):
+        FRIEND = 1
+        NEUTRAL = 2
+        FOE = 3
+        PLAYER = 4
+
     def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, base_hit_chance=70,
                  base_evasion=0, level=1, xp_gained=0, current_xp=0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None):
+                 dead_animation_key=None, alignment: CreatureAlignment = CreatureAlignment.FOE ):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -22,10 +30,15 @@ class Creature:
         self.xp_gained = xp_gained
         self.current_xp = current_xp
         self.owner = None
+        self.alignment = alignment
         self.custom_death = custom_death
         self.death_text = death_text
         self.dead_animation_key = dead_animation_key
         self.dead = False
+
+
+    def is_foe(self):
+        return self.alignment == Creature.CreatureAlignment.FOE
 
     def move(self, dx, dy):
 

@@ -74,6 +74,7 @@ class AiFlee(Ai):
         """
         if visible this ai tries to increase the distance between the player and itself
         """
+        """
         monster = self.owner
         x, y = monster.x, monster.y
         if game_map.is_visible(x, y):
@@ -97,7 +98,7 @@ class AiFlee(Ai):
                 monster.move(0, 1)
             elif dy == 0 and dx != 0 and game_map.is_walkable(x, y - 1):
                 monster.move(0, -1)
-
+        """
 
 class AiCaster(Ai):
 

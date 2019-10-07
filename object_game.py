@@ -34,7 +34,7 @@ class Game:
             obj.animation_destroy()
 
         self.maps_previous.append(
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs))
 
         if len(self.maps_next) == 0:
 
@@ -46,10 +46,12 @@ class Game:
 
             self.pathing = path.AStar(config.FOV_MAP, 0)
 
+            self.stairs = []
+
             game_map.place_objects(self.current_rooms)
 
         else:
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = \
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
             self.maps_next[-1]
             self.pathing = path.AStar(config.FOV_MAP, 0)
 
@@ -72,9 +74,9 @@ class Game:
                 obj.animation_destroy()
 
             self.maps_next.append(
-                (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects))
+                (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs))
 
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects) = \
+            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
             self.maps_previous[-1]
 
 

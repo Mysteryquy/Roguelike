@@ -8,6 +8,7 @@ import config
 import constants
 import monster_gen
 import render
+import menu
 
 
 def death_player(player, killer):
@@ -42,6 +43,8 @@ def death_player(player, killer):
     pygame.mixer.music.play()
 
     pygame.time.wait(12000)
+    config.MAIN_MENU.show_menu()
+
 
 
 

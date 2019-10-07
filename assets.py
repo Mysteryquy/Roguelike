@@ -90,7 +90,7 @@ class Assets:
             "S_SCROLL_01": self.scrollspritesheet.get_image("a", 5, 16, 16, (32, 32)),
             "S_SCROLL_02": self.scrollspritesheet.get_image("a", 2, 16, 16, (32, 32)),
             "S_SCROLL_03": self.scrollspritesheet.get_image("b", 2, 16, 16, (32, 32)),
-            "S_MONEY_SMALL": get_animation_from_files(0, 2, "data/tilesets/Items/Money", num_sprites=1),
+            "S_MONEY_SMALL": get_animation_from_files(0, 1, "data/tilesets/Items/Money", num_sprites=1),
             "S_FLESH_SNAKE": self.flesh.get_image("a", 3, 16, 16, (32, 32)),
             "S_DEAD_SLIME": get_animation_from_files(2, 5, "data/tilesets/Objects/Ground", num_sprites=1),
             "S_FLESH_SPIDER": get_animation_from_files(2, 1, "data/tilesets/Items/Flesh", num_sprites=1),
