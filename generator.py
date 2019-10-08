@@ -121,6 +121,17 @@ def gen_scroll_confusion(coords):
     return return_object
 
 
+def gen_scroll_teleportation(coords):
+    x, y = coords
+
+    item_com = Item(use_function=casting.cast_teleportation, pickup_text="Scroll of Teleportation")
+
+    return_object = Actor(x, y, "Tele-Scroll", animation_key="S_SCROLL_04", depth=constants.DEPTH_ITEM,
+                          item=item_com)
+
+    return return_object
+
+
 def gen_weapon_sword(coords):
     x, y = coords
 
@@ -132,6 +143,9 @@ def gen_weapon_sword(coords):
                           item=equipment_com)
 
     return return_object
+
+
+
 
 
 longsword_name_dict = {
@@ -222,8 +236,19 @@ def gen_and_append_gold(coords):
 
     value = tcod.random_get_int(None, 1, 100)
 
+    pic = "Default"
 
-    return_object = Actor(x, y, "Gold", animation_key="S_MONEY_SMALL", depth=constants.DEPTH_ITEM,
+    if value < 31:
+        pic = "S_MONEY_SMALL"
+    elif value < 67:
+        pic = "S_MONEY_MEDIUM"
+    else:
+        pic = "S_MONEY_LARGE"
+
+
+
+
+    return_object = Actor(x, y, "Gold", animation_key=pic, depth=constants.DEPTH_ITEM,
                           item=Gold(value))
 
     config.GAME.current_objects.append(return_object)
@@ -286,9 +311,10 @@ def gen_weapon(coords):
 
 
 gen_scroll_dict = {
-    0: gen_scroll_fireball,
-    1: gen_scroll_confusion,
-    2: gen_scroll_lighning,
+    #0: gen_scroll_fireball,
+    #1: gen_scroll_confusion,
+    #2: gen_scroll_lighning,
+    0: gen_scroll_teleportation
 }
 
 

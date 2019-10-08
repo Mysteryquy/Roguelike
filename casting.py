@@ -3,6 +3,8 @@ import config
 import constants
 import game_map
 import menu
+import tcod
+
 
 
 def cast_heal(caster, value):
@@ -85,4 +87,36 @@ def cast_confusion(caster, effect_length):
             target.ai.owner = target
 
             config.GAME.game_message("The creature is confused", constants.COLOR_GREEN)
+
+
+def cast_teleportation(caster, value):
+
+    # generate the target destination
+    new_room_number = tcod.random_get_int(None, 1, len(GAME.current_rooms))
+    new_room = GAME.current_rooms[new_room_number]
+    new_x = tcod.random_get_int(None, new_room.left + 1, new_room.right - 1)
+    new_y = tcod.random_get_int(None, new_room.top + 1, new_room.bottom - 1)
+
+    # check if the target tile is occupied by another creature
+    check = "True"
+
+    if game_map.check_for_creature(new_x, new_y) == target:
+        check = "False"
+    else:
+        check = "True"
+
+
+    # add in some cool effects
+    config.GAME.game_message("You start teleporting!", msg_color= constants.COLOR_BLUE_LIGHT)
+    pygame.mixer.Channel(1).play.pygame.Mixer.Sound("data/audio/teleport.wav")
+    pygame.time.wait(300)
+
+    if check == "True":
+        # actually teleport the player
+        caster.x, caster.y = new_x, new_y
+
+    else:
+        pygame.mixer.Channel(1).play.pygame.Mixer.Sound("data/audio/teleport.wav")
+        config.GAME.game_message("The spell fizzels and fails! You stay where you were.", msg_color=constants.COLOR_BLUE_LIGHT)
+
 
