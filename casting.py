@@ -92,18 +92,18 @@ def cast_confusion(caster, effect_length):
 def cast_teleportation(caster, value):
 
     # generate the target destination
-    new_room_number = tcod.random_get_int(None, 1, len(GAME.current_rooms))
+    new_room_number = tcod.random_get_int(None, 1, len(GAME.current_rooms) -1)
     new_room = GAME.current_rooms[new_room_number]
     new_x = tcod.random_get_int(None, new_room.left + 1, new_room.right - 1)
     new_y = tcod.random_get_int(None, new_room.top + 1, new_room.bottom - 1)
 
     # check if the target tile is occupied by another creature
-    check = "True"
+    check = True
 
     if game_map.check_for_creature(new_x, new_y) == target:
-        check = "False"
+        check = False
     else:
-        check = "True"
+        check = True
 
 
     # add in some cool effects
@@ -114,6 +114,7 @@ def cast_teleportation(caster, value):
     if check == "True":
         # actually teleport the player
         caster.x, caster.y = new_x, new_y
+        FOV_CALCULATE = True
 
     else:
         pygame.mixer.Channel(1).play.pygame.Mixer.Sound("data/audio/teleport.wav")
