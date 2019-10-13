@@ -9,6 +9,7 @@ import constants
 import monster_gen
 import render
 import menu
+import game_map
 
 
 def death_player(player, killer):
@@ -54,10 +55,12 @@ def death_worm(monster, killer,):
     chance = tcod.random_get_int(None, 1, 3)
     if chance < 2:
 
-        coords = monster.owner.x, monster.owner.y
-        new_mob = monster_gen.gen_pest_worm(coords)
-        config.GAME.current_objects.append(new_mob)
-        config.GAME.game_message(monster.name_instance + " has halved and its other half came to life!", msg_color=constants.COLOR_RED)
+        x, y = monster.owner.x, monster.owner.y
+        new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+        if new_coords:
+            new_mob = monster_gen.gen_pest_worm(new_coords, monster.name_instance)
+            config.GAME.current_objects.append(new_mob)
+            config.GAME.game_message(monster.name_instance + " has halved and its other half came to life!", msg_color=constants.COLOR_RED)
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
 

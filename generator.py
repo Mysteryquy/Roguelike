@@ -1,3 +1,4 @@
+# coding=utf-8
 import tcod
 
 import casting
@@ -11,16 +12,13 @@ from creature import Creature
 from equipment import Equipment
 from item import Item, Gold
 from structure import ExitPortal, Stairs, Structure
-
+import random
 
 ##PLAYER##
 def gen_player(coords, player_name="Player"):
     x, y = coords
     print(coords)
-    gold = Actor(x, y, "Gold(0)", animation_key="S_MONEY_SMALL", depth=constants.DEPTH_ITEM,
-                          item=Gold(0))
-    gold.animation_destroy()
-    container_com = Container(inventory=[gold])
+    container_com = Container()
     creature_com = Creature(player_name, base_atk=666, base_def=100, custom_death=death.death_player, base_evasion=20,
                             base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
@@ -33,15 +31,15 @@ def gen_player(coords, player_name="Player"):
 def gen_stairs(coords, downwards=True):
     x, y = coords
     stairs_com = Stairs() if downwards else Stairs(downwards)
-    animation_key = "S_STAIRS_DOWN"  if downwards else "S_STAIRS_UP"
+    animation_key = "S_STAIRS_DOWN" if downwards else "S_STAIRS_UP"
     stairs = Actor(x, y, "stairs", animation_key=animation_key, depth=constants.DEPTH_STRUCTURES,
                    structure=stairs_com, draw_explored=True)
-
 
     config.GAME.current_objects.append(stairs)
     print("dddd")
     config.GAME.stairs.append(stairs)
     print(len(config.GAME.stairs))
+
 
 def gen_portal(coords):
     x, y = coords
@@ -145,9 +143,6 @@ def gen_weapon_sword(coords):
     return return_object
 
 
-
-
-
 longsword_name_dict = {
     1: "Silver Longsword",
     2: "Moonlight Sword",
@@ -204,7 +199,7 @@ def gen_weapon_longaxe_2(coords):
 
 
 shield_name_dict = {
-    1 : "Shield of Thorns",
+    1: "Shield of Thorns",
     2: "Rediron Shield",
     3: "Mithril Shield",
     4: "Wooden Shield",
@@ -214,12 +209,14 @@ shield_name_dict = {
 
 }
 
+
 def gen_armor_shield(coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
-    n = tcod.random_get_int(None, 1, len(shield_name_dict))
+    n = random.choice(list(shield_name_dict))
     random_name = shield_name_dict[n]
+
 
     equipment_com = Equipment(defense_bonus=bonus, equip_text=random_name, value=100,
                               pickup_text=random_name)
@@ -245,16 +242,10 @@ def gen_and_append_gold(coords):
     else:
         pic = "S_MONEY_LARGE"
 
-
-
-
     return_object = Actor(x, y, "Gold", animation_key=pic, depth=constants.DEPTH_ITEM,
                           item=Gold(value))
 
     config.GAME.current_objects.append(return_object)
-
-
-
 
 
 def what_to_gen(coords):
@@ -285,8 +276,7 @@ gen_monster_dict = {
 def gen_and_append_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-    gen_function = gen_monster_dict[random_number % len(gen_monster_dict)]
-
+    gen_function = random.choice(gen_monster_dict)
     new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
@@ -303,7 +293,7 @@ gen_weapon_dict = {
 def gen_weapon(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-    gen_function = gen_weapon_dict[random_number % len(gen_weapon_dict)]
+    gen_function = random.choice(gen_weapon_dict)
 
     new_item = gen_function(coords)
 
@@ -311,9 +301,9 @@ def gen_weapon(coords):
 
 
 gen_scroll_dict = {
-    #0: gen_scroll_fireball,
-    #1: gen_scroll_confusion,
-    #2: gen_scroll_lighning,
+    # 0: gen_scroll_fireball,
+    # 1: gen_scroll_confusion,
+    # 2: gen_scroll_lighning,
     0: gen_scroll_teleportation
 }
 
@@ -321,9 +311,8 @@ gen_scroll_dict = {
 def gen_scroll(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-    gen_function = gen_scroll_dict[random_number % len(gen_scroll_dict)]
+    gen_function = random.choice(gen_scroll_dict)
 
     new_item = gen_function(coords)
 
     return new_item
-

@@ -66,15 +66,13 @@ class Item:
 class Gold(Item):
 
     def __init__(self, amount: int):
-        super().__init__(weight=0, volume=0, use_function=None, value=amount, pickup_text="Gold(" + str(amount) + ")")
+        self.amount = amount
+        super().__init__(weight=0, volume=0, pickup_text="Gold(" + str(self.amount) + ")")
 
     def pick_up(self, actor):
         config.GAME.game_message("Picked up " + self.pickup_text)
         if actor.container:
-            gold_in_inventory = actor.container.inventory[0]
-            new_amount = gold_in_inventory.item.value + self.value
-            gold_in_inventory.item = Gold(new_amount)
-            gold_in_inventory.name_object = "Gold(" + str(new_amount) + ")"
+            actor.container.gold = actor.container.gold + self.amount
             self.owner.animation_destroy()
             config.GAME.current_objects.remove(self.owner)
             self.container = actor.container

@@ -6,6 +6,7 @@ import generator
 from dungeon_generator import DungeonGenerator
 import inspect
 from structure import Structure
+import random
 
 
 class Tile:
@@ -18,7 +19,7 @@ class Tile:
     @property
     def texture(self):
         return self._texture
-    
+
     @property
     def texture_explored(self):
         return self._texture_explored
@@ -27,8 +28,6 @@ class Tile:
     def texture(self, value):
         self._texture = value
         self._texture_explored = value + "_EXPLORED"
-
-
 
 
 def is_visible(x, y):
@@ -201,7 +200,7 @@ def how_much_to_place(room_size, room):
     for i in range(0, fuckingree):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-        if len(objects_at_coords(x,y)) == 0:
+        if len(objects_at_coords(x, y)) == 0:
             generator.what_to_gen((x, y))
 
 
@@ -216,7 +215,6 @@ def get_path_from_player(goal_x: int, goal_y: int):
 def start_auto_explore():
     # check if every room was explored
 
-
     for obj in config.GAME.current_objects:
         if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
             config.GAME.game_message("ENEMY NEARBY! Cannot autoexplore", constants.COLOR_RED_LIGHT)
@@ -228,12 +226,14 @@ def start_auto_explore():
 def get_path_to_player(start_x, start_y):
     return config.GAME.pathing.get_path(start_x, start_y, config.PLAYER.x, config.PLAYER.y)
 
+
 def check_contine_autoexplore():
     for obj in config.GAME.current_objects:
         if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
             config.GAME.game_message("ENEMY NEARBY! Stopped autoexploring", constants.COLOR_RED_LIGHT)
             return False
     return True
+
 
 def autoexplore_new_goal():
     goal_x, goal_y = config.PLAYER.x, config.PLAYER.y
@@ -263,8 +263,8 @@ def autoexplore_new_goal():
         if config.CANNOT_AUTOEXPLORE_FURTHER:
             config.CANNOT_AUTOEXPLORE_FURTHER = False
             for obj in sorted(config.GAME.stairs, key=lambda x: x.structure.downwards, reverse=True):
-                if obj.structure and isinstance(obj.structure,Structure) and not (obj.x == config.PLAYER.x and obj.y == config.PLAYER.y ):
-
+                if obj.structure and isinstance(obj.structure, Structure) and not (
+                        obj.x == config.PLAYER.x and obj.y == config.PLAYER.y):
                     goal_x, goal_y = obj.x, obj.y
                     print((goal_x, goal_y))
                     config.GAME.auto_explore_path = iter(get_path_from_player(goal_x, goal_y))
@@ -275,3 +275,16 @@ def autoexplore_new_goal():
         return False
 
 
+def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int, exclude_origin: bool = False):
+    tiles = []
+    for i in list(range(-radius_x, radius_x + 1)):
+        for j in list(range(-radius_y, radius_y + 1)):
+            if not (exclude_origin and i == 0 and j == 0):
+                tiles.append((i, j))
+    random.shuffle(tiles)
+    for i, j in tiles:
+        x, y = origin_x + i, origin_y + j
+        if is_walkable(x, y) and is_visible(x, y) and len(objects_at_coords(x, y)) == 0:
+            return x, y
+
+    return None

@@ -1,4 +1,4 @@
-
+# coding=utf-8
 class Container(object):
 
     def __init__(self, volume=10.0, inventory=None):
@@ -8,6 +8,7 @@ class Container(object):
         self.max_volume = volume
         self._volume = 0.0
         self.owner = None
+        self.gold = 0
 
     @property
     def volume(self):

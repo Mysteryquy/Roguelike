@@ -247,7 +247,7 @@ def menu_inventory():
 
         # TODO Register Changes
         print_list = [obj.display_name for obj in config.PLAYER.container.inventory]
-
+        print_list.insert(0, "Gold(" + str(config.PLAYER.container.gold) + ")")
         events_list = pygame.event.get()
         mouse_x, mouse_y = pygame.mouse.get_pos()
 

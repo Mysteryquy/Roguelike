@@ -192,7 +192,7 @@ def gen_pest_small_scorpion(coords):
     return small_scorpion
 
 
-def gen_pest_worm(coords):
+def gen_pest_worm(coords, name=None):
     x, y = coords
 
     max_health = 12
@@ -202,7 +202,7 @@ def gen_pest_worm(coords):
     doge_value = 15
     xp_granted = 70
 
-    creature_name = tcod.namegen_generate("Celtic male")
+    creature_name = name if name else tcod.namegen_generate("Celtic male")
 
     creature_com = Creature(creature_name, custom_death=death.death_worm, hp=max_health, base_atk=attack,
                             base_def=defence,
