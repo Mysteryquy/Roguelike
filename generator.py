@@ -301,10 +301,10 @@ def gen_weapon(coords):
 
 
 gen_scroll_dict = {
-    # 0: gen_scroll_fireball,
-    # 1: gen_scroll_confusion,
-    # 2: gen_scroll_lighning,
-    0: gen_scroll_teleportation
+    0: gen_scroll_fireball,
+    1: gen_scroll_confusion,
+    2: gen_scroll_lighning,
+    3: gen_scroll_teleportation
 }
 
 

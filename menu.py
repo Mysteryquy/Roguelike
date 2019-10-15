@@ -269,9 +269,12 @@ def menu_inventory():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if mouse_in_window and mouse_line_selection <= len(print_list) - 1:
-                        config.PLAYER.container.inventory[mouse_line_selection].item.use()
-                        menu_close = True
+                    if mouse_in_window and mouse_line_selection <= len(print_list) -1:
+                        if mouse_line_selection > 0:
+                            config.PLAYER.container.inventory[mouse_line_selection - 1].item.use()
+                            menu_close = True
+
+
 
         ##Draw the list
         for line, (name) in enumerate(print_list):

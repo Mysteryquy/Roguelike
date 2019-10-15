@@ -17,9 +17,10 @@ import constants
 import game_map
 import generator
 import menu
+import monster_gen
 import render
 from object_game import Game
-from ui import Textfield
+from ui import Textfield, GuiContainer, FillBar
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -61,8 +62,8 @@ def invoke_command(command):
     arguments = command.split()
     for c in arguments:
         print(c)
-    if command[0] == "gen_enemy":
-        generator.gen_enemy((int(arguments[1]), int(arguments[2])))
+    if command[0] == "gen_dog":
+        config.GAME.current_objects.append(monster_gen.gen_dog_dog(((int(arguments[1]), int(arguments[2])))))
     elif command[0] == "gen_item":
         generator.gen_item((int(arguments[1]), int(arguments[2])))
 
@@ -96,6 +97,9 @@ def game_main_loop():
 
         # draw the game
         render.draw_game()
+        config.GUI.update(None)
+        config.GUI.draw()
+
 
         # update the display
         pygame.display.flip()
@@ -146,6 +150,14 @@ def game_initialize():
         constants.COLOR_GREY,
         constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD, auto_active=False, focus_key=pygame.K_o
     )
+
+    config.PLAYER = generator.gen_player((0,0), "dieter")
+
+    health_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,0,constants.CAMERA_WIDTH,30), "health_bar",
+                         constants.COLOR_RED_LIGHT, constants.COLOR_WHITE, "Health", config.PLAYER.creature.maxhp,
+                         constants.COLOR_BLACK)
+
+    config.GUI = GuiContainer(config.SURFACE_MAIN, pygame.Rect(0,0,0,0), "GUI", health_bar)
 
 
 

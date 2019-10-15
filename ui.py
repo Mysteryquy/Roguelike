@@ -1,4 +1,5 @@
 import pygame
+import config
 
 import constants
 from render import draw_text
@@ -156,7 +157,6 @@ class Slider(UiElement):
                          center=True)
 
 
-
 class Textfield(UiElement):
 
     def __init__(self, surface, rect, id, color_inactive, color_active, text_color, font=pygame.font.Font(None, 32),
@@ -227,3 +227,79 @@ class Textfield(UiElement):
     def draw(self):
         pygame.draw.rect(self.surface, self.color, self.rect)
         draw_text(self.surface, self.text, (self.rect.x + 3, self.rect.y), self.text_color, font=self.font)
+
+
+class FillBar(UiElement):
+
+    def __init__(self, surface, rect, id, bg_color, fg_color, string, max_value, text_color):
+        super().__init__(surface, rect, id,)
+        self.bg_color = bg_color
+        self.fg_color = fg_color
+        self._max_value = max_value
+        self._current_value = self.max_value
+        self.text_color = text_color
+
+        self.fg_rect = pygame.Rect(self.rect.left, self.rect.top, self.rect.width, self.rect.height)
+
+        self.string = string
+
+        self.print_text_format = "{0}: {1}/{2}"
+
+        # The bar gets initialized as filled
+
+    @property
+    def max_value(self):
+        return self._max_value
+
+    @max_value.setter
+    def max_value(self, new_val):
+        self._max_value = new_val
+
+    @property
+    def current_value(self):
+        return self._current_value
+
+
+    @current_value.setter
+    def current_value(self, new_val):
+        self._current_value = min(new_val, self.max_value)
+        #self.right = self.left  + self.width
+        #self.fg_rect.width = int(round(self._current_value/self._max_value)) * self.rect.width
+        print(int(round((self._current_value/self._max_value) * self.rect.width)))
+        self.fg_rect = pygame.Rect(self.rect.left, self.rect.top,
+                                   int(round((self._current_value/self._max_value) * self.rect.width)), self.rect.height )
+
+
+
+    def update(self, player_input):
+        (self.current_value, self.max_value) = player_input
+
+
+
+
+    def draw(self):
+        pygame.draw.rect(self.surface, self.bg_color, self.rect)
+        pygame.draw.rect(self.surface, self.fg_color, self.fg_rect)
+        draw_text(self.surface, self.print_text_format.format(self.string, self.current_value, self.max_value)
+                  , (self.rect.centerx, self.rect.centery), self.text_color,
+                         center=True, font=config.ASSETS.FONT_FANTY)
+
+
+class GuiContainer(UiContainer):
+    string_health_bar = "health_bar"
+
+
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, health_bar):
+        super().__init__(surface, rect, id, None, constants.COLOR_BLUE_LIGHT, transparent=True)
+        self. items ={
+                    }
+        self.items[GuiContainer.string_health_bar] = health_bar
+
+
+    def draw(self):
+        for element in self.items.values():
+            element.draw()
+
+    def update(self, player_input):
+        self.items[GuiContainer.string_health_bar].update(
+            (config.PLAYER.creature.hp, config.PLAYER.creature.maxhp))

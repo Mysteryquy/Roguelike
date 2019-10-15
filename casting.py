@@ -4,7 +4,8 @@ import constants
 import game_map
 import menu
 import tcod
-
+import pygame
+import render
 
 
 def cast_heal(caster, value):
@@ -92,32 +93,22 @@ def cast_confusion(caster, effect_length):
 def cast_teleportation(caster, value):
 
     # generate the target destination
-    new_room_number = tcod.random_get_int(None, 1, len(GAME.current_rooms) -1)
-    new_room = GAME.current_rooms[new_room_number]
+    new_room_number = tcod.random_get_int(None, 0, len(config.GAME.current_rooms) -1)
+    new_room = config.GAME.current_rooms[new_room_number]
     new_x = tcod.random_get_int(None, new_room.left + 1, new_room.right - 1)
     new_y = tcod.random_get_int(None, new_room.top + 1, new_room.bottom - 1)
 
-    # check if the target tile is occupied by another creature
-    check = True
 
-    if game_map.check_for_creature(new_x, new_y) == target:
-        check = False
-    else:
-        check = True
-
-
-    # add in some cool effects
-    config.GAME.game_message("You start teleporting!", msg_color= constants.COLOR_BLUE_LIGHT)
-    pygame.mixer.Channel(1).play.pygame.Mixer.Sound("data/audio/teleport.wav")
-    pygame.time.wait(300)
-
-    if check == "True":
+    if not game_map.check_for_creature(new_x, new_y):
+        # add in some cool effects
+        config.GAME.game_message("You teleported to a different location!", msg_color=constants.COLOR_BLUE_LIGHT)
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/teleport.wav"))
         # actually teleport the player
         caster.x, caster.y = new_x, new_y
-        FOV_CALCULATE = True
+        config.FOV_CALCULATE = True
 
     else:
-        pygame.mixer.Channel(1).play.pygame.Mixer.Sound("data/audio/teleport.wav")
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/teleport_fail.wav"))
         config.GAME.game_message("The spell fizzels and fails! You stay where you were.", msg_color=constants.COLOR_BLUE_LIGHT)
 
 
