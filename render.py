@@ -73,40 +73,38 @@ def draw_game():
     # clear the surface
     config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
+    config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
 
     config.CAMERA.update()
 
     # draw the map
     draw_map(config.GAME.current_map)
+    draw_mini_map(config.GAME.current_map)
 
     for obj in sorted(config.GAME.current_objects, key=lambda x: x.depth, reverse=True):
         obj.draw()
 
-    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
+    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
+    config.SURFACE_MAIN.blit(config.SURFACE_MINI_MAP, (0,0))
     # print(CAMERA.rectangle)
 
     draw_debug()
     draw_messages()
     config.CONSOLE.draw()
 
-def draw_debug_map(map_to_draw):
-    config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
-    config.SURFACE_MAP.fill(constants.COLOR_BLACK)
-    draw_map(map_to_draw)
-    config.CAMERA.update()
-    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
 
 
-DISPLAY_MAP_W = constants.CAMERA_WIDTH/ constants.CELL_WIDTH
-DISPLAY_MAP_H = constants.CAMERA_HEIGHT / constants.CELL_HEIGHT
+
 
 def draw_map(map_to_draw):
-    cam_x, cam_y = config.CAMERA.map_address
+    DISPLAY_MAP_W = constants.CAMERA_WIDTH / constants.CELL_WIDTH
+    DISPLAY_MAP_H = constants.CAMERA_HEIGHT / constants.CELL_HEIGHT
+    cam_x, cam_y = config.CAMERA.x / constants.CELL_WIDTH, config.CAMERA.y / constants.CELL_HEIGHT
 
-    render_w_min = int(cam_x - (DISPLAY_MAP_W / 2))
-    render_h_min = int(cam_y - (DISPLAY_MAP_H / 2))
-    render_w_max = int(cam_x + (DISPLAY_MAP_W / 2))
-    render_h_max = int(cam_y + (DISPLAY_MAP_H / 2))
+    render_w_min = int(cam_x - DISPLAY_MAP_W)
+    render_h_min = int(cam_y - DISPLAY_MAP_H)
+    render_w_max = int(cam_x + DISPLAY_MAP_W)
+    render_h_max = int(cam_y + DISPLAY_MAP_H)
 
     render_w_min = max(0, render_w_min)
     render_h_min = max(0, render_h_min)
@@ -147,3 +145,24 @@ def draw_messages():
 
     for i, (message, color) in enumerate(to_draw):
         draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
+
+
+def draw_mini_map(map_to_draw):
+
+    # display the mini map in the top right corner of the screen
+
+
+    for x in range(constants.MAP_WIDTH):
+        for y in range(constants.MAP_HEIGHT):
+
+            is_visible = config.FOV_MAP.fov[y, x]
+            if map_to_draw[x][y].explored:
+                color = None
+                if is_visible:
+                    color = constants.COLOR_BLUE if map_to_draw[x][y].block_path else constants.COLOR_YELLOW
+                else:
+                    color = constants.COLOR_BLUE_DARK if map_to_draw[x][y].block_path else constants.COLOR_YELLOW_DARK_GOLD
+                pygame.draw.rect(config.SURFACE_MINI_MAP, color, pygame.Rect(x * constants.MINI_MAP_CELL_WIDTH,
+                                                                             y * constants.MINI_MAP_CELL_HEIGHT,
+                                                                             constants.MINI_MAP_CELL_WIDTH,
+                                                                             constants.MINI_MAP_CELL_HEIGHT))

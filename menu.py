@@ -19,7 +19,7 @@ class MainMenu:
 
         self.title_y = constants.CAMERA_HEIGHT / 2 - 40
         self.title_x = constants.CAMERA_WIDTH / 2
-        self.title_text = "Untitled (but very cool) Game "
+        self.title_text = "Deine Mama Game.exe"
 
         # Button Adresses
         continue_game_button_y = self.title_y + 60
@@ -391,7 +391,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
             for (tile_x, tile_y) in area_effect:
                 render.draw_tile_rect((tile_x, tile_y))
 
-        config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rectangle)
+        config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
         # print(CAMERA.rectangle)
 
         render.draw_debug()

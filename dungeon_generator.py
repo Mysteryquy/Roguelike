@@ -180,6 +180,8 @@ class DungeonGenerator:
             open_regions.add(i)
 
         while len(open_regions) > 1:
+            if len(connectors) == 0:
+                return
             connector = random.choice(connectors)
             self.add_junction(connector, "S_FLOOR")
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 # 3rd party modules
 import ctypes
 import gzip
+import os
 import pickle
 import random
 
@@ -62,8 +63,8 @@ def invoke_command(command):
     arguments = command.split()
     for c in arguments:
         print(c)
-    if command[0] == "gen_dog":
-        config.GAME.current_objects.append(monster_gen.gen_dog_dog(((int(arguments[1]), int(arguments[2])))))
+    if command[0] == "gen_worm":
+        config.GAME.current_objects.append(monster_gen.gen_pest_worm(((int(arguments[1]), int(arguments[2])))))
     elif command[0] == "gen_item":
         generator.gen_item((int(arguments[1]), int(arguments[2])))
 
@@ -114,6 +115,7 @@ def game_initialize():
     # os.environ['SDL_VIDEO_WINDOW_POS'] = "30,30"
     # disable scaling of windows
     ctypes.windll.user32.SetProcessDPIAware()
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
     # initialize Pygame
     pygame.init()
@@ -129,11 +131,24 @@ def game_initialize():
     tcod.namegen_parse("data/namegen/jice_celtic.cfg")
 
     # looks for resolution of the display of the user
+    info = pygame.display.Info()
+    screen_width, screen_height = info.current_w, info.current_h
 
-    config.SURFACE_MAIN = pygame.display.set_mode((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+    constants.CAMERA_WIDTH = int(round( screen_width * constants.CAMERA_WIDTH_FRACT))
+    constants.CAMERA_HEIGHT = int(round( screen_height * constants.CAMERA_HEIGHT_FRACT))
+
+    constants.RECT_WHOLE_SCREEN = pygame.Rect(0,0, screen_width, screen_height)
+
+    print((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+
+
+    config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME)
 
     config.SURFACE_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
+
+    config.SURFACE_MINI_MAP = pygame.Surface(
+        (constants.MAP_WIDTH * constants.MINI_MAP_CELL_WIDTH, constants.MAP_HEIGHT * constants.MINI_MAP_CELL_HEIGHT))
 
     config.ASSETS = assets.Assets()
     config.CAMERA = camera.Camera()
@@ -154,10 +169,22 @@ def game_initialize():
     config.PLAYER = generator.gen_player((0,0), "dieter")
 
     health_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,0,constants.CAMERA_WIDTH,30), "health_bar",
-                         constants.COLOR_RED_LIGHT, constants.COLOR_WHITE, "Health", config.PLAYER.creature.maxhp,
+                         constants.COLOR_RED_LIGHT, constants.COLOR_RED_DARK, "Health", config.PLAYER.creature.maxhp,
                          constants.COLOR_BLACK)
 
-    config.GUI = GuiContainer(config.SURFACE_MAIN, pygame.Rect(0,0,0,0), "GUI", health_bar)
+
+    mana_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,30,constants.CAMERA_WIDTH,30), "mana_bar",
+                         constants.COLOR_BLUE_LIGHT, constants.COLOR_BLUE_DARK, "Mana", config.PLAYER.creature.max_mana,
+                         constants.COLOR_WHITE)
+
+
+
+    xp_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,60,constants.CAMERA_WIDTH,30), "xp_bar",
+                         constants.COLOR_YELLOW_LIGHT, constants.COLOR_YELLOW_DARK_GOLD, "XP", constants.XP_NEEDED[config.PLAYER.creature.level],
+                         constants.COLOR_BLACK)
+
+    config.GUI = GuiContainer(config.SURFACE_MAIN, pygame.Rect(0,0,0,0), "GUI", health_bar, mana_bar, xp_bar)
+
 
 
 
@@ -335,7 +362,6 @@ def preferences_load():
 
 
 if __name__ == '__main__':
-    config.PLAYER = None
     game_initialize()
     config.MAIN_MENU = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
     config.MAIN_MENU.show_menu()

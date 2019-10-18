@@ -3,20 +3,25 @@ import tcod as libtcodpy
 
 pygame.init()
 
-CAMERA_WIDTH = 1000
-CAMERA_HEIGHT = 800
+CAMERA_WIDTH_FRACT = 0.8
+CAMERA_HEIGHT_FRACT = 1
 CELL_WIDTH = 32
 CELL_HEIGHT = 32
 SPRITE_WIDTH = 16
 SPRITE_HEIGHT = 16
 
 
-#Map limitations
-MAP_WIDTH = 25
-MAP_HEIGHT = 25
+
+MAP_WIDTH = 41
+MAP_HEIGHT = 41
+#Map limitations (must be odd number)
+assert MAP_WIDTH % 2 == 1
+assert MAP_HEIGHT % 2 == 1
 MAP_MAX_NUM_ROOMS = 10
 MAP_NUM_LEVELS = 3
 
+CAMERA_WIDTH = 1000
+CAMERA_HEIGHT = 800
 
 #Room limitations
 ROOM_MAX_HEIGHT = 7
@@ -24,8 +29,14 @@ ROOM_MAX_WIDTH = 3
 ROOM_MIN_HEIGHT = 5
 ROOM_MIN_WIDTH = 3
 
+RECT_WHOLE_SCREEN = None
 
-RECT_WHOLE_SCREEN = pygame.Rect(0,0,CAMERA_WIDTH,CAMERA_HEIGHT)
+# Mini Map stuff
+MINI_MAP_CELL_WIDTH = 4
+MINI_MAP_CELL_HEIGHT = 4
+
+
+
 
 #FPS LIMIT
 GAME_FPS = 60
@@ -90,6 +101,7 @@ DEPTH_STRUCTURES = 101
 
 #xp related stuff
 XP_NEEDED = {
+    0 : 0,
     1: 300,
     2: 700,
     3: 1200,
@@ -99,6 +111,14 @@ XP_NEEDED = {
 
 MAX_LEVEL = max(XP_NEEDED.keys())
 
+XP_NEEDED_FOR_NEXT = {}
+for i in XP_NEEDED.keys():
+    if i < MAX_LEVEL:
+        XP_NEEDED_FOR_NEXT[i] = XP_NEEDED[i+1] - XP_NEEDED[i]
+    else:
+        XP_NEEDED_FOR_NEXT[i] = 0
+
+print(XP_NEEDED_FOR_NEXT)
 
 EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
 

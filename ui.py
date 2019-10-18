@@ -265,9 +265,10 @@ class FillBar(UiElement):
         self._current_value = min(new_val, self.max_value)
         #self.right = self.left  + self.width
         #self.fg_rect.width = int(round(self._current_value/self._max_value)) * self.rect.width
-        print(int(round((self._current_value/self._max_value) * self.rect.width)))
+
         self.fg_rect = pygame.Rect(self.rect.left, self.rect.top,
                                    int(round((self._current_value/self._max_value) * self.rect.width)), self.rect.height )
+
 
 
 
@@ -286,20 +287,32 @@ class FillBar(UiElement):
 
 
 class GuiContainer(UiContainer):
-    string_health_bar = "health_bar"
 
 
-    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, health_bar):
+
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, health_bar, mana_bar, xp_bar):
         super().__init__(surface, rect, id, None, constants.COLOR_BLUE_LIGHT, transparent=True)
         self. items ={
+            health_bar.id: health_bar,
+            mana_bar.id: mana_bar,
+            xp_bar.id: xp_bar
                     }
-        self.items[GuiContainer.string_health_bar] = health_bar
 
 
     def draw(self):
-        for element in self.items.values():
-            element.draw()
+        pass
+        #for element in self.items.values():
+        #    element.draw()
 
     def update(self, player_input):
-        self.items[GuiContainer.string_health_bar].update(
+        self.items["health_bar"].update(
             (config.PLAYER.creature.hp, config.PLAYER.creature.maxhp))
+        self.items["mana_bar"].update(
+            (config.PLAYER.creature.current_mana, config.PLAYER.creature.max_mana))
+        if config.PLAYER.creature.level == constants.MAX_LEVEL:
+            self.items["xp_bar"].print_string_format = "{0}"
+            self.items["xp_bar"].string = "MAX LEVEL"
+        else:
+            self.items["xp_bar"].update(
+                (config.PLAYER.creature.current_xp - constants.XP_NEEDED[config.PLAYER.creature.level-1],
+                 constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))

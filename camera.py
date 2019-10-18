@@ -2,37 +2,66 @@ import pygame
 
 import config
 import constants
+from numpy import sign
 
 
 class Camera:
 
+
+    map_cell_width = constants.MAP_WIDTH * constants.CELL_WIDTH
+    map_cell_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
+
     def __init__(self):
-        self.width = constants.CAMERA_WIDTH
-        self.height = constants.CAMERA_HEIGHT
-        self.x, self.y = (0, 0)
+        self._rect = pygame.Rect(0, 0, constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT)
+
+
+
 
     def update(self):
-        target_x = config.PLAYER.x * constants.CELL_WIDTH + (constants.CELL_WIDTH / 2)
-        target_y = config.PLAYER.y * constants.CELL_HEIGHT + (constants.CELL_HEIGHT / 2)
 
-        distance_x, distance_y = self.map_dist((target_x, target_y))
-
-        # Durch das 1 kann der Effekt erzeugt werden, dass die Cam dem Spieler "folgt" und nicht an ihm festgeklebt ist. Kann geändert werden nach Geschmack
-        self.x += int(distance_x * 1)
-        self.y += int(distance_y * 1)
+        self.x = self.scrolling_map(config.PLAYER.x * constants.CELL_WIDTH, constants.CAMERA_WIDTH /2, constants.CAMERA_WIDTH, Camera.map_cell_width)
+        self.y = self.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT /2, constants.CAMERA_HEIGHT, Camera.map_cell_height)
 
     @property
-    def rectangle(self):
-        pos_rect = pygame.Rect((0, 0), (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+    def x(self):
+        return self._rect.left
 
-        pos_rect.center = (self.x, self.y)
+    @property
+    def y(self):
+        return self._rect.top
 
-        return pos_rect
+    @x.setter
+    def x(self, val):
+        self._rect.left = val
+
+    @y.setter
+    def y(self, val):
+        self._rect.top = val
+
+    def scrolling_map(self, p, hs, s, m):
+        """
+        Get the position of the camera in a scrolling map:
+
+         - p is the position of the player.
+         - hs is half of the screen size, and s is the full screen size.
+         - m is the size of the map.
+        """
+        if p < hs:
+            return 0
+        elif p >= m - hs:
+            return m - s
+        else:
+            return p - hs
+
+    @property
+    def rect(self):
+        return self._rect
 
     @property
     def map_address(self):
-        map_x = self.x / constants.CELL_WIDTH
-        map_y = self.y / constants.CELL_HEIGHT
+        x,y = self.rect.center
+        map_x = x / constants.CELL_WIDTH
+        map_y = y / constants.CELL_HEIGHT
 
         return map_x, map_y
 
@@ -59,8 +88,8 @@ class Camera:
     def cam_dist(self, coords):
         win_x, win_y = coords
 
-        dist_x = win_x - (self.width / 2)
-        dist_y = win_y - (self.height / 2)
+        dist_x = win_x - (self.rect.width / 2)
+        dist_y = win_y - (self.rect.height / 2)
 
         return dist_x, dist_y
 
