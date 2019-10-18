@@ -150,6 +150,8 @@ def game_initialize():
     config.SURFACE_MINI_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.MINI_MAP_CELL_WIDTH, constants.MAP_HEIGHT * constants.MINI_MAP_CELL_HEIGHT))
 
+    render.fill_surfaces()
+
     config.ASSETS = assets.Assets()
     config.CAMERA = camera.Camera()
 

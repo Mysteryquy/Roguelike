@@ -16,9 +16,9 @@ class Creature:
         FOE = 3
         PLAYER = 4
 
-    def __init__(self, name_instance, base_atk=2, base_def=0, hp=10, base_hit_chance=70,
-                 base_evasion=0, level=1, xp_gained=0, current_xp=0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None, max_mana=100, current_mana = 10, alignment: CreatureAlignment = CreatureAlignment.FOE ):
+    def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
+                 base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
+                 dead_animation_key=None, max_mana: int =100, current_mana: int = 10, alignment: CreatureAlignment = CreatureAlignment.FOE ):
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def

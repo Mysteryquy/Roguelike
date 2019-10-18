@@ -3,6 +3,7 @@ import tcod.path as path
 import config
 import constants
 import game_map
+import render
 
 
 class Game:
@@ -50,6 +51,7 @@ class Game:
 
             game_map.place_objects(self.current_rooms)
 
+
         else:
             (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
             self.maps_next[-1]
@@ -65,6 +67,8 @@ class Game:
             config.FOV_CALCULATE = True
 
             del self.maps_next[-1]
+
+        render.fill_surfaces()
 
     def transition_previous(self):
 
@@ -84,6 +88,7 @@ class Game:
                 obj.animation_init()
 
             game_map.make_fov(self.current_map)
+            render.fill_surfaces()
             self.pathing = path.AStar(config.FOV_MAP, 0)
             config.FOV_CALCULATE = True
 

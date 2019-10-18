@@ -71,10 +71,6 @@ def helper_text_width(font):
 
 def draw_game():
     # clear the surface
-    config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
-    config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
-    config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
-
     config.CAMERA.update()
 
     # draw the map
@@ -94,7 +90,10 @@ def draw_game():
 
 
 
-
+def fill_surfaces():
+    config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
+    config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
+    config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
 
 def draw_map(map_to_draw):
     DISPLAY_MAP_W = constants.CAMERA_WIDTH / constants.CELL_WIDTH
@@ -150,7 +149,7 @@ def draw_messages():
 def draw_mini_map(map_to_draw):
 
     # display the mini map in the top right corner of the screen
-
+    rect = pygame.Rect(0,0, constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT)
 
     for x in range(constants.MAP_WIDTH):
         for y in range(constants.MAP_HEIGHT):
@@ -162,7 +161,5 @@ def draw_mini_map(map_to_draw):
                     color = constants.COLOR_BLUE if map_to_draw[x][y].block_path else constants.COLOR_YELLOW
                 else:
                     color = constants.COLOR_BLUE_DARK if map_to_draw[x][y].block_path else constants.COLOR_YELLOW_DARK_GOLD
-                pygame.draw.rect(config.SURFACE_MINI_MAP, color, pygame.Rect(x * constants.MINI_MAP_CELL_WIDTH,
-                                                                             y * constants.MINI_MAP_CELL_HEIGHT,
-                                                                             constants.MINI_MAP_CELL_WIDTH,
-                                                                             constants.MINI_MAP_CELL_HEIGHT))
+                rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT )
+                pygame.draw.rect(config.SURFACE_MINI_MAP, color, rect)

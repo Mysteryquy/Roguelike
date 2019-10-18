@@ -103,6 +103,7 @@ class MainMenu:
         # try to load game, start new if problems
         try:
             self.game_load()
+            render.fill_surfaces()
         except Exception as e:
             print(e)
 
@@ -135,6 +136,7 @@ class MainMenu:
         pygame.mixer.music.load(config.ASSETS.music_lvl_1)
         pygame.mixer.music.play(-1)
         self.game_new(player_name)
+        render.fill_surfaces()
         self.game_main_loop()
 
     def options_button_callback(self, id):
