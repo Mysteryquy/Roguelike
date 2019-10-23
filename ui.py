@@ -231,19 +231,27 @@ class Textfield(UiElement):
 
 class FillBar(UiElement):
 
-    def __init__(self, surface, rect, id, bg_color, fg_color, string, max_value, text_color):
+    def __init__(self, surface, rect, id, bg_color, fg_color, string, max_value, text_color, border_color = constants.COLOR_BLACK):
         super().__init__(surface, rect, id,)
         self.bg_color = bg_color
         self.fg_color = fg_color
         self._max_value = max_value
         self._current_value = self.max_value
         self.text_color = text_color
+        self.border_color = border_color
 
         self.fg_rect = pygame.Rect(self.rect.left, self.rect.top, self.rect.width, self.rect.height)
+
+        #if self.border:
+            #self.border  = pygame.transform.scale(self.border, (self.rect.width, self.rect.height))
 
         self.string = string
 
         self.print_text_format = "{0}: {1}/{2}"
+
+
+        self.mini_rect_w = pygame.Rect(self.rect.left, self.rect.top, self.rect.width, 3)
+        self.mini_rect_h = pygame.Rect(self.rect.left, self.rect.top, 3, self.rect.height)
 
         # The bar gets initialized as filled
 
@@ -285,24 +293,57 @@ class FillBar(UiElement):
                   , (self.rect.centerx, self.rect.centery), self.text_color,
                          center=True, font=config.ASSETS.FONT_FANTY)
 
+        #if self.border:
+        #    self.surface.blit(self.border, self.rect)
+        self.mini_rect_w.top = self.rect.top
+        pygame.draw.rect(self.surface, self.border_color, self.mini_rect_w)
+        self.mini_rect_w.top = self.rect.bottom - self.mini_rect_w.height
+        pygame.draw.rect(self.surface, self.border_color, self.mini_rect_w)
+        self.mini_rect_h.left = self.rect.left
+        pygame.draw.rect(self.surface, self.border_color, self.mini_rect_h)
+        self.mini_rect_h.left = self.rect.right - self.mini_rect_h.width
+        pygame.draw.rect(self.surface, self.border_color, self.mini_rect_h)
+
+class TextPane(UiElement):
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id: str, text_color, text, bg_color=None):
+        super().__init__(surface, rect, id)
+        self.text_color = text_color
+        self.bg_color = bg_color
+        self.static_text = text
+        self.value = 0
+
+    def update(self, player_input):
+        self.value = player_input
+
+    def draw(self):
+        if self.bg_color:
+            pygame.draw.rect(self.surface, self.bg_color, self.rect)
+        draw_text(self.surface, self.static_text + str(self.value), (self.rect.x, self.rect.y), self.text_color)
+
+
+
+
+
 
 class GuiContainer(UiContainer):
 
 
 
-    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, health_bar, mana_bar, xp_bar):
+    def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id, health_bar, mana_bar, xp_bar, str_pane, dex_pane, int_pane):
         super().__init__(surface, rect, id, None, constants.COLOR_BLUE_LIGHT, transparent=True)
         self. items ={
             health_bar.id: health_bar,
             mana_bar.id: mana_bar,
-            xp_bar.id: xp_bar
+            xp_bar.id: xp_bar,
+            str_pane.id: str_pane,
+            dex_pane.id: dex_pane,
+            int_pane.id: int_pane
                     }
 
 
     def draw(self):
-        pass
-        #for element in self.items.values():
-        #    element.draw()
+        for element in self.items.values():
+            element.draw()
 
     def update(self, player_input):
         self.items["health_bar"].update(
@@ -316,3 +357,8 @@ class GuiContainer(UiContainer):
             self.items["xp_bar"].update(
                 (config.PLAYER.creature.current_xp - constants.XP_NEEDED[config.PLAYER.creature.level-1],
                  constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))
+
+        self.items["str"].update(config.PLAYER.creature.strength)
+        self.items["dex"].update(config.PLAYER.creature.dexterity)
+        self.items["int"].update(config.PLAYER.creature.intelligence)
+

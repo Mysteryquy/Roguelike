@@ -18,7 +18,14 @@ class Creature:
 
     def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
                  base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None, max_mana: int =100, current_mana: int = 10, alignment: CreatureAlignment = CreatureAlignment.FOE ):
+                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, alignment: CreatureAlignment = CreatureAlignment.FOE,
+                 strength = 0,
+                 dexterity = 0,
+                 intelligence = 0
+                 ):
+        self._intelligence = 0
+        self._strength = 0
+        self._dexterity = 0
         self.name_instance = name_instance
         self.base_atk = base_atk
         self.base_def = base_def
@@ -34,9 +41,48 @@ class Creature:
         self.custom_death = custom_death
         self.death_text = death_text
         self.dead_animation_key = dead_animation_key
-        self.dead = False
         self.max_mana = max_mana
         self.current_mana = current_mana
+
+        self.intelligence = intelligence
+        self.dexterity = dexterity
+        self.strength = strength
+
+
+    @property
+    def dexterity(self):
+        return self._dexterity
+
+    @dexterity.setter
+    def dexterity(self, value):
+        self._dexterity = value
+        self.base_evasion += value*2
+        self.base_hit_chance += value*2
+        #rechne rest...
+
+    @property
+    def strength(self):
+        return self._strength
+
+    @strength.setter
+    def strength(self, value):
+        self._strength = value
+        self.base_atk += value
+        #rechne rest aus
+
+    @property
+    def intelligence(self):
+        return self._intelligence
+
+
+    @intelligence.setter
+    def intelligence(self, value):
+        self._intelligence = value
+        self.max_mana += value*2
+        #rechne rest...
+
+
+
 
 
     def is_foe(self):
@@ -139,10 +185,11 @@ class Creature:
         # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
         if self.dead_animation_key:
             self.owner.set_animation(self.dead_animation_key)
-            print(self.owner.animation_key)
         killer.get_xp(self.xp_gained)
         self.owner.depth = constants.DEPTH_CORPSE
         if self.custom_death:
             self.custom_death(self, killer)
-        self.dead = True
+
+        self.owner.is_corpse = True
+
         self.owner.destroy()

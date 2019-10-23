@@ -112,3 +112,11 @@ def cast_teleportation(caster, value):
         config.GAME.game_message("The spell fizzels and fails! You stay where you were.", msg_color=constants.COLOR_BLUE_LIGHT)
 
 
+def cast_raisedead(caster, value):
+    actors_to_check = game_map.objects_at_coords(coords_x= caster.x, coords_y=caster.y)
+    print(actors_to_check)
+    for actor in actors_to_check:
+        print(actor.is_corpse)
+        if actor.is_corpse:
+
+

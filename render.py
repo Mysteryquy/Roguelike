@@ -72,7 +72,9 @@ def helper_text_width(font):
 def draw_game():
     # clear the surface
     config.CAMERA.update()
-
+    #fill_surfaces()
+    config.GUI.update(None)
+    config.GUI.draw()
     # draw the map
     draw_map(config.GAME.current_map)
     draw_mini_map(config.GAME.current_map)
@@ -81,7 +83,8 @@ def draw_game():
         obj.draw()
 
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
-    config.SURFACE_MAIN.blit(config.SURFACE_MINI_MAP, (0,0))
+    config.SURFACE_INFO.blit(config.SURFACE_MINI_MAP, (0,0))
+    config.SURFACE_MAIN.blit(config.SURFACE_INFO, (constants.CAMERA_WIDTH,0))
     # print(CAMERA.rectangle)
 
     draw_debug()
@@ -94,6 +97,7 @@ def fill_surfaces():
     config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
+    config.SURFACE_INFO.fill(constants.COLOR_BLACK)
 
 def draw_map(map_to_draw):
     DISPLAY_MAP_W = constants.CAMERA_WIDTH / constants.CELL_WIDTH
@@ -143,7 +147,7 @@ def draw_messages():
     start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
     for i, (message, color) in enumerate(to_draw):
-        draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
+        draw_text(config.SURFACE_INFO, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
 
 
 def draw_mini_map(map_to_draw):
@@ -163,3 +167,7 @@ def draw_mini_map(map_to_draw):
                     color = constants.COLOR_BLUE_DARK if map_to_draw[x][y].block_path else constants.COLOR_YELLOW_DARK_GOLD
                 rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT )
                 pygame.draw.rect(config.SURFACE_MINI_MAP, color, rect)
+
+
+def draw_info():
+    pass

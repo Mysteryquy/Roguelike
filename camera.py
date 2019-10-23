@@ -18,9 +18,8 @@ class Camera:
 
 
     def update(self):
-
-        self.x = self.scrolling_map(config.PLAYER.x * constants.CELL_WIDTH, constants.CAMERA_WIDTH /2, constants.CAMERA_WIDTH, Camera.map_cell_width)
-        self.y = self.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT /2, constants.CAMERA_HEIGHT, Camera.map_cell_height)
+        self.x = self.scrolling_map(config.PLAYER.x * constants.CELL_WIDTH, constants.CAMERA_WIDTH /2, constants.CAMERA_WIDTH  , constants.MAP_WIDTH * constants.CELL_WIDTH)
+        self.y = self.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT /2, constants.CAMERA_HEIGHT, constants.MAP_HEIGHT * constants.CELL_HEIGHT)
 
     @property
     def x(self):
@@ -38,7 +37,8 @@ class Camera:
     def y(self, val):
         self._rect.top = val
 
-    def scrolling_map(self, p, hs, s, m):
+    @staticmethod
+    def scrolling_map(p, hs, s, m):
         """
         Get the position of the camera in a scrolling map:
 
@@ -49,9 +49,9 @@ class Camera:
         if p < hs:
             return 0
         elif p >= m - hs:
-            return m - s
+            return max(p - (m-hs),0)
         else:
-            return p - hs
+            return max(p - hs,0)
 
     @property
     def rect(self):

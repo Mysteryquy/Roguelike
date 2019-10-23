@@ -44,6 +44,8 @@ class Assets:
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
 
+        self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16,112, 48,48)
+
 
         self.tile_dict = {
             "S_WALL" : pygame.image.load("data/sprites/wall2.jpg"),
@@ -139,6 +141,12 @@ class Assets:
 
         pygame.mixer.music.set_volume(config.PREFERENCES.vol_music)
 
+def get_image_from_file(file, x, y, width, height):
+    image = pygame.Surface([width, height]).convert()
+    sprite_sheet = pygame.image.load(file)
+    image.blit(sprite_sheet, (0, 0), (x,y, width, height))
+    image.set_colorkey(constants.COLOR_BLACK)
+    return image
 
 def get_animation_from_files(column, row, file_prefix,
                              width=constants.SPRITE_WIDTH, height=constants.SPRITE_HEIGHT, num_sprites=2,

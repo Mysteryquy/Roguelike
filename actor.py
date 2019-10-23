@@ -20,7 +20,7 @@ class Actor:
                  creature=None, ai: Optional[Ai] = None, container: Optional[Container] = None,
                  item: Optional[Item] = None, equipment: Optional[Equipment] = None,
                  state: Optional[str] = None, structure: Optional[Structure] = None,
-                 draw_explored: bool = False):
+                 draw_explored: bool = False, is_corpse = False):
         self.x = x
         self.y = y
         self.name_object = name_object
@@ -30,6 +30,7 @@ class Actor:
         self.depth = depth
 
         self.draw_explored = draw_explored
+        self.is_corpse = is_corpse
 
         # animation flicker speed
         self.flicker_speed = self.animation_speed / len(self.animation)

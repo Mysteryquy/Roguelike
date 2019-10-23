@@ -21,7 +21,8 @@ import menu
 import monster_gen
 import render
 from object_game import Game
-from ui import Textfield, GuiContainer, FillBar
+from ui import Textfield, GuiContainer, FillBar, TextPane
+from casting import cast_raisedead
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -96,11 +97,7 @@ def game_main_loop():
         if config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN":
             game_quit = True
 
-        # draw the game
         render.draw_game()
-        config.GUI.update(None)
-        config.GUI.draw()
-
 
         # update the display
         pygame.display.flip()
@@ -137,9 +134,11 @@ def game_initialize():
     constants.CAMERA_WIDTH = int(round( screen_width * constants.CAMERA_WIDTH_FRACT))
     constants.CAMERA_HEIGHT = int(round( screen_height * constants.CAMERA_HEIGHT_FRACT))
 
+    rest_of_screen_w = screen_width - constants.CAMERA_WIDTH
+
     constants.RECT_WHOLE_SCREEN = pygame.Rect(0,0, screen_width, screen_height)
 
-    print((constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+
 
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME)
@@ -148,7 +147,14 @@ def game_initialize():
         (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
 
     config.SURFACE_MINI_MAP = pygame.Surface(
-        (constants.MAP_WIDTH * constants.MINI_MAP_CELL_WIDTH, constants.MAP_HEIGHT * constants.MINI_MAP_CELL_HEIGHT))
+        (rest_of_screen_w, rest_of_screen_w))
+
+
+    print("x:")
+    print( screen_height - constants.CAMERA_HEIGHT)
+    config.SURFACE_INFO = pygame.Surface(
+        (rest_of_screen_w, screen_height)
+    )
 
     render.fill_surfaces()
 
@@ -170,26 +176,36 @@ def game_initialize():
 
     config.PLAYER = generator.gen_player((0,0), "dieter")
 
-    health_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,0,constants.CAMERA_WIDTH,30), "health_bar",
+    setup_gui(rest_of_screen_w)
+
+
+
+
+
+def setup_gui(rest_of_screen_w):
+    health_bar = FillBar(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 5, rest_of_screen_w, 30), "health_bar",
                          constants.COLOR_RED_LIGHT, constants.COLOR_RED_DARK, "Health", config.PLAYER.creature.maxhp,
                          constants.COLOR_BLACK)
 
+    mana_bar = FillBar(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 40, rest_of_screen_w, 30), "mana_bar",
+                       constants.COLOR_BLUE_LIGHT, constants.COLOR_BLUE_DARK, "Mana", config.PLAYER.creature.max_mana,
+                       constants.COLOR_WHITE)
 
-    mana_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,30,constants.CAMERA_WIDTH,30), "mana_bar",
-                         constants.COLOR_BLUE_LIGHT, constants.COLOR_BLUE_DARK, "Mana", config.PLAYER.creature.max_mana,
-                         constants.COLOR_WHITE)
+    xp_bar = FillBar(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 75, rest_of_screen_w, 30), "xp_bar",
+                     constants.COLOR_YELLOW_LIGHT, constants.COLOR_YELLOW_DARK_GOLD, "XP",
+                     constants.XP_NEEDED[config.PLAYER.creature.level],
+                     constants.COLOR_BLACK)
+
+    str_pane = TextPane(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 110, 50, 20), "str",
+                        constants.COLOR_RED, "STR: ")
+    dex_pane = TextPane(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 135, 50, 20), "dex",
+                        constants.COLOR_GREEN, "DEX: ")
+    int_pane = TextPane(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 160, 50, 20), "int",
+                        constants.COLOR_BLUE, "INT: ")
 
 
-
-    xp_bar = FillBar(config.SURFACE_MAIN, pygame.Rect(0,60,constants.CAMERA_WIDTH,30), "xp_bar",
-                         constants.COLOR_YELLOW_LIGHT, constants.COLOR_YELLOW_DARK_GOLD, "XP", constants.XP_NEEDED[config.PLAYER.creature.level],
-                         constants.COLOR_BLACK)
-
-    config.GUI = GuiContainer(config.SURFACE_MAIN, pygame.Rect(0,0,0,0), "GUI", health_bar, mana_bar, xp_bar)
-
-
-
-
+    config.GUI = GuiContainer(config.SURFACE_INFO, pygame.Rect(0, 0, 0, 0), "GUI", health_bar, mana_bar, xp_bar,
+                              str_pane, dex_pane, int_pane)
 
 
 def game_handle_keys(player):
@@ -283,6 +299,10 @@ def game_handle_keys(player):
 
             if event.key == pygame.K_BACKQUOTE:
                 game_map.start_auto_explore()
+
+            if event.key == pygame.K_y:
+                cast_raisedead(config.PLAYER, 10)
+
 
 
 
