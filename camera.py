@@ -49,7 +49,7 @@ class Camera:
         if p < hs:
             return 0
         elif p >= m - hs:
-            return max(p - (m-hs),0)
+            return max(m - s,0)
         else:
             return max(p - hs,0)
 

@@ -16,6 +16,19 @@ class Creature:
         FOE = 3
         PLAYER = 4
 
+
+        @classmethod
+        def can_bump(cls, c1, c2):
+            if c1.alignment == cls.FRIEND:
+                return c2.alignment == cls.FOE
+            elif c1.alignment == cls.FOE:
+                return c2.alignment == cls.FRIEND or c2.alignment == cls.PLAYER
+            elif c1.alignment == cls.PLAYER:
+                return c2.alignment == cls.FOE
+
+
+
+
     def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
                  base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
                  dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, alignment: CreatureAlignment = CreatureAlignment.FOE,
@@ -94,7 +107,7 @@ class Creature:
 
         target = game_map.check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
-        if target:
+        if target and Creature.CreatureAlignment.can_bump(self, target.creature) :
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
             self.attack_new(target)
 

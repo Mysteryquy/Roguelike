@@ -256,7 +256,8 @@ def gen_undead_ghost(coords):
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,)
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            alignment=Creature.CreatureAlignment.FRIEND)
     ai_com = ai.AiChase()
 
     ghost = Actor(x, y, "Ghost", animation_key="A_UNDEAD_GHOST", depth=constants.DEPTH_CREATURE,
@@ -265,7 +266,7 @@ def gen_undead_ghost(coords):
 
     return ghost
 
-
+def gen_goblin(coords):
     x, y = coords
 
     max_health = 13

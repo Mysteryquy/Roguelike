@@ -117,16 +117,21 @@ def cast_teleportation(caster, value):
 def cast_raisedead(caster, value):
     actors_to_check = game_map.objects_at_coords(coords_x= caster.x, coords_y=caster.y)
     print(actors_to_check)
+    corpse = None
     for actor in actors_to_check:
-        corpselist = []
         if actor.is_corpse:
-            corpselist.append(actor)
-            if len(corpselist) > 0:
-                new_creature = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin = True)
-                monster_gen.gen_undead_ghost(new_creature)
-                config.GAME.current_objects.append(new_creature)
-                config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
-        else:
-            config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
+            corpse = actor
+            break
 
+    if corpse:
+            new_creature_coords = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin=True)
+            if new_creature_coords:
+                new_creature = monster_gen.gen_undead_ghost(new_creature_coords)
+                config.GAME.current_objects.append(new_creature)
+                config.GAME.current_objects.remove(corpse)
+                config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
+            else:
+                config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
+    else:
+            config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
 

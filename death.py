@@ -61,7 +61,7 @@ def death_worm(monster, killer,):
             new_mob = monster_gen.gen_pest_worm(new_coords, monster.name_instance)
             config.GAME.current_objects.append(new_mob)
             config.GAME.game_message(monster.name_instance + " has halved and its other half came to life!", msg_color=constants.COLOR_RED)
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/worm_split.mp3"))
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/w.mp3"))
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
 

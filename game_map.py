@@ -165,7 +165,7 @@ def find_line(coords1, coords2, include_origin=False):
 
 
 def is_walkable(x, y):
-    return config.FOV_MAP.walkable[y, x]
+    return  config.FOV_MAP.walkable[y, x]
 
 
 def find_radius(coords, radius):
@@ -284,7 +284,7 @@ def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int
     random.shuffle(tiles)
     for i, j in tiles:
         x, y = origin_x + i, origin_y + j
-        if is_walkable(x, y) and is_visible(x, y) and len(objects_at_coords(x, y)) == 0:
+        if x < constants.MAP_WIDTH and y < constants.MAP_HEIGHT and is_walkable(x, y) and is_visible(x, y) and len(objects_at_coords(x, y)) == 0:
             return x, y
 
     return None

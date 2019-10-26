@@ -88,6 +88,7 @@ def game_main_loop():
             game_exit()
 
         for obj in config.GAME.current_objects:
+
             if obj.ai:
                 if player_action != "no-action" and player_action != "console":
                     obj.ai.take_turn()

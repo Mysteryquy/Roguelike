@@ -113,3 +113,13 @@ class AiCaster(Ai):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             print(monster)
             casting.cast_lightning(monster, (1, 3), (player_x, player_y))
+
+class AiFriend(Ai):
+
+    def __init__(self):
+        super().__init__()
+        self.owner = None
+
+    def take_turn(self):
+        monster = self.owner
+        x, y = monster.x, monster.y
