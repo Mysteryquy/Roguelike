@@ -159,14 +159,17 @@ def draw_mini_map(map_to_draw):
         for y in range(constants.MAP_HEIGHT):
 
             is_visible = config.FOV_MAP.fov[y, x]
-            if map_to_draw[x][y].explored:
-                color = None
+            if map_to_draw[x][y].explored and not map_to_draw[x][y].block_path:
                 if is_visible:
-                    color = constants.COLOR_BLUE if map_to_draw[x][y].block_path else constants.COLOR_YELLOW
-                else:
-                    color = constants.COLOR_BLUE_DARK if map_to_draw[x][y].block_path else constants.COLOR_YELLOW_DARK_GOLD
-                rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT )
-                pygame.draw.rect(config.SURFACE_MINI_MAP, color, rect)
+                    map_to_draw[x][y].draw_on_minimap = True
+                    rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT)
+                    pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW, rect)
+                elif map_to_draw[x][y].draw_on_minimap:
+                    rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT)
+                    pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW_DARK_GOLD, rect)
+                    map_to_draw[x][y].draw_on_minimap = False
+
+
 
 
 def draw_info():

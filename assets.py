@@ -48,13 +48,17 @@ class Assets:
 
 
         self.tile_dict = {
-            "S_WALL" : pygame.image.load("data/sprites/wall2.jpg"),
-            "S_WALL_EXPLORED" : pygame.image.load("data/sprites/wallunseen2.png"),
-            "S_FLOOR" : pygame.image.load("data/sprites/floor.jpg"),
-            "S_FLOOR_EXPLORED" : pygame.image.load("data/sprites/floorunseen2.png")
+            "S_WALL" : pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
+            "S_WALL_EXPLORED" : pygame.image.load("data/sprites/wallunseen2.png").convert_alpha(),
+            "S_FLOOR" : pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
+            "S_FLOOR_EXPLORED" : pygame.image.load("data/sprites/floorunseen2.png").convert_alpha()
 
 
         }
+
+        #self.YELLOW_RECT = pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW, rect)
+        #img = pygame.Surface([, height]).convert()
+
 
         self.animation_dict = {
             "A_PLAYER": get_animation_from_files(1, 7, "data/tilesets/Characters/Player", num_sprites=2),
@@ -189,7 +193,7 @@ class Spritesheet:  # Bilder von Spritesheets holen
 
         image_list = []
 
-        image = pygame.Surface([width, height]).convert()
+        image = pygame.Surface([width, height]).convert_alpha()
 
         image.blit(self.sprite_sheet, (0, 0), (Spritesheet.tiledict[column] * width, row * height, width, height))
 

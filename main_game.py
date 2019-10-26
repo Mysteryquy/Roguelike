@@ -142,7 +142,8 @@ def game_initialize():
 
 
 
-    config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME)
+    config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
+    config.SURFACE_MAIN.set_alpha(None)
 
     config.SURFACE_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
