@@ -242,25 +242,49 @@ def gen_humanoid_goblin(coords):
     return goblin
 
 
-def gen_misc_monkey(coords):
+def gen_undead_ghost(coords):
     x, y = coords
 
-    max_health = 10
-    attack = 0
-    defence = 0
-    hit_chance = 0
+    max_health = 20
+    attack = 10
+    defence = 3
+    hit_chance = 100
     doge_value = 50
-    xp_granted = 150
+    xp_granted = 0
 
-    creature_name = tcod.namegen_generate("Celtic male")
+    creature_name = "Ghostler"
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted)
-    ai_com = ai.AiFlee()
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,)
+    ai_com = ai.AiChase()
 
-    monkey = Actor(x, y, "Scared Monkey", animation_key="A_MISC_MONKEY", depth=constants.DEPTH_CREATURE,
+    ghost = Actor(x, y, "Ghost", animation_key="A_UNDEAD_GHOST", depth=constants.DEPTH_CREATURE,
                    creature=creature_com,
                    ai=ai_com)
 
-    return monkey
+    return ghost
+
+
+    x, y = coords
+
+    max_health = 13
+    attack = 5
+    defence = 1
+    hit_chance = 85
+    doge_value = 15
+    xp_granted = 100
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    goblin = Actor(x, y, "Goblin", animation_key="A_HUMANOID_GOBLIN", depth=constants.DEPTH_CREATURE,
+                   creature=creature_com,
+                   ai=ai_com)
+
+    return goblin

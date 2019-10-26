@@ -69,6 +69,7 @@ class Assets:
             "A_PEST_WORM": get_animation_from_files(0, 3, "data/tilesets/Characters/Pest", num_sprites=2),
             "A_HUMANOID_GOBLIN": get_animation_from_files(0, 8, "data/tilesets/Characters/Humanoid", num_sprites=2),
             "A_MISC_MONKEY": get_animation_from_files(0, 3, "data/tilesets/Characters/Misc", num_sprites=2),
+            "A_UNDEAD_GHOST": get_animation_from_files(2, 4, "data/tilesets/Characters/Undead", num_sprites=2),
 
             ## ITEMS ##
             "S_SWORD": [pygame.transform.scale(pygame.image.load("data/sprites/sword.png"),

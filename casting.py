@@ -6,6 +6,8 @@ import menu
 import tcod
 import pygame
 import render
+import monster_gen
+
 
 
 def cast_heal(caster, value):
@@ -116,7 +118,15 @@ def cast_raisedead(caster, value):
     actors_to_check = game_map.objects_at_coords(coords_x= caster.x, coords_y=caster.y)
     print(actors_to_check)
     for actor in actors_to_check:
-        print(actor.is_corpse)
+        corpselist = []
         if actor.is_corpse:
+            corpselist.append(actor)
+            if len(corpselist) > 0:
+                new_creature = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin = True)
+                monster_gen.gen_undead_ghost(new_creature)
+                config.GAME.current_objects.append(new_creature)
+                config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
+        else:
+            config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
 
 
