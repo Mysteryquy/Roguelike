@@ -152,8 +152,6 @@ def draw_messages():
 
 def draw_mini_map(map_to_draw):
 
-    # display the mini map in the top right corner of the screen
-    rect = pygame.Rect(0,0, constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT)
 
     for x in range(constants.MAP_WIDTH):
         for y in range(constants.MAP_HEIGHT):
@@ -162,12 +160,14 @@ def draw_mini_map(map_to_draw):
             if map_to_draw[x][y].explored and not map_to_draw[x][y].block_path:
                 if is_visible:
                     map_to_draw[x][y].draw_on_minimap = True
-                    rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT)
-                    pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW, rect)
+                    config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_YELLOW_RECT,
+                                                 (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
                 elif map_to_draw[x][y].draw_on_minimap:
-                    rect.topleft = (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT)
-                    pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW_DARK_GOLD, rect)
+                    config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
+                                                 (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
                     map_to_draw[x][y].draw_on_minimap = False
+                config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
+                                             (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
 
 
 

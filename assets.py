@@ -20,12 +20,11 @@ class Assets:
         self.demon1 = Spritesheet("data/sprites/Demon1.png")
         self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
-
         # FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_CURSOR_TEXT = pygame.font.Font("data/joystix.ttf", constants.CELL_HEIGHT)
-        self.FONT_FANTY = pygame.font.Font("data/fanty.ttf", int(round(constants.CELL_HEIGHT/2)))
+        self.FONT_FANTY = pygame.font.Font("data/fanty.ttf", int(round(constants.CELL_HEIGHT / 2)))
         self.FONT_MAG1 = pygame.font.Font("data/mag1.ttf", constants.CELL_HEIGHT)
         self.FONT_MAG2 = pygame.font.Font("data/mag2.ttf", constants.CELL_HEIGHT)
         self.FONT_RED1 = pygame.font.Font("data/red1.ttf", int(constants.CELL_HEIGHT * 1.5))
@@ -44,21 +43,20 @@ class Assets:
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
 
-        self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16,112, 48,48)
-
+        self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16, 112, 48, 48)
 
         self.tile_dict = {
-            "S_WALL" : pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
-            "S_WALL_EXPLORED" : pygame.image.load("data/sprites/wallunseen2.png").convert_alpha(),
-            "S_FLOOR" : pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
-            "S_FLOOR_EXPLORED" : pygame.image.load("data/sprites/floorunseen2.png").convert_alpha()
-
+            "S_WALL": pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
+            "S_WALL_EXPLORED": pygame.image.load("data/sprites/wallunseen2.png").convert_alpha(),
+            "S_FLOOR": pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
+            "S_FLOOR_EXPLORED": pygame.image.load("data/sprites/floorunseen2.png").convert_alpha()
 
         }
 
-        #self.YELLOW_RECT = pygame.draw.rect(config.SURFACE_MINI_MAP, constants.COLOR_YELLOW, rect)
-        #img = pygame.Surface([, height]).convert()
-
+        self.MINIMAP_YELLOW_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
+                                                         constants.COLOR_YELLOW)
+        self.MINIMAP_GOLD_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
+                                                  constants.COLOR_YELLOW_DARK_GOLD)
 
         self.animation_dict = {
             "A_PLAYER": get_animation_from_files(1, 7, "data/tilesets/Characters/Player", num_sprites=2),
@@ -80,7 +78,7 @@ class Assets:
                                                (constants.CELL_WIDTH, constants.CELL_HEIGHT))],
             "S_SHIELD": [pygame.transform.scale(pygame.image.load("data/sprites/shield.png"),
                                                 (constants.CELL_WIDTH, constants.CELL_HEIGHT))],
-            "S_WEP_LONGSWORD_1" : get_animation_from_files(0, 0, "data/tilesets/Items/MedWep", num_sprites =1),
+            "S_WEP_LONGSWORD_1": get_animation_from_files(0, 0, "data/tilesets/Items/MedWep", num_sprites=1),
             "S_WEP_LONGSWORD_2": get_animation_from_files(1, 0, "data/tilesets/Items/MedWep", num_sprites=1),
             "S_WEP_LONGSWORD_3": get_animation_from_files(2, 0, "data/tilesets/Items/MedWep", num_sprites=1),
             "S_WEP_LONGSWORD_4": get_animation_from_files(3, 0, "data/tilesets/Items/MedWep", num_sprites=1),
@@ -146,12 +144,14 @@ class Assets:
 
         pygame.mixer.music.set_volume(config.PREFERENCES.vol_music)
 
+
 def get_image_from_file(file, x, y, width, height):
     image = pygame.Surface([width, height]).convert()
     sprite_sheet = pygame.image.load(file)
-    image.blit(sprite_sheet, (0, 0), (x,y, width, height))
+    image.blit(sprite_sheet, (0, 0), (x, y, width, height))
     image.set_colorkey(constants.COLOR_BLACK)
     return image
+
 
 def get_animation_from_files(column, row, file_prefix,
                              width=constants.SPRITE_WIDTH, height=constants.SPRITE_HEIGHT, num_sprites=2,
@@ -181,7 +181,7 @@ def get_animation_from_files(column, row, file_prefix,
 class Spritesheet:  # Bilder von Spritesheets holen
 
     tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
-                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16, "z":0}
+                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16, "z": 0}
 
     def __init__(self, file_name):
         # Den Sheet laden.
@@ -230,3 +230,9 @@ class Spritesheet:  # Bilder von Spritesheets holen
             image_list.append(image)
 
         return image_list
+
+
+def get_surface_rect(width, height, color):
+    surf = pygame.Surface([width, height]).convert()
+    pygame.draw.rect(surf, color, surf.get_rect())
+    return surf
