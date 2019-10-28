@@ -267,6 +267,7 @@ def menu_inventory():
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_i:
+                    pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/soundeffects/leather_inventory.wav"))
                     menu_close = True
 
             if event.type == pygame.MOUSEBUTTONDOWN:

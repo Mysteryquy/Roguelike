@@ -7,6 +7,8 @@ import tcod
 import pygame
 import render
 import monster_gen
+import math
+
 
 
 
@@ -134,4 +136,32 @@ def cast_raisedead(caster, value):
                 config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
     else:
             config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
+
+
+def cast_buffstats(caster, value):
+
+    spell_duration = value
+    setter_value = math.trunc(caster.creature.intelligence / 2)
+    config.GAME.game_message("You are feeling a boost of all your stats for " + str(spell_duration) + " turns!")
+    if spell_duration > 0:
+        caster.creature.strength = caster.creature.strength + setter_value
+        caster.creature.hp = caster.creature.hp + caster.creature.strength
+        caster.creature.intelligence = caster.creature.intelligence + setter_value
+        caster.creature.current_mana = caster.creature.current_mana + caster.creature.intelligence * 2
+        caster.creature.dexterity = caster.creature.dexterity + setter_value
+        events_list = pygame.event.get()
+        for event in events_list:
+            if event == None:
+                spell_duration = spell_duration - 1
+                print(spell_duration)
+                print(caster.creature.strength)
+    else:
+        config.GAME.game_message("You feel the surge of power leaving you!")
+
+    # TODO Create countdown
+    # TODO Fix stat drawing
+    # TODO Fix unupdating stats
+    # TODO Add current HP while buffing it
+
+
 

@@ -131,6 +131,17 @@ def gen_scroll_teleportation(coords):
     return return_object
 
 
+def gen_potion_buffstats(coords):
+    x, y = coords
+
+    item_com = Item(use_function=casting.cast_buffstats, pickup_text="Potion of Statpower")
+
+    return_object = Actor(x, y, "Potion of Statpower", animation_key="S_POTION_01", depth=constants.DEPTH_ITEM,
+                          item=item_com)
+
+    return return_object
+
+
 def gen_weapon_sword(coords):
     x, y = coords
 
@@ -271,6 +282,9 @@ gen_monster_dict = {
     4: monster_gen.gen_reptile_cobra,
     5: monster_gen.gen_pest_snail,
     6: monster_gen.gen_slime_small,
+    7: monster_gen.gen_humanoid_goblin,
+    8: monster_gen.gen_elemental_potato,
+    9: monster_gen.gen_pest_small_spider
 }
 
 
@@ -305,7 +319,8 @@ gen_scroll_dict = {
     0: gen_scroll_fireball,
     1: gen_scroll_confusion,
     2: gen_scroll_lighning,
-    3: gen_scroll_teleportation
+    3: gen_scroll_teleportation,
+    4: gen_potion_buffstats
 }
 
 

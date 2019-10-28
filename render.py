@@ -71,6 +71,7 @@ def helper_text_width(font):
 
 def draw_game():
     # clear the surface
+    config.SURFACE_INFO.fill(constants.COLOR_BLACK)
     config.CAMERA.update()
     #fill_surfaces()
     config.GUI.update(None)
@@ -81,6 +82,8 @@ def draw_game():
 
     for obj in sorted(config.GAME.current_objects, key=lambda x: x.depth, reverse=True):
         obj.draw()
+
+
 
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
     config.SURFACE_INFO.blit(config.SURFACE_MINI_MAP, (0,0))
@@ -147,7 +150,7 @@ def draw_messages():
     start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
     for i, (message, color) in enumerate(to_draw):
-        draw_text(config.SURFACE_INFO, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
+        draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
 
 
 def draw_mini_map(map_to_draw):
@@ -168,6 +171,10 @@ def draw_mini_map(map_to_draw):
                     map_to_draw[x][y].draw_on_minimap = False
                 config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
                                              (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
+
+    config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_RED_RECT,
+                                 (config.PLAYER.x * constants.MINI_MAP_CELL_WIDTH, config.PLAYER.y * constants.MINI_MAP_CELL_HEIGHT))
+
 
 
 

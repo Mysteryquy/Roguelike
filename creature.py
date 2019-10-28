@@ -81,6 +81,7 @@ class Creature:
     def strength(self, value):
         self._strength = value
         self.base_atk += value
+        self.maxhp += value*2
         #rechne rest aus
 
     @property

@@ -157,7 +157,7 @@ def gen_pest_small_spider(coords):
 
     creature_com = Creature(creature_name, custom_death=None, hp=max_health, base_atk=attack,
                             base_def=defence,
-                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation = config.ASSETS.S_FLESH_SPIDER, dead_animation_key = "S_FLESH_SPIDER",)
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted, dead_animation_key = "S_FLESH_SPIDER",)
     ai_com = ai.AiChase()
 
     small_spider = Actor(x, y, "Small Spider", animation_key="A_PEST_SMALL_SPIDER", depth=constants.DEPTH_CREATURE,
@@ -266,17 +266,18 @@ def gen_undead_ghost(coords):
 
     return ghost
 
-def gen_goblin(coords):
+
+def gen_elemental_potato(coords):
     x, y = coords
 
-    max_health = 13
-    attack = 5
-    defence = 1
+    max_health = 25
+    attack = 6
+    defence = 0
     hit_chance = 85
     doge_value = 15
-    xp_granted = 100
+    xp_granted = 500
 
-    creature_name = tcod.namegen_generate("Celtic male")
+    creature_name = "Markus"
 
     creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
                             base_def=defence,
@@ -284,8 +285,8 @@ def gen_goblin(coords):
                             dead_animation_key="S_FLESH_NORMAL")
     ai_com = ai.AiChase()
 
-    goblin = Actor(x, y, "Goblin", animation_key="A_HUMANOID_GOBLIN", depth=constants.DEPTH_CREATURE,
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_POTATO", depth=constants.DEPTH_CREATURE,
                    creature=creature_com,
                    ai=ai_com)
 
-    return goblin
+    return elemental

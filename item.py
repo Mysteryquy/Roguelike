@@ -6,6 +6,7 @@ from typing import Optional, Any, Callable
 import config
 
 
+
 class Item:
 
     def __init__(self, weight: float = 0.0, volume: float = 0.0,
@@ -36,6 +37,7 @@ class Item:
                 self.owner.animation_destroy()
                 config.GAME.current_objects.remove(self.owner)
                 self.container = actor.container
+
 
     ## Drop Item
     def drop(self, new_x: int, new_y: int):
@@ -76,6 +78,8 @@ class Gold(Item):
             self.owner.animation_destroy()
             config.GAME.current_objects.remove(self.owner)
             self.container = actor.container
+
+
 
     def use(self):
         raise AssertionError("Cannot use Gold")

@@ -22,7 +22,7 @@ import monster_gen
 import render
 from object_game import Game
 from ui import Textfield, GuiContainer, FillBar, TextPane
-from casting import cast_raisedead
+from casting import cast_buffstats
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -267,6 +267,7 @@ def game_handle_keys(player):
                 return "pause"
 
             if event.key == pygame.K_i:
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/soundeffects/leather_inventory.wav"))
                 menu.menu_inventory()
                 return "inventory"
 
@@ -303,7 +304,7 @@ def game_handle_keys(player):
                 game_map.start_auto_explore()
 
             if event.key == pygame.K_y:
-                cast_raisedead(config.PLAYER, 10)
+                cast_buffstats(config.PLAYER, 10)
 
 
 

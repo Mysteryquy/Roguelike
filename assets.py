@@ -57,6 +57,10 @@ class Assets:
                                                          constants.COLOR_YELLOW)
         self.MINIMAP_GOLD_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                   constants.COLOR_YELLOW_DARK_GOLD)
+        self.MINIMAP_RED_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
+                                                  constants.COLOR_RED_DARK)
+        self.MINIMAP_WHITE_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
+                                                  constants.COLOR_WHITE)
 
         self.animation_dict = {
             "A_PLAYER": get_animation_from_files(1, 7, "data/tilesets/Characters/Player", num_sprites=2),
@@ -72,6 +76,8 @@ class Assets:
             "A_HUMANOID_GOBLIN": get_animation_from_files(0, 8, "data/tilesets/Characters/Humanoid", num_sprites=2),
             "A_MISC_MONKEY": get_animation_from_files(0, 3, "data/tilesets/Characters/Misc", num_sprites=2),
             "A_UNDEAD_GHOST": get_animation_from_files(2, 4, "data/tilesets/Characters/Undead", num_sprites=2),
+            "A_ELEMENTAL_POTATO": get_animation_from_files(0, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
+
 
             ## ITEMS ##
             "S_SWORD": [pygame.transform.scale(pygame.image.load("data/sprites/sword.png"),
@@ -96,10 +102,11 @@ class Assets:
             "S_SCROLL_02": get_animation_from_files(0, 1, "data/tilesets/Items/Scroll", num_sprites=1),
             "S_SCROLL_03": get_animation_from_files(0, 2, "data/tilesets/Items/Scroll", num_sprites=1),
             "S_SCROLL_04": get_animation_from_files(0, 3, "data/tilesets/Items/Scroll", num_sprites=1),
+            "S_POTION_01": get_animation_from_files(0, 0, "data/tilesets/Items/Potion", num_sprites=1),
             "S_MONEY_SMALL": get_animation_from_files(2, 1, "data/tilesets/Items/Money", num_sprites=1),
             "S_MONEY_MEDIUM": get_animation_from_files(1, 1, "data/tilesets/Items/Money", num_sprites=1),
             "S_MONEY_LARGE": get_animation_from_files(0, 1, "data/tilesets/Items/Money", num_sprites=1),
-            "S_FLESH_SNAKE": self.flesh.get_image("a", 3, 16, 16, (32, 32)),
+            "S_FLESH_SNAKE": get_animation_from_files(1, 3, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_DEAD_SLIME": get_animation_from_files(2, 5, "data/tilesets/Objects/Ground", num_sprites=1),
             "S_FLESH_SPIDER": get_animation_from_files(2, 1, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_FLESH_WORM": get_animation_from_files(2, 3, "data/tilesets/Items/Flesh", num_sprites=1),
