@@ -65,16 +65,3 @@ def death_worm(monster, killer,):
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
 
-
-def death_humanoid(monster, killer):
-
-
-    config.GAME.game_message(monster.creature.name_instance + " is dead!",
-                             constants.COLOR_GREY)
-
-    monster.animation = config.ASSETS.S_FLESH_SPIDER
-    monster.animation_key = "S_FLESH_SPIDER"
-    killer.get_xp(monster.creature.xp_gained)
-    monster.creature = None
-    monster.ai = None
-    monster.depth = constants.DEPTH_CORPSE

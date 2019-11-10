@@ -16,6 +16,7 @@ class Tile:
         self._texture = texture
         self._texture_explored = self._texture + "_EXPLORED"
         self.draw_on_minimap = True
+        self.draw_on_screen = True
 
     @property
     def texture(self):
