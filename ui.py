@@ -355,7 +355,7 @@ class GuiContainer(UiContainer):
             self.items["xp_bar"].string = "MAX LEVEL"
         else:
             self.items["xp_bar"].update(
-                (config.PLAYER.creature.current_xp - constants.XP_NEEDED[config.PLAYER.creature.level-1],
+                (config.PLAYER.creature.current_xp - ( constants.XP_NEEDED[config.PLAYER.creature.level-1] if config.PLAYER.creature.level != 1 else 0),
                  constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))
 
         self.items["str"].update(config.PLAYER.creature.strength)

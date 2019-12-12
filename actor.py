@@ -106,6 +106,15 @@ class Actor:
                                         (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT),
                                         special_flags=special_flags)
 
+    def update(self):
+        if self.ai:
+            self.ai.take_turn()
+        if self.structure:
+            self.structure.update()
+        if self.creature:
+            self.creature.check_effects()
+
+
     def distance_to(self, other: Actor):
 
         dx = other.x - self.x
@@ -189,3 +198,33 @@ class Actor:
         """
         self.animation_key = new_key
         self.animation = config.ASSETS.animation_dict[self.animation_key]
+
+    def delete(self):
+        self.creature = None
+        self.ai = None
+        self.container = None
+        self.item = None
+        self.equipment = None
+        self.structure = None
+        self.state = None
+        config.GAME.current_objects.remove(self)
+
+class TemporaryActor(Actor):
+    def __init__(self, x: int, y: int, name_object: str, animation_key: str, duration: int, animation_speed: float = 1.0,
+                 depth: int = 0, creature=None, ai: Optional[Ai] = None, container: Optional[Container] = None,
+                 item: Optional[Item] = None, equipment: Optional[Equipment] = None, state: Optional[str] = None,
+                 structure: Optional[Structure] = None, draw_explored: bool = False, is_corpse=False):
+        super().__init__(x, y, name_object, animation_key, animation_speed, depth, creature, ai, container, item,
+                         equipment, state, structure, draw_explored, is_corpse)
+        self.duration = duration
+        self.turn_creation = config.ROUND_COUNTER
+
+
+
+    def update(self):
+        if config.ROUND_COUNTER > self.turn_creation + self.duration:
+            config.GAME.game_message(self.name_object + " disappears", msg_color=constants.COLOR_PINK)
+            self.delete()
+        else:
+            super().draw()
+

@@ -22,7 +22,8 @@ import monster_gen
 import render
 from object_game import Game
 from ui import Textfield, GuiContainer, FillBar, TextPane
-from casting import cast_buffstats
+from casting import cast_buffstats, cast_raisedead
+from constants import ACTIONS
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -73,27 +74,28 @@ def invoke_command(command):
 def game_main_loop():
     game_quit = False
 
-    player_action = "no-action"
-
     while not game_quit:
 
-        player_action = game_handle_keys(config.PLAYER)
-        if player_action != "player autoexplored":
+
+        player_action = game_handle_keys()
+
+        if player_action != ACTIONS.AUTOEXPLORED:
             config.AUTO_EXPLORING = False
 
 
         game_map.calculate_fov()
 
-        if player_action == "QUIT":
+        if player_action == ACTIONS.QUIT:
             game_exit()
 
-        for obj in config.GAME.current_objects:
 
-            if obj.ai:
-                if player_action != "no-action" and player_action != "console":
-                    obj.ai.take_turn()
-            if obj.structure:
-                obj.structure.update()
+
+        if constants.takes_turn(player_action):
+            for obj in config.GAME.current_objects:
+                obj.update()
+
+            config.ROUND_COUNTER += 1
+
 
         if config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN":
             game_quit = True
@@ -139,7 +141,7 @@ def game_initialize():
 
     constants.RECT_WHOLE_SCREEN = pygame.Rect(0,0, screen_width, screen_height)
 
-
+    config.ROUND_COUNTER = 0
 
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
@@ -210,8 +212,8 @@ def setup_gui(rest_of_screen_w):
                               str_pane, dex_pane, int_pane)
 
 
-def game_handle_keys(player):
-    # get player input
+def game_handle_keys():
+    # get config.PLAYER input
     keys_list = pygame.key.get_pressed()
     events_list = pygame.event.get()
 
@@ -226,25 +228,28 @@ def game_handle_keys(player):
             if config.CONSOLE.react(event):
                 command = config.CONSOLE.text_ready
                 invoke_command(command)
-            return "console"
+            return ACTIONS.CONSOLE
         if config.CONSOLE.update_activate(event):
-            return "console"
+            return ACTIONS.CONSOLE
         if event.type == pygame.QUIT:
-            return "QUIT"
+            return ACTIONS.QUIT
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                return "QUIT"
+                return ACTIONS.QUIT
 
             if event.key in constants.MOVEMENT_DICT.keys():
                 dx,dy = constants.MOVEMENT_DICT[event.key]
-                player.move(dx,dy)
-                config.FOV_CALCULATE = True
-                return "player moved"
+                if game_map.is_walkable(config.PLAYER.x + dx, config.PLAYER.y + dy):
+                    config.PLAYER.move(dx,dy)
+                    config.FOV_CALCULATE = True
+                    return ACTIONS.MOVED
+                else:
+                    return ACTIONS.NO_ACTION
 
             if event.key == pygame.K_a:
                 menu.debug_tile_select_pathing()
-                return "debug"
+                return ACTIONS.DEBUG
 
 
             if event.key == pygame.K_g:
@@ -254,57 +259,63 @@ def game_handle_keys(player):
                     if obj.item:
                         print(obj.name_object)
                         obj.item.pick_up(config.PLAYER)
-                return "picked up"
+                return ACTIONS.PICKED_UP
 
             if event.key == pygame.K_d:
-                if len(player.container.inventory) > 0:
-                    player.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
-                return "drop"
+                if len(config.PLAYER.container.inventory) > 0:
+                    config.PLAYER.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
+                return ACTIONS.DROP
 
             if event.key == pygame.K_p:
                 config.GAME.game_message("Game resumed", constants.COLOR_WHITE)
                 menu.menu_pause()
-                return "pause"
+                return ACTIONS.PAUSE
 
             if event.key == pygame.K_i:
                 pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/soundeffects/leather_inventory.wav"))
                 menu.menu_inventory()
-                return "inventory"
+                return ACTIONS.INVENTORY
 
             if event.key == pygame.K_l:
                 menu.menu_tile_select()
-                return "tile select"
+                return ACTIONS.TILE_SELECT
 
 
             if event.key == pygame.K_m:
-                generator.gen_and_append_enemy((player.x, player.y))
-                return "debug"
+                generator.gen_and_append_enemy((config.PLAYER.x, config.PLAYER.y))
+                return ACTIONS.DEBUG
 
             if event.key == pygame.K_x:
                 menu.debug_tile_select()
-                return "debug"
+                return ACTIONS.DEBUG
 
             if event.key == pygame.K_s:
                 config.GAME.transition_next()
-                return "debug"
+                return ACTIONS.DEBUG
 
             if event.key == pygame.K_b:
                 game_save(display_message=True)
                 game_load()
-                return "debug"
+                return ACTIONS.DEBUG
+
+            if event.key == pygame.K_r:
+                cast_raisedead(config.PLAYER, 10)
+                return ACTIONS.SPELL
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
                 list_of_objs = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
                 for obj in list_of_objs:
                     if obj.structure:
                         obj.structure.use()
-                return "used"
+                return ACTIONS.USED
 
             if event.key == pygame.K_BACKQUOTE:
                 game_map.start_auto_explore()
+                return ACTIONS.AUTOEXPLORED
 
-            if event.key == pygame.K_y:
+            if event.key == pygame.K_v:
                 cast_buffstats(config.PLAYER, 10)
+                return ACTIONS.SPELL
 
 
 
@@ -315,28 +326,27 @@ def game_handle_keys(player):
 
         config.AUTO_EXPLORING = game_map.check_contine_autoexplore()
         if not config.AUTO_EXPLORING:
-            return "stopped autoexploring"
+            return ACTIONS.STOPPED_AUTOEXPLORING
         if (x,y) == (0,0):
             if game_map.autoexplore_new_goal():
                  x, y = next(config.GAME.auto_explore_path, (0, 0))
             else:
-                return "stopped autoexploring"
+                return ACTIONS.STOPPED_AUTOEXPLORING
 
 
 
-        player.move_towards_point(x,y)
+        config.PLAYER.move_towards_point(x,y)
         config.FOV_CALCULATE = True
-        return "player autoexplored"
+        return ACTIONS.AUTOEXPLORED
 
 
 
 
 
-    return "no-action"
+    return ACTIONS.NO_ACTION
 
 
-def game_new(player_name="Player"):
-
+def game_new(player_name="config.PLAYER"):
     # starts a nre game and map
     config.GAME = Game()
     config.PLAYER = generator.gen_player((0, 0), player_name=player_name)

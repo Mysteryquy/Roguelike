@@ -5,7 +5,7 @@ import casting
 import config
 import constants
 import death
-from actor import Actor
+from actor import Actor, TemporaryActor
 from creature import Creature
 from item import Item
 
@@ -229,7 +229,7 @@ def gen_humanoid_goblin(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
                             dead_animation_key="S_FLESH_NORMAL")
@@ -242,7 +242,7 @@ def gen_humanoid_goblin(coords):
     return goblin
 
 
-def gen_undead_ghost(coords):
+def gen_undead_ghost(coords, duration):
     x, y = coords
 
     max_health = 20
@@ -260,7 +260,7 @@ def gen_undead_ghost(coords):
                             alignment=Creature.CreatureAlignment.FRIEND)
     ai_com = ai.AiChase()
 
-    ghost = Actor(x, y, "Ghost", animation_key="A_UNDEAD_GHOST", depth=constants.DEPTH_CREATURE,
+    ghost = TemporaryActor(x=x, y=y, name_object="Ghost", animation_key="A_UNDEAD_GHOST", duration=10, depth=constants.DEPTH_CREATURE,
                    creature=creature_com,
                    ai=ai_com)
 
@@ -279,7 +279,7 @@ def gen_elemental_potato(coords):
 
     creature_name = "Markus"
 
-    creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
                             dead_animation_key="S_FLESH_NORMAL")

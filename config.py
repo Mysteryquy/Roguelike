@@ -1,4 +1,4 @@
-
+# coding=utf-8
 ASSETS = None
 PLAYER = None
 PREFERENCES = None
@@ -18,3 +18,4 @@ CANNOT_AUTOEXPLORE_FURTHER = False
 GUI = None
 SURFACE_MINI_MAP = None
 REDRAW_MAP = False
+ROUND_COUNTER = 0

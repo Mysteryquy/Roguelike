@@ -139,7 +139,9 @@ def draw_map(map_to_draw):
 
 
 def draw_debug():
-    draw_text(config.SURFACE_MAIN, "fps: " + str(int(config.CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE,
+    draw_text(config.SURFACE_MAIN, "FPS: " + str(int(config.CLOCK.get_fps())), (0, 0), constants.COLOR_WHITE,
+              constants.COLOR_BLACK)
+    draw_text(config.SURFACE_MAIN, "Turn: " + str(config.ROUND_COUNTER), (0, 20), constants.COLOR_WHITE,
               constants.COLOR_BLACK)
 
 

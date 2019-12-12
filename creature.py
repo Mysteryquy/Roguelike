@@ -25,7 +25,9 @@ class Creature:
                 return c2.alignment == cls.FRIEND or c2.alignment == cls.PLAYER
             elif c1.alignment == cls.PLAYER:
                 return c2.alignment == cls.FOE
-
+        @classmethod
+        def can_swap(cls, c1, c2):
+            return c1.alignment == cls.PLAYER and c2.alignment == cls.FRIEND
 
 
 
@@ -56,7 +58,7 @@ class Creature:
         self.dead_animation_key = dead_animation_key
         self.max_mana = max_mana
         self.current_mana = current_mana
-
+        self.effects = []
         self.intelligence = intelligence
         self.dexterity = dexterity
         self.strength = strength
@@ -79,9 +81,10 @@ class Creature:
 
     @strength.setter
     def strength(self, value):
+        dstr = value - self._strength
         self._strength = value
-        self.base_atk += value
-        self.maxhp += value*2
+        self.base_atk += dstr
+        self.maxhp += dstr*2
         #rechne rest aus
 
     @property
@@ -91,13 +94,20 @@ class Creature:
 
     @intelligence.setter
     def intelligence(self, value):
+        dint = value - self._intelligence
         self._intelligence = value
-        self.max_mana += value*2
-        #rechne rest...
+        self.max_mana += dint*2
 
 
 
+    def add_int(self, value):
+        self.intelligence += value
 
+    def add_dex(self, value):
+        self.dexterity += value
+
+    def add_str(self, value):
+        self.strength += value
 
     def is_foe(self):
         return self.alignment == Creature.CreatureAlignment.FOE
@@ -111,7 +121,11 @@ class Creature:
         if target and Creature.CreatureAlignment.can_bump(self, target.creature) :
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
             self.attack_new(target)
-
+        elif target and Creature.CreatureAlignment.can_swap(self, target.creature):
+            self.owner.x += dx
+            self.owner.y += dy
+            target.x -= dx
+            target.y -= dy
         if not tile_is_wall and target is None:
             self.owner.x += dx
             self.owner.y += dy
@@ -207,3 +221,9 @@ class Creature:
         self.owner.is_corpse = True
 
         self.owner.destroy()
+
+    def check_effects(self):
+        self.effects = [ effect for effect in self.effects if effect.proc()]
+
+    def add_effect(self, effect):
+        self.effects.append(effect)

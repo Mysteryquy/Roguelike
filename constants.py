@@ -1,5 +1,7 @@
 import pygame
 import tcod as libtcodpy
+import math
+from enum import Enum
 
 pygame.init()
 
@@ -12,8 +14,8 @@ SPRITE_HEIGHT = 16
 
 
 
-MAP_WIDTH = 101
-MAP_HEIGHT = 101
+MAP_WIDTH = 51
+MAP_HEIGHT = 51
 #Map limitations (must be odd number)
 assert MAP_WIDTH % 2 == 1
 assert MAP_HEIGHT % 2 == 1
@@ -103,7 +105,6 @@ DEPTH_STRUCTURES = 101
 
 #xp related stuff
 XP_NEEDED = {
-    0 : 0,
     1: 300,
     2: 700,
     3: 1200,
@@ -118,7 +119,7 @@ for i in XP_NEEDED.keys():
     if i < MAX_LEVEL:
         XP_NEEDED_FOR_NEXT[i] = XP_NEEDED[i+1] - XP_NEEDED[i]
     else:
-        XP_NEEDED_FOR_NEXT[i] = 0
+        XP_NEEDED_FOR_NEXT[i] = math.inf
 
 print(XP_NEEDED_FOR_NEXT)
 
@@ -140,3 +141,26 @@ MOVEMENT_DICT = {
     pygame.K_KP8: (0,-1),
     pygame.K_KP9: (1,-1),
 }
+
+class ACTIONS(Enum):
+    CONSOLE = 1
+    QUIT = 2
+    MOVED = 3
+    DEBUG = 4
+    PICKED_UP = 5
+    DROP = 6
+    PAUSE = 7
+    INVENTORY = 8
+    TILE_SELECT = 9
+    USED = 10
+    STOPPED_AUTOEXPLORING = 11
+    AUTOEXPLORED = 12
+    NO_ACTION = 13
+    SPELL = 14
+
+
+TAKES_TURN = { ACTIONS.MOVED,  ACTIONS.PICKED_UP,  ACTIONS.DROP,  ACTIONS.USED,  ACTIONS.AUTOEXPLORED,  ACTIONS.STOPPED_AUTOEXPLORING, ACTIONS.SPELL}
+
+def takes_turn(action):
+    return action in TAKES_TURN
+

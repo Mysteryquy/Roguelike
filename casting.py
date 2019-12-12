@@ -8,6 +8,7 @@ import pygame
 import render
 import monster_gen
 import math
+from effect import StatusEffect
 
 
 
@@ -127,9 +128,9 @@ def cast_raisedead(caster, value):
     if corpse:
             new_creature_coords = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin=True)
             if new_creature_coords:
-                new_creature = monster_gen.gen_undead_ghost(new_creature_coords)
+                new_creature = monster_gen.gen_undead_ghost(new_creature_coords, 10)
                 config.GAME.current_objects.append(new_creature)
-                config.GAME.current_objects.remove(corpse)
+                corpse.delete()
                 config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
             else:
                 config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
@@ -141,21 +142,8 @@ def cast_buffstats(caster, value):
 
     spell_duration = value
     setter_value = math.trunc(caster.creature.intelligence / 2)
-    config.GAME.game_message("You are feeling a boost of all your stats for " + str(spell_duration) + " turns!")
-    if spell_duration > 0:
-        caster.creature.strength = caster.creature.strength + setter_value
-        caster.creature.hp = caster.creature.hp + caster.creature.strength
-        caster.creature.intelligence = caster.creature.intelligence + setter_value
-        caster.creature.current_mana = caster.creature.current_mana + caster.creature.intelligence * 2
-        caster.creature.dexterity = caster.creature.dexterity + setter_value
-        events_list = pygame.event.get()
-        for event in events_list:
-            if event == None:
-                spell_duration = spell_duration - 1
-                print(spell_duration)
-                print(caster.creature.strength)
-    else:
-        config.GAME.game_message("You feel the surge of power leaving you!")
+    buff = StatusEffect(caster.creature, setter_value, setter_value,setter_value, spell_duration)
+    caster.creature.add_effect(buff)
 
     # TODO Create countdown
     # TODO Fix stat drawing
