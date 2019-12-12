@@ -117,6 +117,8 @@ def draw_map(map_to_draw):
     render_w_max = min(constants.MAP_WIDTH, render_w_max)
     render_h_max = min(constants.MAP_HEIGHT, render_h_max)
 
+    texture = None
+
     for x in range(render_w_min, render_w_max):
         for y in range(render_h_min, render_h_max):
 
@@ -125,11 +127,13 @@ def draw_map(map_to_draw):
                 map_to_draw[x][y].explored = True
             if map_to_draw[x][y].explored:
                 if is_visible:
-                    texture = map_to_draw[x][y].texture
-                else:
-                    texture = map_to_draw[x][y].texture_explored
-                config.SURFACE_MAP.blit(config.ASSETS.tile_dict[texture],
-                                        (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    map_to_draw[x][y].draw_on_screen = True
+                    config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture],
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                elif map_to_draw[x][y].draw_on_screen:
+                    config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture_explored],
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                    map_to_draw[x][y].draw_on_screen = False
 
 
 
@@ -169,8 +173,7 @@ def draw_mini_map(map_to_draw):
                     config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
                                                  (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
                     map_to_draw[x][y].draw_on_minimap = False
-                config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
-                                             (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
+
 
     config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_RED_RECT,
                                  (config.PLAYER.x * constants.MINI_MAP_CELL_WIDTH, config.PLAYER.y * constants.MINI_MAP_CELL_HEIGHT))

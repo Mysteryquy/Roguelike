@@ -95,7 +95,6 @@ def cast_confusion(caster, effect_length):
 
 
 def cast_teleportation(caster, value):
-
     # generate the target destination
     new_room_number = tcod.random_get_int(None, 0, len(config.GAME.current_rooms) -1)
     new_room = config.GAME.current_rooms[new_room_number]

@@ -229,7 +229,7 @@ def gen_humanoid_goblin(coords):
 
     creature_name = tcod.namegen_generate("Celtic male")
 
-    creature_com = Creature(creature_name,  hp=max_health, base_atk=attack,
+    creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
                             dead_animation_key="S_FLESH_NORMAL")
@@ -279,7 +279,7 @@ def gen_elemental_potato(coords):
 
     creature_name = "Markus"
 
-    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+    creature_com = Creature(creature_name, custom_death=death.death_humanoid, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
                             dead_animation_key="S_FLESH_NORMAL")

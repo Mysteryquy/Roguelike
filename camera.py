@@ -8,6 +8,7 @@ from numpy import sign
 class Camera:
 
 
+
     map_cell_width = constants.MAP_WIDTH * constants.CELL_WIDTH
     map_cell_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
 
@@ -19,7 +20,8 @@ class Camera:
 
     def update(self):
         self.x = self.scrolling_map(config.PLAYER.x * constants.CELL_WIDTH, constants.CAMERA_WIDTH /2, constants.CAMERA_WIDTH  , constants.MAP_WIDTH * constants.CELL_WIDTH)
-        self.y = self.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT /2, constants.CAMERA_HEIGHT, constants.MAP_HEIGHT * constants.CELL_HEIGHT)
+        self.y = self.y = self.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT /2, constants.CAMERA_HEIGHT, constants.MAP_HEIGHT * constants.CELL_HEIGHT)
+
 
     @property
     def x(self):
