@@ -9,6 +9,7 @@ import render
 import monster_gen
 import math
 from effect import StatusEffect
+from creature import Status
 
 
 
@@ -142,8 +143,8 @@ def cast_buffstats(caster, value):
 
     spell_duration = value
     setter_value = math.trunc(caster.creature.intelligence / 2)
-    buff = StatusEffect(caster.creature, setter_value, setter_value,setter_value, spell_duration)
-    caster.creature.add_effect(buff)
+    buff = StatusEffect(caster,spell_duration, effect_dict= {Status.STRENGTH:setter_value, Status.INTELLIGENCE:setter_value, Status.DEXTERITY:setter_value })
+    caster.add_effect(buff)
 
     # TODO Create countdown
     # TODO Fix stat drawing

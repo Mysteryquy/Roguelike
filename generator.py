@@ -19,7 +19,7 @@ def gen_player(coords, player_name="Player"):
     x, y = coords
     print(coords)
     container_com = Container()
-    creature_com = Creature(player_name, base_atk=666, base_def=100, custom_death=death.death_player, base_evasion=20,
+    creature_com = Creature(player_name, base_atk=666, base_def=1, custom_death=death.death_player, base_evasion=20,
                             base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER, strength = 10,
                             dexterity=7, intelligence=5)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
@@ -292,7 +292,8 @@ gen_monster_dict = {
 def gen_and_append_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
-    gen_function = random.choice(gen_monster_dict)
+    #gen_function = random.choice(gen_monster_dict)
+    gen_function = monster_gen.gen_reptile_anaconda
     new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)

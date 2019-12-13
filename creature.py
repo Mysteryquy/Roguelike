@@ -1,3 +1,5 @@
+# coding=utf-8
+from __future__ import annotations
 import pygame
 import tcod
 
@@ -5,10 +7,22 @@ import config
 import constants
 import game_map
 from enum import Enum
+from actor import Actor
 
+
+class Status(Enum):
+    DEXTERITY = 1
+    INTELLIGENCE = 2
+    STRENGTH = 3
+    MAX_HP = 4
+    CURRENT_HP = 5
+    MAX_MANA = 6
+    CURRENT_MANA = 7
 
 
 class Creature:
+
+
 
     class CreatureAlignment(Enum):
         FRIEND = 1
@@ -33,7 +47,7 @@ class Creature:
 
     def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
                  base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10,special_attack = False, alignment: CreatureAlignment = CreatureAlignment.FOE,
+                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, onhit_effects=None, alignment: CreatureAlignment = CreatureAlignment.FOE,
                  strength = 0,
                  dexterity = 0,
                  intelligence = 0
@@ -58,11 +72,13 @@ class Creature:
         self.dead_animation_key = dead_animation_key
         self.max_mana = max_mana
         self.current_mana = current_mana
-        self.effects = []
+        if onhit_effects is None:
+            self.onhit_effects = []
+        else:
+            self.onhit_effects = onhit_effects
         self.intelligence = intelligence
         self.dexterity = dexterity
         self.strength = strength
-        self.special_attack = special_attack
 
 
     @property
@@ -121,7 +137,7 @@ class Creature:
 
         if target and Creature.CreatureAlignment.can_bump(self, target.creature) :
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-            self.attack_new(target)
+            self.hit(target)
         elif target and Creature.CreatureAlignment.can_swap(self, target.creature):
             self.owner.x += dx
             self.owner.y += dy
@@ -131,7 +147,7 @@ class Creature:
             self.owner.x += dx
             self.owner.y += dy
 
-    def attack_new(self, target):
+    def attack(self, target):
 
         chance_to_hit = self.base_hit_chance - target.creature.base_evasion
 
@@ -140,20 +156,23 @@ class Creature:
         else:
             config.GAME.game_message(self.name_instance + " misses " + target.creature.name_instance)
 
-    def attack(self, target):
+    def hit(self, target: Creature):
 
         damage_dealt = self.power - target.creature.defense
 
         config.GAME.game_message(
             self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage_dealt) + " damage!",
             constants.COLOR_WHITE)
-        target.creature.take_damage(damage_dealt, self)
+
+        target.creature.take_damage(damage_dealt, self.owner)
+
+        for effect in self.onhit_effects:
+            effect.on_attack(target)
 
         if damage_dealt > 0 and self.owner is config.PLAYER:
             pygame.mixer.Sound.play(config.RANDOM_ENGINE.choice(config.ASSETS.snd_list_hit))
 
-        if self.special_attack == True:
-            creature.special_attack()
+
 
     def take_damage(self, damage, attacker):
         self.hp -= damage
@@ -161,7 +180,7 @@ class Creature:
                                  constants.COLOR_RED)
 
         if self.hp <= 0:
-            self.death(attacker)
+            self.death(killer=attacker)
 
     def heal(self, value):
 
@@ -180,6 +199,8 @@ class Creature:
         self.level = self.level + 1
         config.GAME.game_message(self.name_instance + " leveled up! He/She/It is now Level " + str(self.level),
                                  msg_color=constants.COLOR_GREEN)
+        self.hp = max(self.hp, self.maxhp)
+        self.current_mana = max(self.current_mana, self.max_mana)
         # Here comes the things we eventually add upon level up
 
     @property
@@ -210,14 +231,14 @@ class Creature:
 
         return total_defense
 
-    def death(self, killer):
+    def death(self, killer: Actor):
         if self.death_text:
             config.GAME.game_message(self.name_instance + self.death_text,
                                      constants.COLOR_GREY)
         # print (monster.creature.name_instance + " is slaughtered into ugly bits of flesh!")
         if self.dead_animation_key:
             self.owner.set_animation(self.dead_animation_key)
-        killer.get_xp(self.xp_gained)
+        killer.creature.get_xp(self.xp_gained)
         self.owner.depth = constants.DEPTH_CORPSE
         if self.custom_death:
             self.custom_death(self, killer)
@@ -226,8 +247,6 @@ class Creature:
 
         self.owner.destroy()
 
-    def check_effects(self):
-        self.effects = [ effect for effect in self.effects if effect.proc()]
+    def add_onhit_effect(self, effect):
+        self.onhit_effects.append(effect)
 
-    def add_effect(self, effect):
-        self.effects.append(effect)

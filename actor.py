@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import annotations
 
 from typing import Optional
@@ -36,6 +37,7 @@ class Actor:
         self.flicker_speed = self.animation_speed / len(self.animation)
         self.flicker_timer = 0.0
         self.sprite_image = 0  # s
+        self.effects = []
 
         self.creature = creature
         if self.creature:
@@ -111,8 +113,7 @@ class Actor:
             self.ai.take_turn()
         if self.structure:
             self.structure.update()
-        if self.creature:
-            self.creature.check_effects()
+        self.check_effects()
 
 
     def distance_to(self, other: Actor):
@@ -208,6 +209,12 @@ class Actor:
         self.structure = None
         self.state = None
         config.GAME.current_objects.remove(self)
+
+    def check_effects(self):
+        self.effects = [effect for effect in self.effects if effect.proc()]
+
+    def add_effect(self, effect):
+        self.effects.append(effect)
 
 class TemporaryActor(Actor):
     def __init__(self, x: int, y: int, name_object: str, animation_key: str, duration: int, animation_speed: float = 1.0,

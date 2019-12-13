@@ -3,9 +3,7 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="PyArgumentEqualDefaultInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PyAugmentAssignmentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
-    <inspection_tool class="PyMandatoryEncodingInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="myAllPythons" value="true" />
-    </inspection_tool>
+    <inspection_tool class="PyMandatoryEncodingInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PyMissingOrEmptyDocstringInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PyMissingTypeHintsInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
@@ -14,6 +12,8 @@
           <option value="map.texture" />
           <option value="item.Actor" />
           <option value="dungeon_generator.Tile" />
+          <option value="actor.Actor" />
+          <option value="creature.Creature" />
         </list>
       </option>
     </inspection_tool>

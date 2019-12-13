@@ -9,6 +9,7 @@ from actor import Actor, TemporaryActor
 from creature import Creature
 from item import Item
 import effect
+from creature import Status
 
 
 def gen_reptile_anaconda(coords):
@@ -16,6 +17,7 @@ def gen_reptile_anaconda(coords):
 
     max_health = tcod.random_get_int(None, 15, 20)
     base_attack = tcod.random_get_int(None, 3, 6)
+    setter_value = -5
 
     creature_name = tcod.namegen_generate("Celtic female")
 
@@ -25,8 +27,14 @@ def gen_reptile_anaconda(coords):
                             )
     ai_com = ai.AiChase()
 
+
+
     snake = Actor(x, y, "Anaconda", animation_key="A_SNAKE_ANACONDA", depth=constants.DEPTH_CREATURE, creature=creature_com,
                   ai=ai_com)
+
+    poison = effect.OnHitEffect(owner=snake, duration=None,
+                              apply=effect.StatusEffect(owner=None, duration=20, effect_dict={Status.MAX_HP:setter_value},autostart=False))
+    snake.creature.add_onhit_effect(poison)
 
     return snake
 
@@ -302,19 +310,21 @@ def gen_elemental_fire(coords):
     hit_chance = 100
     doge_value = 25
     xp_granted = 1000
-    Burn = Debuff(target.creature, setter_value, spell_duration)
-    caster.creature.add_effect(Burn)
 
     creature_name = "Flamey"
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation_key="S_FLESH_NORMAL", special_attack=Burn)
+                            dead_animation_key="S_FLESH_NORMAL")
     ai_com = ai.AiChase()
 
     elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_FIRE", depth=constants.DEPTH_CREATURE,
-                   creature=creature_com,
-                   ai=ai_com)
+                      creature=creature_com,
+                      ai=ai_com)
+
+    burn = effect.OnHitEffect(owner=elemental, duration=None, apply=effect.DamageOverTimeEffect(applier=elemental, duration=3, damage=1) )
+    elemental.creature.add_onhit_effect(burn)
+
 
     return elemental
