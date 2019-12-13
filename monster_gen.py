@@ -8,6 +8,7 @@ import death
 from actor import Actor, TemporaryActor
 from creature import Creature
 from item import Item
+import effect
 
 
 def gen_reptile_anaconda(coords):
@@ -301,13 +302,15 @@ def gen_elemental_fire(coords):
     hit_chance = 100
     doge_value = 25
     xp_granted = 1000
+    Burn = Debuff(target.creature, setter_value, spell_duration)
+    caster.creature.add_effect(Burn)
 
     creature_name = "Flamey"
 
     creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation_key="S_FLESH_NORMAL")
+                            dead_animation_key="S_FLESH_NORMAL", special_attack=Burn)
     ai_com = ai.AiChase()
 
     elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_FIRE", depth=constants.DEPTH_CREATURE,

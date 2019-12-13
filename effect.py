@@ -52,3 +52,21 @@ class StatusEffect(Effect):
         self.owner.add_dex(-self.ddex)
         self.owner.add_str(-self.dstr)
         config.GAME.game_message("You feel the surge of power leaving you")
+
+
+class Debuff(Effect):
+    def __init__(self, owner, damage, duration):
+        super().__init__(owner=owner, duration=duration)
+        self.damage = damage
+        self.start()
+
+
+    def update(self):
+        pass
+
+    def start(self):
+        self.owner.hp = self.owner.hp - self.damage
+        config.GAME.game_message("You are covered in flames that deal " + str(self.damage)+ " for " + str(self.duration) + " turns!")
+
+    def stop(self):
+        config.GAME.game_message("You feel that the flames stopped burning your beautiful body.")

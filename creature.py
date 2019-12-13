@@ -33,7 +33,7 @@ class Creature:
 
     def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
                  base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, alignment: CreatureAlignment = CreatureAlignment.FOE,
+                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10,special_attack = False, alignment: CreatureAlignment = CreatureAlignment.FOE,
                  strength = 0,
                  dexterity = 0,
                  intelligence = 0
@@ -62,6 +62,7 @@ class Creature:
         self.intelligence = intelligence
         self.dexterity = dexterity
         self.strength = strength
+        self.special_attack = special_attack
 
 
     @property
@@ -150,6 +151,9 @@ class Creature:
 
         if damage_dealt > 0 and self.owner is config.PLAYER:
             pygame.mixer.Sound.play(config.RANDOM_ENGINE.choice(config.ASSETS.snd_list_hit))
+
+        if self.special_attack == True:
+            creature.special_attack()
 
     def take_damage(self, damage, attacker):
         self.hp -= damage
