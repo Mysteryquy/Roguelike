@@ -77,6 +77,7 @@ class Assets:
             "A_MISC_MONKEY": get_animation_from_files(0, 3, "data/tilesets/Characters/Misc", num_sprites=2),
             "A_UNDEAD_GHOST": get_animation_from_files(2, 4, "data/tilesets/Characters/Undead", num_sprites=2),
             "A_ELEMENTAL_POTATO": get_animation_from_files(0, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_FIRE": get_animation_from_files(2, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
 
 
             ## ITEMS ##

@@ -284,7 +284,8 @@ gen_monster_dict = {
     6: monster_gen.gen_slime_small,
     7: monster_gen.gen_humanoid_goblin,
     8: monster_gen.gen_elemental_potato,
-    9: monster_gen.gen_pest_small_spider
+    9: monster_gen.gen_pest_small_spider,
+    10: monster_gen.gen_elemental_fire
 }
 
 

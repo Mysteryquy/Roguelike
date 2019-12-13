@@ -290,3 +290,28 @@ def gen_elemental_potato(coords):
                    ai=ai_com)
 
     return elemental
+
+
+def gen_elemental_fire(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 100
+    doge_value = 25
+    xp_granted = 1000
+
+    creature_name = "Flamey"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_FIRE", depth=constants.DEPTH_CREATURE,
+                   creature=creature_com,
+                   ai=ai_com)
+
+    return elemental
