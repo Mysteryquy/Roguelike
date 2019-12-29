@@ -73,7 +73,7 @@ def draw_game():
     # clear the surface
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
     config.CAMERA.update()
-    #fill_surfaces()
+    # fill_surfaces()
     config.GUI.update(None)
     config.GUI.draw()
     # draw the map
@@ -83,11 +83,9 @@ def draw_game():
     for obj in sorted(config.GAME.current_objects, key=lambda x: x.depth, reverse=True):
         obj.draw()
 
-
-
     config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
-    config.SURFACE_INFO.blit(config.SURFACE_MINI_MAP, (0,0))
-    config.SURFACE_MAIN.blit(config.SURFACE_INFO, (constants.CAMERA_WIDTH,0))
+    config.SURFACE_INFO.blit(config.SURFACE_MINI_MAP, (0, 0))
+    config.SURFACE_MAIN.blit(config.SURFACE_INFO, (constants.CAMERA_WIDTH, 0))
     # print(CAMERA.rectangle)
 
     draw_debug()
@@ -95,12 +93,12 @@ def draw_game():
     config.CONSOLE.draw()
 
 
-
 def fill_surfaces():
     config.SURFACE_MAIN.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
+
 
 def draw_map(map_to_draw):
     DISPLAY_MAP_W = constants.CAMERA_WIDTH / constants.CELL_WIDTH
@@ -117,15 +115,13 @@ def draw_map(map_to_draw):
     render_w_max = min(constants.MAP_WIDTH, render_w_max)
     render_h_max = min(constants.MAP_HEIGHT, render_h_max)
 
-    texture = None
-
     for x in range(render_w_min, render_w_max):
         for y in range(render_h_min, render_h_max):
 
             is_visible = config.FOV_MAP.fov[y, x]
             if is_visible and not map_to_draw[x][y].explored:
                 map_to_draw[x][y].explored = True
-            if map_to_draw[x][y].explored:
+            if map_to_draw[x][y].explored or map_to_draw[x][y].draw_on_screen:
                 if is_visible:
                     map_to_draw[x][y].draw_on_screen = True
                     config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture],
@@ -134,8 +130,6 @@ def draw_map(map_to_draw):
                     config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture_explored],
                                             (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     map_to_draw[x][y].draw_on_screen = False
-
-
 
 
 def draw_debug():
@@ -160,8 +154,6 @@ def draw_messages():
 
 
 def draw_mini_map(map_to_draw):
-
-
     for x in range(constants.MAP_WIDTH):
         for y in range(constants.MAP_HEIGHT):
 
@@ -170,18 +162,21 @@ def draw_mini_map(map_to_draw):
                 if is_visible:
                     map_to_draw[x][y].draw_on_minimap = True
                     config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_YELLOW_RECT,
-                                                 (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
+                                                 (
+                                                     x * constants.MINI_MAP_CELL_WIDTH,
+                                                     y * constants.MINI_MAP_CELL_HEIGHT))
+                    map_to_draw[x][y].was_drawn = True
                 elif map_to_draw[x][y].draw_on_minimap:
                     config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_GOLD_RECT,
-                                                 (x * constants.MINI_MAP_CELL_WIDTH, y * constants.MINI_MAP_CELL_HEIGHT))
+                                                 (
+                                                     x * constants.MINI_MAP_CELL_WIDTH,
+                                                     y * constants.MINI_MAP_CELL_HEIGHT))
                     map_to_draw[x][y].draw_on_minimap = False
-
+                    map_to_draw[x][y].was_drawn = True
 
     config.SURFACE_MINI_MAP.blit(config.ASSETS.MINIMAP_RED_RECT,
-                                 (config.PLAYER.x * constants.MINI_MAP_CELL_WIDTH, config.PLAYER.y * constants.MINI_MAP_CELL_HEIGHT))
-
-
-
+                                 (config.PLAYER.x * constants.MINI_MAP_CELL_WIDTH,
+                                  config.PLAYER.y * constants.MINI_MAP_CELL_HEIGHT))
 
 
 def draw_info():

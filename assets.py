@@ -4,6 +4,7 @@ import config
 import constants
 
 
+# noinspection PyArgumentEqualDefault
 class Assets:
 
     def __init__(self):
@@ -61,6 +62,9 @@ class Assets:
                                                   constants.COLOR_RED_DARK)
         self.MINIMAP_WHITE_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                   constants.COLOR_WHITE)
+
+        self.MAP_DARK_GREY_RECT = get_surface_rect(constants.CELL_WIDTH, constants.CELL_HEIGHT,
+                                                   constants.COLOR_DARK_GREY)
 
         self.animation_dict = {
             "A_PLAYER": get_animation_from_files(1, 7, "data/tilesets/Characters/Player", num_sprites=2),

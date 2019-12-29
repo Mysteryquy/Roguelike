@@ -196,7 +196,7 @@ class Creature:
                 self.level_up()
 
     def level_up(self):
-        self.level = self.level + 1
+        self.level += 1
         config.GAME.game_message(self.name_instance + " leveled up! He/She/It is now Level " + str(self.level),
                                  msg_color=constants.COLOR_GREEN)
         self.hp = max(self.hp, self.maxhp)

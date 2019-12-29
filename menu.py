@@ -52,26 +52,25 @@ class MainMenu:
         sound_effect_vol = 0.5
         music_effect_slider_y = sound_effect_slider_y + 70
 
-
         self.sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
-                                        (slider_x, sound_effect_slider_y),
-                                        constants.COLOR_RED,
-                                        constants.COLOR_GREEN, config.PREFERENCES.vol_sound, "Sound Volume",
+                                             (slider_x, sound_effect_slider_y),
+                                             constants.COLOR_RED,
+                                             constants.COLOR_GREEN, config.PREFERENCES.vol_sound, "Sound Volume",
                                              callback=self.sound_volume_adjust_callback)
 
         self.music_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "music_effect_slider",
-                                        (slider_x, music_effect_slider_y),
-                                        constants.COLOR_RED,
-                                        constants.COLOR_GREEN, config.PREFERENCES.vol_music, "Music Volume",
+                                             (slider_x, music_effect_slider_y),
+                                             constants.COLOR_RED,
+                                             constants.COLOR_GREEN, config.PREFERENCES.vol_music, "Music Volume",
                                              callback=self.music_volume_adjust_callback)
 
         self.effect_container = ui.UiContainer(config.SURFACE_MAIN,
-                                               pygame.Rect(constants.CAMERA_WIDTH / 2 - 200, constants.CAMERA_HEIGHT / 2 - 150,
+                                               pygame.Rect(constants.CAMERA_WIDTH / 2 - 200,
+                                                           constants.CAMERA_HEIGHT / 2 - 150,
                                                            400, 400),
                                                id="effect_container",
                                                elements=[self.sound_effect_slider, self.music_effect_slider],
                                                color=constants.COLOR_GREY)
-
 
     def show_menu(self):
         pygame.mixer.music.load(config.ASSETS.music_main_menu)
@@ -142,10 +141,10 @@ class MainMenu:
     def options_button_callback(self, id):
         self.menu_options()
 
-    def quit_button_callback(self, id):
+    @staticmethod
+    def quit_button_callback(id):
         pygame.quit()
         exit()
-
 
     def menu_options(self):
         menu_close = False
@@ -169,20 +168,19 @@ class MainMenu:
             self.effect_container.draw()
             pygame.display.update()
 
-
-    def sound_volume_adjust_callback(self, id, current_val):
+    @staticmethod
+    def sound_volume_adjust_callback(id, current_val):
         current_sound_volume = config.PREFERENCES.vol_sound
         if current_sound_volume is not current_val:
             config.PREFERENCES.vol_sound = current_val
             config.ASSETS.volume_adjust()
 
-
-    def music_volume_adjust_callback(self, id, current_val):
+    @staticmethod
+    def music_volume_adjust_callback(id, current_val):
         current_music_volume = config.PREFERENCES.vol_music
         if current_music_volume is not current_val:
             config.PREFERENCES.vol_music = current_val
             config.ASSETS.volume_adjust()
-
 
 
 def menu_pause():
@@ -272,12 +270,10 @@ def menu_inventory():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if mouse_in_window and mouse_line_selection <= len(print_list) -1:
+                    if mouse_in_window and mouse_line_selection <= len(print_list) - 1:
                         if mouse_line_selection > 0:
                             config.PLAYER.container.inventory[mouse_line_selection - 1].item.use()
                             menu_close = True
-
-
 
         ##Draw the list
         for line, (name) in enumerate(print_list):
@@ -302,13 +298,15 @@ def menu_inventory():
 
 
 def debug_tile_select():
-    (x, y) = menu_tile_select()
+    x, y = menu_tile_select()
     objects = game_map.objects_at_coords(x, y)
-    print("Objects at " + str((x,y)) + "(walkable=" + str(game_map.is_walkable(x,y)) +": " + str(objects) )
+    config.GAME.game_message("Mouse position: " + str((x, y)))
+
 
 def debug_tile_select_pathing():
     (x, y) = menu_tile_select()
-    print("Path from" + str( (config.PLAYER.x, config.PLAYER.y))  + " to " + str((x,y)) +" :" + str(game_map.get_path_from_player(x,y)))
+    print("Path from" + str((config.PLAYER.x, config.PLAYER.y)) + " to " + str((x, y)) + " :" + str(
+        game_map.get_path_from_player(x, y)))
 
 
 def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
@@ -319,6 +317,9 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
     menu_close = False
 
+    previous = None
+    previous_drawn = []
+
     while not menu_close:
 
         # Get mouse position
@@ -327,15 +328,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         # Get button clicks
         events_list = pygame.event.get()
 
-        mapx_pixel, mapy_pixel = config.CAMERA.win_to_map((mouse_x, mouse_y))
-
-        # Mouse map selection
-        map_coord_x = mapx_pixel / constants.CELL_WIDTH
-        map_coord_y = mapy_pixel / constants.CELL_HEIGHT
-
-        # transform into integers
-        int_x = int(map_coord_x)
-        int_y = int(map_coord_y)
+        int_x, int_y = config.CAMERA.coords_from_position(mouse_x, mouse_y)
 
         valid_tiles = []
 
@@ -367,38 +360,51 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if event.button == 1:
+                    if previous:
+                        for x, y in previous_drawn:
+                            if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x, y):
+                                config.SURFACE_MAP.blit(
+                                    config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],
+                                    (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                            else:
+                                config.SURFACE_MAP.blit(config.ASSETS.MAP_DARK_GREY_RECT,
+                                                        (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     return valid_tiles[-1]
 
-        # Draw Game first
-        config.SURFACE_MAIN.fill(constants.COLOR_DEFAULT_BG)
-        config.SURFACE_MAP.fill(constants.COLOR_BLACK)
+        render.draw_game()
 
-        config.CAMERA.update()
+        if previous:
+            for x, y in previous_drawn:
+                if x >= constants.MAP_WIDTH+1 or y >= constants.MAP_HEIGHT+1:
+                    continue
+                if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x,y):
+                    config.SURFACE_MAP.blit(config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
+                else:
+                    config.SURFACE_MAP.blit(config.ASSETS.MAP_DARK_GREY_RECT,
+                                            (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
 
-        # draw the map
-        render.draw_map(config.GAME.current_map)
+        previous = int_x, int_y
+        previous_drawn = []
 
-        for obj in config.GAME.current_objects:
-            obj.draw()
-
-        render.draw_tile_rect((int_x, int_y))  # Hier ?
         # Draw Rectangle at mouse position on top of game, dont draw the last tile in grey
         for (tile_x, tile_y) in valid_tiles[:-1]:
             render.draw_tile_rect((tile_x, tile_y), constants.COLOR_GREY)
+            if not game_map.is_visible(tile_x, tile_y):
+                previous_drawn.append((tile_x, tile_y))
         last_tile_x, last_tile_y = valid_tiles[-1]
         render.draw_tile_rect((last_tile_x, last_tile_y), constants.COLOR_RED, mark="X")
+        if not game_map.is_visible(last_tile_x, last_tile_y):
+            previous_drawn.append((last_tile_x, last_tile_y))
 
         if radius:
             area_effect = game_map.find_radius(valid_tiles[-1], radius)
 
             for (tile_x, tile_y) in area_effect:
                 render.draw_tile_rect((tile_x, tile_y))
-
+                if not game_map.is_visible(tile_x, tile_y):
+                    previous_drawn.append((tile_x, tile_y))
         config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
-        # print(CAMERA.rectangle)
-
-        render.draw_debug()
-        render.draw_messages()
 
         # update the display
         pygame.display.flip()

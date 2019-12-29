@@ -12,8 +12,6 @@ from effect import StatusEffect
 from creature import Status
 
 
-
-
 def cast_heal(caster, value):
     if caster.creature.hp == caster.creature.maxhp:
         config.GAME.game_message("HP is allready full")
@@ -46,7 +44,7 @@ def cast_lightning(caster, T_damage_maxrange, coords=None):
             target = game_map.check_for_creature(x, y)
 
             if target:
-                target.creature.take_damage(damage,caster.creature)
+                target.creature.take_damage(damage, caster.creature)
 
 
 def cast_fireball(caster, T_damage_radius_range):
@@ -56,7 +54,7 @@ def cast_fireball(caster, T_damage_radius_range):
     player_location = (caster.x, caster.y)
 
     point_selected = menu.menu_tile_select(coords_origin=player_location, max_range=max_r, penetrate_walls=False,
-                                      pierce_creature=False, radius=local_radius)
+                                           pierce_creature=False, radius=local_radius)
 
     # get sequence of tiles
     tiles_to_damage = game_map.find_radius(point_selected, local_radius)
@@ -68,14 +66,15 @@ def cast_fireball(caster, T_damage_radius_range):
         creature_to_damage = game_map.check_for_creature(x, y)
 
         if creature_to_damage:
-            creature_to_damage.creature.take_damage(damage,caster)
+            creature_to_damage.creature.take_damage(damage, caster)
 
             if creature_to_damage is not config.PLAYER:
                 creature_hit = True
 
     if creature_hit:
-        config.GAME.game_message("The fire rages and evaporates all flesh it came in contact with. Its nearly as hot as Alina Paul",
-                     constants.COLOR_RED)
+        config.GAME.game_message(
+            "The fire rages and evaporates all flesh it came in contact with. Its nearly as hot as Alina Paul",
+            constants.COLOR_RED)
 
 
 def cast_confusion(caster, effect_length):
@@ -98,11 +97,10 @@ def cast_confusion(caster, effect_length):
 
 def cast_teleportation(caster, value):
     # generate the target destination
-    new_room_number = tcod.random_get_int(None, 0, len(config.GAME.current_rooms) -1)
+    new_room_number = tcod.random_get_int(None, 0, len(config.GAME.current_rooms) - 1)
     new_room = config.GAME.current_rooms[new_room_number]
     new_x = tcod.random_get_int(None, new_room.left + 1, new_room.right - 1)
     new_y = tcod.random_get_int(None, new_room.top + 1, new_room.bottom - 1)
-
 
     if not game_map.check_for_creature(new_x, new_y):
         # add in some cool effects
@@ -114,11 +112,12 @@ def cast_teleportation(caster, value):
 
     else:
         pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/teleport_fail.wav"))
-        config.GAME.game_message("The spell fizzels and fails! You stay where you were.", msg_color=constants.COLOR_BLUE_LIGHT)
+        config.GAME.game_message("The spell fizzels and fails! You stay where you were.",
+                                 msg_color=constants.COLOR_BLUE_LIGHT)
 
 
 def cast_raisedead(caster, value):
-    actors_to_check = game_map.objects_at_coords(coords_x= caster.x, coords_y=caster.y)
+    actors_to_check = game_map.objects_at_coords(coords_x=caster.x, coords_y=caster.y)
     print(actors_to_check)
     corpse = None
     for actor in actors_to_check:
@@ -127,29 +126,27 @@ def cast_raisedead(caster, value):
             break
 
     if corpse:
-            new_creature_coords = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin=True)
-            if new_creature_coords:
-                new_creature = monster_gen.gen_undead_ghost(new_creature_coords, 10)
-                config.GAME.current_objects.append(new_creature)
-                corpse.delete()
-                config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
-            else:
-                config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
-    else:
+        new_creature_coords = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin=True)
+        if new_creature_coords:
+            new_creature = monster_gen.gen_undead_ghost(new_creature_coords, 10)
+            config.GAME.current_objects.append(new_creature)
+            corpse.delete()
+            config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
+        else:
             config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
+    else:
+        config.GAME.game_message("The spell failed!", msg_color=constants.COLOR_GREEN_DARK)
 
 
 def cast_buffstats(caster, value):
-
     spell_duration = value
     setter_value = math.trunc(caster.creature.intelligence / 2)
-    buff = StatusEffect(caster,spell_duration, effect_dict= {Status.STRENGTH:setter_value, Status.INTELLIGENCE:setter_value, Status.DEXTERITY:setter_value })
+    buff = StatusEffect(caster, spell_duration,
+                        effect_dict={Status.STRENGTH: setter_value, Status.INTELLIGENCE: setter_value,
+                                     Status.DEXTERITY: setter_value})
     caster.add_effect(buff)
 
     # TODO Create countdown
     # TODO Fix stat drawing
     # TODO Fix unupdating stats
     # TODO Add current HP while buffing it
-
-
-

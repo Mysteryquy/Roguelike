@@ -1,3 +1,5 @@
+from enum import Enum
+
 import tcod.path as path
 
 import config
@@ -6,8 +8,15 @@ import game_map
 import render
 
 
+class GameState(Enum):
+    RUNNING = 1
+    PAUSE = 2
+
+
 class Game:
     def __init__(self):
+
+        self.state = GameState.RUNNING
 
         self.message_history = []
 
@@ -19,9 +28,9 @@ class Game:
 
         self.current_map, self.current_rooms = game_map.create()
 
-        tmp = (config.FOV_MAP)
+        tmp = config.FOV_MAP
 
-        self.pathing = path.AStar(tmp,0)
+        self.pathing = path.AStar(tmp, 0)
 
         self.auto_explore_path = None
 
@@ -53,11 +62,10 @@ class Game:
 
 
         else:
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
-            self.maps_next[-1]
+            (
+            config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
+                self.maps_next[-1]
             self.pathing = path.AStar(config.FOV_MAP, 0)
-
-
 
             for obj in self.current_objects:
                 obj.animation_init()
@@ -78,11 +86,12 @@ class Game:
                 obj.animation_destroy()
 
             self.maps_next.append(
-                (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs))
+                (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects,
+                 self.stairs))
 
-            (config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
-            self.maps_previous[-1]
-
+            (
+            config.PLAYER.x, config.PLAYER.y, self.current_map, self.current_rooms, self.current_objects, self.stairs) = \
+                self.maps_previous[-1]
 
             for obj in self.current_objects:
                 obj.animation_init()

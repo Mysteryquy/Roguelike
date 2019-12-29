@@ -21,7 +21,7 @@ class Actor:
                  creature=None, ai: Optional[Ai] = None, container: Optional[Container] = None,
                  item: Optional[Item] = None, equipment: Optional[Equipment] = None,
                  state: Optional[str] = None, structure: Optional[Structure] = None,
-                 draw_explored: bool = False, is_corpse = False):
+                 draw_explored: bool = False, is_corpse: bool = False):
         self.x = x
         self.y = y
         self.name_object = name_object

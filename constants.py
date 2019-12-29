@@ -164,3 +164,5 @@ TAKES_TURN = { ACTIONS.MOVED,  ACTIONS.PICKED_UP,  ACTIONS.DROP,  ACTIONS.USED, 
 def takes_turn(action):
     return action in TAKES_TURN
 
+
+

@@ -74,7 +74,7 @@ class Gold(Item):
     def pick_up(self, actor):
         config.GAME.game_message("Picked up " + self.pickup_text)
         if actor.container:
-            actor.container.gold = actor.container.gold + self.amount
+            actor.container.gold += self.amount
             self.owner.animation_destroy()
             config.GAME.current_objects.remove(self.owner)
             self.container = actor.container

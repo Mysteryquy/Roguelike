@@ -241,7 +241,7 @@ class DungeonGenerator:
                         for direction in DungeonGenerator.directions:
                             dx, dy = direction
                             if not self.current_map[x + dx][y + dy].block_path:
-                                exits = exits + 1
+                                exits += 1
 
                         if exits == 1:
                             done = False

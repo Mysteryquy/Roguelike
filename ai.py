@@ -48,6 +48,7 @@ class AiChase(Ai):
     """
     This AI chases and bumps into the player
     """
+
     def __init__(self):
         super().__init__()
 
@@ -67,6 +68,7 @@ class AiFlee(Ai):
     """
     This AI flees from the player
     """
+
     def __init__(self):
         super().__init__()
 
@@ -100,6 +102,7 @@ class AiFlee(Ai):
                 monster.move(0, -1)
         """
 
+
 class AiCaster(Ai):
 
     def __init__(self):
@@ -113,6 +116,7 @@ class AiCaster(Ai):
             player_x, player_y = config.PLAYER.x, config.PLAYER.y
             print(monster)
             casting.cast_lightning(monster, (1, 3), (player_x, player_y))
+
 
 class AiFriend(Ai):
 

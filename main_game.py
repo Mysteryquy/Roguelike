@@ -9,7 +9,7 @@ import random
 import pygame
 import tcod
 import tcod.map
-
+from object_game import GameState
 import assets
 import camera
 import config
@@ -38,8 +38,6 @@ class Preferences:
     def __init__(self):
         self.vol_sound = .5
         self.vol_music = .25
-
-
 
 
 #  o         o   __o__
@@ -76,29 +74,27 @@ def game_main_loop():
 
     while not game_quit:
 
+        if config.GAME.state == GameState.RUNNING:
+            player_action = game_handle_keys()
 
-        player_action = game_handle_keys()
+            if player_action != ACTIONS.AUTOEXPLORED:
+                config.AUTO_EXPLORING = False
 
-        if player_action != ACTIONS.AUTOEXPLORED:
-            config.AUTO_EXPLORING = False
+            game_map.calculate_fov()
 
+            if player_action == ACTIONS.QUIT:
+                game_exit()
 
-        game_map.calculate_fov()
+            if constants.takes_turn(player_action):
+                for obj in config.GAME.current_objects:
+                    obj.update()
 
-        if player_action == ACTIONS.QUIT:
-            game_exit()
+                config.ROUND_COUNTER += 1
 
-
-
-        if constants.takes_turn(player_action):
-            for obj in config.GAME.current_objects:
-                obj.update()
-
-            config.ROUND_COUNTER += 1
-
-
-        if config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN":
-            game_quit = True
+            if config.PLAYER.state == "STATUS_DEAD" or config.PLAYER.state == "STATUS_WIN":
+                game_quit = True
+        elif config.GAME.state == GameState.PAUSE:
+            continue
 
         render.draw_game()
 
@@ -134,15 +130,14 @@ def game_initialize():
     info = pygame.display.Info()
     screen_width, screen_height = info.current_w, info.current_h
 
-    constants.CAMERA_WIDTH = int(round( screen_width * constants.CAMERA_WIDTH_FRACT))
-    constants.CAMERA_HEIGHT = int(round( screen_height * constants.CAMERA_HEIGHT_FRACT))
+    constants.CAMERA_WIDTH = int(round(screen_width * constants.CAMERA_WIDTH_FRACT))
+    constants.CAMERA_HEIGHT = int(round(screen_height * constants.CAMERA_HEIGHT_FRACT))
 
     rest_of_screen_w = screen_width - constants.CAMERA_WIDTH
 
-    constants.RECT_WHOLE_SCREEN = pygame.Rect(0,0, screen_width, screen_height)
+    constants.RECT_WHOLE_SCREEN = pygame.Rect(0, 0, screen_width, screen_height)
 
     config.ROUND_COUNTER = 0
-
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
     config.SURFACE_MAIN.set_alpha(None)
@@ -153,9 +148,8 @@ def game_initialize():
     config.SURFACE_MINI_MAP = pygame.Surface(
         (rest_of_screen_w, rest_of_screen_w))
 
-
     print("x:")
-    print( screen_height - constants.CAMERA_HEIGHT)
+    print(screen_height - constants.CAMERA_HEIGHT)
     config.SURFACE_INFO = pygame.Surface(
         (rest_of_screen_w, screen_height)
     )
@@ -178,12 +172,9 @@ def game_initialize():
         constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD, auto_active=False, focus_key=pygame.K_o
     )
 
-    config.PLAYER = generator.gen_player((0,0), "dieter")
+    config.PLAYER = generator.gen_player((0, 0), "dieter")
 
     setup_gui(rest_of_screen_w)
-
-
-
 
 
 def setup_gui(rest_of_screen_w):
@@ -206,7 +197,6 @@ def setup_gui(rest_of_screen_w):
                         constants.COLOR_GREEN, "DEX: ")
     int_pane = TextPane(config.SURFACE_INFO, pygame.Rect(0, rest_of_screen_w + 160, 50, 20), "int",
                         constants.COLOR_BLUE, "INT: ")
-
 
     config.GUI = GuiContainer(config.SURFACE_INFO, pygame.Rect(0, 0, 0, 0), "GUI", health_bar, mana_bar, xp_bar,
                               str_pane, dex_pane, int_pane)
@@ -239,9 +229,9 @@ def game_handle_keys():
                 return ACTIONS.QUIT
 
             if event.key in constants.MOVEMENT_DICT.keys():
-                dx,dy = constants.MOVEMENT_DICT[event.key]
+                dx, dy = constants.MOVEMENT_DICT[event.key]
                 if game_map.is_walkable(config.PLAYER.x + dx, config.PLAYER.y + dy):
-                    config.PLAYER.move(dx,dy)
+                    config.PLAYER.move(dx, dy)
                     config.FOV_CALCULATE = True
                     return ACTIONS.MOVED
                 else:
@@ -250,7 +240,6 @@ def game_handle_keys():
             if event.key == pygame.K_a:
                 menu.debug_tile_select_pathing()
                 return ACTIONS.DEBUG
-
 
             if event.key == pygame.K_g:
                 objects_at_player = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
@@ -280,7 +269,6 @@ def game_handle_keys():
                 menu.menu_tile_select()
                 return ACTIONS.TILE_SELECT
 
-
             if event.key == pygame.K_m:
                 generator.gen_and_append_enemy((config.PLAYER.x, config.PLAYER.y))
                 return ACTIONS.DEBUG
@@ -291,6 +279,14 @@ def game_handle_keys():
 
             if event.key == pygame.K_s:
                 config.GAME.transition_next()
+                return ACTIONS.DEBUG
+
+            if event.key == pygame.K_1:
+                config.GAME.game_message("Player position: " + str((config.PLAYER.x, config.PLAYER.y)))
+                return ACTIONS.DEBUG
+
+            if event.key == pygame.K_2:
+                config.GAME.game_message("Camera position: " + str(config.CAMERA.cam_map_coord))
                 return ACTIONS.DEBUG
 
             if event.key == pygame.K_b:
@@ -317,31 +313,22 @@ def game_handle_keys():
                 cast_buffstats(config.PLAYER, 10)
                 return ACTIONS.SPELL
 
-
-
-
     if config.AUTO_EXPLORING:
 
-        x,y = next(config.GAME.auto_explore_path, (0,0))
+        x, y = next(config.GAME.auto_explore_path, (0, 0))
 
         config.AUTO_EXPLORING = game_map.check_contine_autoexplore()
         if not config.AUTO_EXPLORING:
             return ACTIONS.STOPPED_AUTOEXPLORING
-        if (x,y) == (0,0):
+        if (x, y) == (0, 0):
             if game_map.autoexplore_new_goal():
-                 x, y = next(config.GAME.auto_explore_path, (0, 0))
+                x, y = next(config.GAME.auto_explore_path, (0, 0))
             else:
                 return ACTIONS.STOPPED_AUTOEXPLORING
 
-
-
-        config.PLAYER.move_towards_point(x,y)
+        config.PLAYER.move_towards_point(x, y)
         config.FOV_CALCULATE = True
         return ACTIONS.AUTOEXPLORED
-
-
-
-
 
     return ACTIONS.NO_ACTION
 
