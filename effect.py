@@ -1,4 +1,6 @@
 # coding=utf-8
+
+
 from abc import ABC, abstractmethod
 import constants
 import config
@@ -13,7 +15,7 @@ class Effect(ABC):
         self.start_turn = config.ROUND_COUNTER
 
     def proc(self):
-        if self.duration and config.ROUND_COUNTER > self.start_turn + self.duration:
+        if self.duration is not None and config.ROUND_COUNTER > self.start_turn + self.duration:
             self.stop()
             return False
         self.update()
@@ -32,6 +34,7 @@ class Effect(ABC):
 
     def copy(self):
         pass
+
 
 
 class StatusEffect(Effect):
@@ -74,19 +77,29 @@ class StatusEffect(Effect):
 
 
 class OnHitEffect(Effect):
-    def __init__(self, owner, duration, apply: Effect):
+    def __init__(self, owner, duration, apply_attacked: Effect = None, apply_attacker: Effect = None):
         super().__init__(owner=owner, duration=duration)
-        self.apply = apply
+        self.apply_attacked = apply_attacked
+        self.apply_attacker = apply_attacker
+        if self.apply_attacked is None and self.apply_attacker is None:
+            raise ValueError("useless effect, no effect on either target or attacker")
         self.start()
 
     def update(self):
         pass
 
     def on_attack(self, target):
-        effect = self.apply.copy()
-        effect.owner = target
-        effect.start()
-        target.add_effect(effect)
+        if self.apply_attacked is not None:
+            self.on_attack_help(self.apply_attacked, target)
+        if self.apply_attacker is not None:
+            self.on_attack_help(self.apply_attacker, self.owner)
+
+
+    def on_attack_help(self, effect, target):
+        new_effect = effect.copy()
+        new_effect.owner = target
+        new_effect.start()
+        target.add_effect(new_effect)
         config.GAME.game_message("An effect has been applied to " + target.name_object)
 
 
@@ -97,7 +110,7 @@ class OnHitEffect(Effect):
         pass
 
     def copy(self):
-        return OnHitEffect(owner=self.owner, duration=self.duration, apply=self.apply)
+        return OnHitEffect(owner=self.owner, duration=self.duration, apply_attacker=self.apply_attacker, apply_attacked=self.apply_attacked)
 
 
 

@@ -137,7 +137,7 @@ class Creature:
 
         if target and Creature.CreatureAlignment.can_bump(self, target.creature) :
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
-            self.hit(target)
+            self.attack(target)
         elif target and Creature.CreatureAlignment.can_swap(self, target.creature):
             self.owner.x += dx
             self.owner.y += dy
@@ -152,11 +152,11 @@ class Creature:
         chance_to_hit = self.base_hit_chance - target.creature.base_evasion
 
         if (chance_to_hit + tcod.random_get_int(None, 1, 100)) >= 100:
-            self.attack(target)
+            self.hit(target)
         else:
             config.GAME.game_message(self.name_instance + " misses " + target.creature.name_instance)
 
-    def hit(self, target: Creature):
+    def hit(self, target: Actor):
 
         damage_dealt = self.power - target.creature.defense
 

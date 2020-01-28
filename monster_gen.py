@@ -33,7 +33,7 @@ def gen_reptile_anaconda(coords):
                   ai=ai_com)
 
     poison = effect.OnHitEffect(owner=snake, duration=None,
-                              apply=effect.StatusEffect(owner=None, duration=20, effect_dict={Status.MAX_HP:setter_value},autostart=False))
+                              apply_attacked=effect.StatusEffect(owner=None, duration=20, effect_dict={Status.MAX_HP:setter_value},autostart=False))
     snake.creature.add_onhit_effect(poison)
 
     return snake
@@ -323,7 +323,9 @@ def gen_elemental_fire(coords):
                       creature=creature_com,
                       ai=ai_com)
 
-    burn = effect.OnHitEffect(owner=elemental, duration=None, apply=effect.DamageOverTimeEffect(applier=elemental, duration=3, damage=1) )
+    burn = effect.OnHitEffect(owner=elemental, duration=None,
+                              apply_attacker=effect.DamageOverTimeEffect(applier=elemental, duration=1, damage=-2),
+                              apply_attacked=effect.DamageOverTimeEffect(applier=elemental, duration=3, damage=1))
     elemental.creature.add_onhit_effect(burn)
 
 

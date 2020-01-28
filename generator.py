@@ -293,7 +293,7 @@ def gen_and_append_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
     #gen_function = random.choice(gen_monster_dict)
-    gen_function = monster_gen.gen_reptile_anaconda
+    gen_function = monster_gen.gen_elemental_fire
     new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
