@@ -82,6 +82,10 @@ class Assets:
             "A_UNDEAD_GHOST": get_animation_from_files(2, 4, "data/tilesets/Characters/Undead", num_sprites=2),
             "A_ELEMENTAL_POTATO": get_animation_from_files(0, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_FIRE": get_animation_from_files(2, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_ICE": get_animation_from_files(4, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_EARTH": get_animation_from_files(3, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_LIGHTNING": get_animation_from_files(1, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_BOSS_BEHOLDER": get_animation_from_files(2, 5, "data/tilesets/Characters/Elemental", num_sprites=2),
 
 
             ## ITEMS ##
@@ -113,6 +117,9 @@ class Assets:
             "S_MONEY_LARGE": get_animation_from_files(0, 1, "data/tilesets/Items/Money", num_sprites=1),
             "S_FLESH_SNAKE": get_animation_from_files(1, 3, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_DEAD_SLIME": get_animation_from_files(2, 5, "data/tilesets/Objects/Ground", num_sprites=1),
+            "S_DEAD_ICE": get_animation_from_files(1, 4, "data/tilesets/Characters/Elemental", num_sprites=1),
+            "S_DEAD_FIRE": get_animation_from_files(2, 4, "data/tilesets/Characters/Elemental", num_sprites=1),
+            "S_DEAD_EARTH": get_animation_from_files(0, 4, "data/tilesets/Characters/Elemental", num_sprites=1),
             "S_FLESH_SPIDER": get_animation_from_files(2, 1, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_FLESH_WORM": get_animation_from_files(2, 3, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_FLESH_NORMAL": get_animation_from_files(0, 0, "data/tilesets/Items/Flesh", num_sprites=1),

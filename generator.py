@@ -285,7 +285,11 @@ gen_monster_dict = {
     7: monster_gen.gen_humanoid_goblin,
     8: monster_gen.gen_elemental_potato,
     9: monster_gen.gen_pest_small_spider,
-    10: monster_gen.gen_elemental_fire
+    10: monster_gen.gen_elemental_fire,
+    11: monster_gen.gen_elemental_ice,
+    12: monster_gen.gen_elemental_earth,
+    13: monster_gen.gen_elemental_lightning,
+    14: monster_gen.gen_boss_beholder,
 }
 
 
@@ -293,7 +297,7 @@ def gen_and_append_enemy(coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
     #gen_function = random.choice(gen_monster_dict)
-    gen_function = monster_gen.gen_elemental_fire
+    gen_function = monster_gen.gen_elemental_ice
     new_enemy = gen_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
