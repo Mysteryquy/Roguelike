@@ -39,7 +39,7 @@ class Assets:
         self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
-                                                           (constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT))
+                                                           (constants.RECT_WHOLE_SCREEN.width, constants.RECT_WHOLE_SCREEN.height))
         self.S_END_GAME_ITEM = self.tool.get_image("a", 0, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))

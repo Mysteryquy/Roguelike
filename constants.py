@@ -14,8 +14,8 @@ SPRITE_HEIGHT = 16
 
 
 
-MAP_WIDTH = 51
-MAP_HEIGHT = 51
+MAP_WIDTH = 25
+MAP_HEIGHT = 25
 #Map limitations (must be odd number)
 assert MAP_WIDTH % 2 == 1
 assert MAP_HEIGHT % 2 == 1

@@ -7,6 +7,9 @@ from dungeon_generator import DungeonGenerator
 import inspect
 from structure import Structure
 import random
+import tcod.path as path
+
+
 
 
 class Tile:
@@ -18,6 +21,7 @@ class Tile:
         self.draw_on_minimap = False
         self.draw_on_screen = False
         self.was_drawn = False
+
 
     @property
     def texture(self):
@@ -33,6 +37,23 @@ class Tile:
         self._texture_explored = value + "_EXPLORED"
 
 
+class DungeonLevel:
+
+    def __init__(self, player_x, player_y, map, rooms, objects):
+        self.player_x = player_x
+        self.player_y = player_y
+        self.map = map
+        self.rooms = rooms
+        self.objects = objects
+        self.pathing = path.AStar(config.FOV_MAP, 0)
+        self.auto_explore_path = None
+        self.stairs = []
+
+
+
+
+
+
 def is_visible(x, y):
     return config.FOV_MAP.fov[y, x]
 
@@ -41,7 +62,7 @@ def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
 
 
-def create():
+def create(level="1"):
     gen = DungeonGenerator()
     new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
     return new_map

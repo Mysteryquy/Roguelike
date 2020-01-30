@@ -16,9 +16,10 @@ class MainMenu:
         self.preferences_save = preferences_save
 
         self.menu_running = True
+        print(str(constants.RECT_WHOLE_SCREEN))
+        self.title_y = constants.RECT_WHOLE_SCREEN.height / 2 - 40
+        self.title_x = constants.RECT_WHOLE_SCREEN.width / 2
 
-        self.title_y = constants.CAMERA_HEIGHT / 2 - 40
-        self.title_x = constants.CAMERA_WIDTH / 2
         self.title_text = "Deine Mama Game.exe"
 
         # Button Adresses
@@ -111,8 +112,8 @@ class MainMenu:
     def newgame_button_callback(self, id):
         config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT * 2, constants.CAMERA_WIDTH * 2)),
                                  (0, 0))
-        input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.CAMERA_WIDTH / 4,
-                                                                    constants.CAMERA_HEIGHT / 2, 500, 60),
+        input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.RECT_WHOLE_SCREEN.width/2 - 500/2 ,
+                                                                    constants.RECT_WHOLE_SCREEN.height / 2, 500, 60),
                                    "name_input",
                                    constants.COLOR_GREY, constants.COLOR_WHITE,
                                    constants.COLOR_BLACK, auto_active=True,
@@ -287,7 +288,7 @@ def menu_inventory():
                                  constants.COLOR_WHITE)
 
         # Render Game
-        render.draw_game()
+        render.draw_menu()
 
         # Display Menu
         config.SURFACE_MAIN.blit(local_inventory_surface, (menu_x, menu_y))

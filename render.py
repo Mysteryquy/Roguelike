@@ -68,6 +68,18 @@ def helper_text_width(font):
 
     return width
 
+def draw_menu():
+    # clear the surface
+    config.SURFACE_INFO.fill(constants.COLOR_BLACK)
+    config.CAMERA.update()
+    # fill_surfaces()
+    # draw the map
+
+    config.GUI.update(None)
+    config.GUI.draw()
+    # print(CAMERA.rectangle)
+
+    draw_debug()
 
 def draw_game():
     # clear the surface
@@ -83,9 +95,11 @@ def draw_game():
     for obj in sorted(config.GAME.current_objects, key=lambda x: x.depth, reverse=True):
         obj.draw()
 
-    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
     config.SURFACE_INFO.blit(config.SURFACE_MINI_MAP, (0, 0))
     config.SURFACE_MAIN.blit(config.SURFACE_INFO, (constants.CAMERA_WIDTH, 0))
+    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
+    config.GUI.update(None)
+    config.GUI.draw()
     # print(CAMERA.rectangle)
 
     draw_debug()

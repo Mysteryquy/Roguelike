@@ -238,7 +238,7 @@ def game_handle_keys():
                     return ACTIONS.NO_ACTION
 
             if event.key == pygame.K_a:
-                menu.debug_tile_select_pathing()
+                generator.gen_monster_on_level((1,1))
                 return ACTIONS.DEBUG
 
             if event.key == pygame.K_g:

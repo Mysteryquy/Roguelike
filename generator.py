@@ -13,6 +13,7 @@ from equipment import Equipment
 from item import Item, Gold
 from structure import ExitPortal, Stairs, Structure
 import random
+import numpy.random
 
 ##PLAYER##
 def gen_player(coords, player_name="Player"):
@@ -292,13 +293,19 @@ gen_monster_dict = {
     14: monster_gen.gen_boss_beholder,
 }
 
+level_monster_dict = {
+    "1" : [( monster_gen.gen_reptile_anaconda, 100),  (monster_gen.gen_rodent_mouse, 3), (monster_gen.gen_elemental_potato, 777) ]
+}
 
-def gen_and_append_enemy(coords):
-    random_number = tcod.random_get_int(None, 0, 200)
 
-    #gen_function = random.choice(gen_monster_dict)
-    gen_function = monster_gen.gen_elemental_ice
-    new_enemy = gen_function(coords)
+
+def gen_and_append_enemy(coords, level="1"):
+    monsters_and_weight = level_monster_dict[level]
+    monsters = [monster for monster, _ in monsters_and_weight]  # anaconda,mouse,potato
+    sum_weights = sum([weight for _, weight in monsters_and_weight])
+    probabilities = [weight / sum_weights for _, weight in monsters_and_weight]  # 100/880, 3/880, 777/880
+    monster_function = numpy.random.choice(monsters, 1, p=probabilities)[0]
+    new_enemy = monster_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
 

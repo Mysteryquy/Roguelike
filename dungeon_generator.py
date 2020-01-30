@@ -16,8 +16,12 @@ See https://github.com/munificent/hauberk/ for his project and source code
 
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    level_tile_dict = {
+        "1" : ("S_WALL", "S_FLOOR"),
+        "2" : ("S_FLOOR", "S_WALL")
+    }
 
-    def __init__(self):
+    def __init__(self, wall_texture = "S_WALL", tile_texture="S_FLOOR" ):
         self.num_room_tries: int = 50
         self.extra_connector_chance: int = 3
         self.room_extra_size: int = 0
@@ -28,9 +32,19 @@ class DungeonGenerator:
         self.current_map = None
         self.current_map_width: int = 0
         self.current_map_height: int = 0
+        self.wall_texture =  wall_texture
+        self.tile_texture = tile_texture
+
+    def change_level(self, level):
+        if level not in DungeonGenerator.level_tile_dict:
+            return
+        w,t = DungeonGenerator.level_tile_dict[level]
+        self.tile_texture = t
+        self.wall_texture = w
+
 
     def generate(self, map_width: int, map_height: int) -> Tuple[List[List[Tile]], List[pygame.Rect]]:
-        self.current_map = [[mp.Tile(True, "S_WALL") for y in range(0, map_height)] for x in range(0, map_width)]
+        self.current_map = [[mp.Tile(True, self.wall_texture) for y in range(0, map_height)] for x in range(0, map_width)]
         self.regions = np.zeros((map_width, map_height))
         self.current_map_width = map_width
         self.current_map_height = map_height
@@ -100,7 +114,7 @@ class DungeonGenerator:
             if not overlaps:
                 self.rooms.append(room)
                 self.start_region()
-                self.carve(room, "S_FLOOR")
+                self.carve(room, self.tile_texture)
 
     def grow_maze(self, x: int, y: int) -> None:
         """
@@ -112,7 +126,7 @@ class DungeonGenerator:
         last_dir = None
         self.start_region()
         start = (x, y)
-        self.carve_single(start, "S_FLOOR")
+        self.carve_single(start, self.tile_texture)
         cells.append(start)
 
         while len(cells) > 0:
@@ -130,8 +144,8 @@ class DungeonGenerator:
                 c_x, c_y = cell
                 d_x, d_y = direction
                 double_tmp = (c_x + d_x * 2, c_y + d_y * 2)
-                self.carve_single((c_x + d_x, c_y + d_y), "S_FLOOR")
-                self.carve_single(double_tmp, "S_FLOOR")
+                self.carve_single((c_x + d_x, c_y + d_y), self.tile_texture)
+                self.carve_single(double_tmp, self.tile_texture)
                 cells.append(double_tmp)
                 last_dir = direction
             else:
@@ -183,7 +197,7 @@ class DungeonGenerator:
             if len(connectors) == 0:
                 return
             connector = random.choice(connectors)
-            self.add_junction(connector, "S_FLOOR")
+            self.add_junction(connector, self.tile_texture)
 
             regions = map(lambda i: merged[i], connector_regions[connector])
             dest = next(regions)
@@ -212,7 +226,7 @@ class DungeonGenerator:
                     continue
 
                 if random.randint(1, 100) < self.extra_connector_chance:
-                    self.add_junction(conn, "S_FLOOR")
+                    self.add_junction(conn, self.tile_texture)
 
                 if conn in connectors:
                     connectors.remove(conn)
@@ -246,4 +260,4 @@ class DungeonGenerator:
                         if exits == 1:
                             done = False
                             self.current_map[x][y].block_path = True
-                            self.current_map[x][y].texture = "S_WALL"
+                            self.current_map[x][y].texture = self.wall_texture

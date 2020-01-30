@@ -43,6 +43,7 @@ class UiContainer(UiElement):
     def draw(self):
         if not self.transparent:
             if self.img:
+                print(str(self.rect))
                 self.surface.blit(self.img, self.rect.topleft)
             else:
                 pygame.draw.rect(self.surface, self.color, self.rect)
