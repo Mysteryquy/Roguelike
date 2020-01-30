@@ -214,6 +214,18 @@ def game_handle_keys():
 
     for event in events_list:
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            #start autoexplore weird
+            x,y = pygame.mouse.get_pos()
+            x,y = config.CAMERA.coords_from_position(x,y)
+            if game_map.is_explored(x,y):
+                #game_map.start_auto_explore()
+                config.AUTO_WALKING = True
+                config.GAME.auto_explore_path = iter(game_map.get_path_from_player(x,y))
+
+
+
+
         if config.CONSOLE.active:
             if config.CONSOLE.react(event):
                 command = config.CONSOLE.text_ready
@@ -238,7 +250,7 @@ def game_handle_keys():
                     return ACTIONS.NO_ACTION
 
             if event.key == pygame.K_a:
-                generator.gen_monster_on_level((1,1))
+                generator.gen_and_append_enemy((1,1))
                 return ACTIONS.DEBUG
 
             if event.key == pygame.K_g:
@@ -329,6 +341,20 @@ def game_handle_keys():
         config.PLAYER.move_towards_point(x, y)
         config.FOV_CALCULATE = True
         return ACTIONS.AUTOEXPLORED
+
+    if config.AUTO_WALKING:
+        x, y = next(config.GAME.auto_explore_path, (0, 0))
+
+        config.AUTO_WALKING = game_map.check_contine_autoexplore()
+        if not config.AUTO_WALKING:
+            return ACTIONS.STOPPED_AUTOWALKING
+        if (x, y) == (0, 0):
+            config.AUTO_WALKING = False
+            return ACTIONS.STOPPED_AUTOWALKING
+
+        config.PLAYER.move_towards_point(x, y)
+        config.FOV_CALCULATE = True
+        return ACTIONS.AUTOWALK
 
     return ACTIONS.NO_ACTION
 

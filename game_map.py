@@ -5,13 +5,20 @@ import constants
 import generator
 from dungeon_generator import DungeonGenerator
 import inspect
-from structure import Structure
+from structure import Structure, Stairs
 import random
 import tcod.path as path
+from actor import Actor
 
 
 
-
+def transition_reset():
+    for x in range(0, constants.MAP_WIDTH):
+        for y in range(0, constants.MAP_HEIGHT):
+            if config.GAME.current_map[x][y].explored:
+                config.GAME.current_map[x][y].draw_on_minimap = True
+                config.GAME.current_map[x][y].draw_on_screen = True
+                config.GAME.current_map[x][y].was_drawn = False
 class Tile:
     def __init__(self, block_path, texture):
         self.block_path = block_path
@@ -39,15 +46,15 @@ class Tile:
 
 class DungeonLevel:
 
-    def __init__(self, player_x, player_y, map, rooms, objects):
-        self.player_x = player_x
-        self.player_y = player_y
-        self.map = map
-        self.rooms = rooms
+    def __init__(self, objects, level_code="1"):
+        self.player_x = -1
+        self.player_y = -1
+        self.map, self.rooms = create(level=level_code)
         self.objects = objects
         self.pathing = path.AStar(config.FOV_MAP, 0)
         self.auto_explore_path = None
         self.stairs = []
+        self.floor = level_code
 
 
 
@@ -236,15 +243,15 @@ def get_path_from_player(goal_x: int, goal_y: int):
     return config.GAME.pathing.get_path(config.PLAYER.x, config.PLAYER.y, goal_x, goal_y)
 
 
-def start_auto_explore():
+def start_auto_explore(new_goal=True):
     # check if every room was explored
 
     for obj in config.GAME.current_objects:
         if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
-            config.GAME.game_message("ENEMY NEARBY! Cannot autoexplore", constants.COLOR_RED_LIGHT)
+            config.GAME.game_message("ENEMY NEARBY! Cannot explore", constants.COLOR_RED_LIGHT)
             return
-
-    autoexplore_new_goal()
+    if new_goal:
+        autoexplore_new_goal()
 
 
 def get_path_to_player(start_x, start_y):
@@ -254,7 +261,7 @@ def get_path_to_player(start_x, start_y):
 def check_contine_autoexplore():
     for obj in config.GAME.current_objects:
         if obj.creature and is_visible(obj.x, obj.y) and obj.creature.is_foe():
-            config.GAME.game_message("ENEMY NEARBY! Stopped autoexploring", constants.COLOR_RED_LIGHT)
+            config.GAME.game_message("ENEMY NEARBY! Stopped exploring", constants.COLOR_RED_LIGHT)
             return False
     return True
 

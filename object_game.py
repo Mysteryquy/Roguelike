@@ -21,14 +21,22 @@ class Game:
 
         self.message_history = []
 
-        self.current_floor = "1"
+
         self.current_level = None
-        self.create_new_level(self.current_floor)
+        self.create_new_level("1", place_objects=False)
 
 
         self.maps_previous = []
 
         self.maps_next = []
+
+    @property
+    def current_floor_number(self):
+        return len(self.maps_previous) +1
+
+    @property
+    def current_floor(self):
+        return self.current_level.floor
 
     @property
     def current_objects(self):
@@ -59,8 +67,7 @@ class Game:
         self.current_level.auto_explore_path = value
 
 
-    def transition(self, next = True):
-        config.FOV_CALCULATE = True
+    def transition_init(self, next = True):
         self.current_level.player_x, self.current_level.player_y = config.PLAYER.x, config.PLAYER.y
 
         for obj in self.current_objects:
@@ -73,30 +80,36 @@ class Game:
 
 
 
-    def create_new_level(self, level_code="1"):
-        map, rooms = game_map.create(level_code)
+    def create_new_level(self, level_code="1", initial_stairs=True, place_objects=True):
+        self.current_level = DungeonLevel([config.PLAYER], level_code=level_code)
+        if place_objects:
+            print(self.current_level.rooms)
+            game_map.place_objects(self.current_level.rooms)
         config.PLAYER.animation_init()
-        self.current_level =  DungeonLevel(config.PLAYER.x, config.PLAYER.y, map, rooms, [config.PLAYER])
 
 
-    def transition_to_level(self, level):
+
+
+    def transition_to_level(self, level, new_level=False):
         self.current_level = level
 
         for obj in self.current_objects:
             obj.animation_init()
-
+        if not new_level:
+            config.PLAYER.x = self.current_level.player_x
+            config.PLAYER.y = self.current_level.player_y
+        game_map.transition_reset()
         game_map.make_fov(self.current_map)
         config.FOV_CALCULATE = True
         render.fill_surfaces()
 
     def transition_next(self):
-
-        self.transition(next=True)
+        self.transition_init(next=True)
 
 
         if len(self.maps_next) == 0:
-            self.current_level =  self.create_new_level(self.current_floor)
-
+            self.create_new_level()
+            self.transition_to_level(self.current_level, new_level=True)
 
         else:
             self.transition_to_level(self.maps_next[0])
@@ -104,9 +117,8 @@ class Game:
 
 
     def transition_previous(self):
-
         if len(self.maps_previous) > 0:
-            self.transition(next=False)
+            self.transition_init(next=False)
             self.transition_to_level(self.maps_previous[-1])
             del self.maps_previous[-1]
 
