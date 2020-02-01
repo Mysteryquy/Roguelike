@@ -294,12 +294,13 @@ gen_monster_dict = {
 }
 
 level_monster_dict = {
-    "1" : [( monster_gen.gen_reptile_anaconda, 100),  (monster_gen.gen_rodent_mouse, 3), (monster_gen.gen_elemental_potato, 777) ]
+    1 : [( monster_gen.gen_reptile_anaconda, 100),  (monster_gen.gen_rodent_mouse, 3), (monster_gen.gen_elemental_potato, 777) ],
+    2 : [(monster_gen.gen_boss_beholder,777), (monster_gen.gen_rodent_mouse, 3)]
 }
 
 
 
-def gen_and_append_enemy(coords, level="1"):
+def gen_and_append_enemy(coords, level=constants.level_the_player_is_in):
     monsters_and_weight = level_monster_dict[level]
     monsters = [monster for monster, _ in monsters_and_weight]  # anaconda,mouse,potato
     sum_weights = sum([weight for _, weight in monsters_and_weight])
@@ -308,6 +309,7 @@ def gen_and_append_enemy(coords, level="1"):
     new_enemy = monster_function(coords)
 
     config.GAME.current_objects.append(new_enemy)
+
 
 
 gen_weapon_dict = {

@@ -75,12 +75,14 @@ class Game:
 
         if next:
             self.maps_previous.append(self.current_level)
+
+
         else:
             self.maps_next.insert(0, self.current_level)
 
 
 
-    def create_new_level(self, level_code="1", initial_stairs=True, place_objects=True):
+    def create_new_level(self, level_code=constants.level_the_player_is_in, initial_stairs=True, place_objects=True):
         self.current_level = DungeonLevel([config.PLAYER], level_code=level_code)
         if place_objects:
             print(self.current_level.rooms)
@@ -105,7 +107,7 @@ class Game:
 
     def transition_next(self):
         self.transition_init(next=True)
-
+        constants.level_the_player_is_in = constants.ALL_DUNEGON_LEVELS_LIST[(constants.level_the_player_is_in + 1) - 1]
 
         if len(self.maps_next) == 0:
             self.create_new_level()

@@ -332,7 +332,6 @@ def gen_elemental_fire(coords):
     return elemental
 
 
-
 def gen_elemental_ice(coords):
     x, y = coords
 
@@ -345,10 +344,10 @@ def gen_elemental_ice(coords):
 
     creature_name = "Icey"
 
-    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+    creature_com = Creature(creature_name, custom_death=death.death_ice_elemental, hp=max_health, base_atk=attack,
                             base_def=defence,
                             base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
-                            dead_animation_key="S_DEAD_ICE", death_text= "Is smashed to a little Snowball")
+                            dead_animation_key="S_DEAD_ICE")
     ai_com = ai.AiChase()
 
     elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_ICE", depth=constants.DEPTH_CREATURE,
@@ -359,6 +358,30 @@ def gen_elemental_ice(coords):
     return elemental
 
 
+def gen_elemental_icicle(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 100
+    doge_value = 15
+    xp_granted = 1000
+
+    creature_name = "Icey-fleißi"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_ICE", death_text= "Is smashed to a little Snowball")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_ICICLE", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+    return elemental
 
 def gen_elemental_earth(coords):
     x, y = coords
@@ -384,7 +407,6 @@ def gen_elemental_earth(coords):
 
 
     return elemental
-
 
 
 def gen_elemental_lightning(coords):
@@ -414,6 +436,165 @@ def gen_elemental_lightning(coords):
     return elemental
 
 
+def gen_elemental_paper(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Papyrus"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_PAPER", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return elemental
+
+
+
+def gen_elemental_slime(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Slimey"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_SLIME", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return elemental
+
+
+def gen_elemental_flesh(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Flabsy"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_FLESH", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return elemental
+
+def gen_elemental_gold(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Richy"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_FLESH", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return elemental
+
+
+def gen_elemental_mimic(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Flabsy"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_MIMIC", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+
+    return elemental
+
+
+def gen_elemental_steel(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "STEELOX"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_STEEL", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+    return elemental
 
 def gen_boss_beholder(coords):
     x, y = coords

@@ -17,11 +17,11 @@ def death_player(player, killer):
 
     config.SURFACE_MAIN.fill(constants.COLOR_BLACK)
 
-    screen_center = (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2)
+    screen_center = (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2)
 
     render.draw_text(config.SURFACE_MAIN, "lol nibba u dead!", screen_center, constants.COLOR_WHITE, center=True)
     render.draw_text(config.SURFACE_MAIN, "Check the legacy file to know what beat yo ass up",
-                     (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
+                     (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100), constants.COLOR_WHITE,
                      center=True)
 
     pygame.display.update()
@@ -65,3 +65,29 @@ def death_worm(monster, killer,):
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a bloody mess!", constants.COLOR_GREY)
 
+def death_ice_elemental(monster, killer,):
+
+
+    chance = tcod.random_get_int(None, 1, 3)
+    if chance < 1:
+
+        x, y = monster.owner.x, monster.owner.y
+        new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+        if new_coords:
+            new_mob = monster_gen.gen_elemental_icicle(new_coords, monster.name_instance)
+            config.GAME.current_objects.append(new_mob)
+            config.GAME.game_message(monster.name_instance + " was smashed but small pieces still remain!", msg_color=constants.COLOR_RED)
+    else:
+        config.GAME.game_message(monster.name_instance + " is smashed to a icey mess!", constants.COLOR_GREY)
+
+
+def death_gold_elemental(monster, killer):
+    x, y = monster.owner.x, monster.owner.y
+    new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+    if new_coords:
+        new_mob = generator.gen_and_append_gold(new_coords)
+        config.GAME.current_objects.append(new_mob)
+        config.GAME.game_message(monster.name_instance + " was smashed but small pieces still remain!",
+                                 msg_color=constants.COLOR_RED)
+    else:
+        config.GAME.game_message(monster.name_instance + " is smashed to a icey mess!", constants.COLOR_GREY)

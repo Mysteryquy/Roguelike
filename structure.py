@@ -77,11 +77,11 @@ class ExitPortal(Structure):
 
             config.SURFACE_MAIN.fill(constants.COLOR_WHITE)
 
-            screen_center = (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2)
+            screen_center = (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2)
 
             render.draw_text(config.SURFACE_MAIN, "YOU WON!", screen_center, constants.COLOR_BLACK, center=True)
             render.draw_text(config.SURFACE_MAIN, "Your win was recorded in your win file",
-                             (constants.CAMERA_WIDTH / 2, constants.CAMERA_HEIGHT / 2 + 100), constants.COLOR_WHITE,
+                             (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100), constants.COLOR_BLUE,
                              center=True)
 
             pygame.display.update()

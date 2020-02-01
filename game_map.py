@@ -46,7 +46,7 @@ class Tile:
 
 class DungeonLevel:
 
-    def __init__(self, objects, level_code="1"):
+    def __init__(self, objects, level_code=constants.level_the_player_is_in):
         self.player_x = -1
         self.player_y = -1
         self.map, self.rooms = create(level=level_code)
@@ -69,7 +69,7 @@ def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
 
 
-def create(level="1"):
+def create(level=constants.level_the_player_is_in):
     gen = DungeonGenerator()
     new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
     return new_map

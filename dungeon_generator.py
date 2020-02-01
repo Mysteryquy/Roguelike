@@ -17,8 +17,8 @@ See https://github.com/munificent/hauberk/ for his project and source code
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     level_tile_dict = {
-        "1" : ("S_WALL", "S_FLOOR"),
-        "2" : ("S_FLOOR", "S_WALL")
+        1 : ("S_WALL", "S_FLOOR"),
+        2 : ("S_FLOOR", "S_WALL")
     }
 
     def __init__(self, wall_texture = "S_WALL", tile_texture="S_FLOOR" ):

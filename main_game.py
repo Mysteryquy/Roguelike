@@ -148,6 +148,8 @@ def game_initialize():
     config.SURFACE_MINI_MAP = pygame.Surface(
         (rest_of_screen_w, rest_of_screen_w))
 
+
+
     print("x:")
     print(screen_height - constants.CAMERA_HEIGHT)
     config.SURFACE_INFO = pygame.Surface(

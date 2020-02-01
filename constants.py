@@ -167,5 +167,6 @@ TAKES_TURN = { ACTIONS.MOVED,  ACTIONS.PICKED_UP,  ACTIONS.DROP,  ACTIONS.USED, 
 def takes_turn(action):
     return action in TAKES_TURN
 
-
+ALL_DUNEGON_LEVELS_LIST = [1, 2, 3]
+level_the_player_is_in = ALL_DUNEGON_LEVELS_LIST[0]
 

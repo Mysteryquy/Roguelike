@@ -83,8 +83,14 @@ class Assets:
             "A_ELEMENTAL_POTATO": get_animation_from_files(0, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_FIRE": get_animation_from_files(2, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_ICE": get_animation_from_files(4, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_ICICLE": get_animation_from_files(2, 6, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_EARTH": get_animation_from_files(3, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_STEEL": get_animation_from_files(3, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_LIGHTNING": get_animation_from_files(1, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_PAPER": get_animation_from_files(1, 0, "data/tilesets/Characters/Elemental",num_sprites=2),
+            "A_ELEMENTAL_SLIME": get_animation_from_files(2, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_FLESH": get_animation_from_files(7, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_ELEMENTAL_MIMIC": get_animation_from_files(0, 8, "data/tilesets/Characters/Elemental", num_sprites=1),
             "A_BOSS_BEHOLDER": get_animation_from_files(2, 5, "data/tilesets/Characters/Elemental", num_sprites=2),
 
 
