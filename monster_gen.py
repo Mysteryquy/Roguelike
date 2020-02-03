@@ -11,6 +11,247 @@ from item import Item
 import effect
 from creature import Status
 
+def gen_demon_pillus(coords):
+    x, y = coords
+
+    max_health = 200
+    attack = 80
+    defence = 20
+    hit_chance = 50
+    doge_value = 30
+    xp_granted = 1000
+
+    creature_name = "Pillus"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_pillus = Actor(x, y, "Demon", animation_key="A_DEMON_PILLUS", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_pillus
+
+
+def gen_demon_buffla(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Buffla"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_buffla = Actor(x, y, "Demon", animation_key="A_DEMON_BUFFLA", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_buffla
+
+
+def gen_demon_avin(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Avin"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_avin = Actor(x, y, "Demon", animation_key="A_DEMON_AVIN", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_avin
+
+
+def gen_demon_gronk(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Gronk"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_gronk = Actor(x, y, "Demon", animation_key="A_DEMON_GRONK", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_gronk
+
+
+def gen_demon_sloosh(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Sloosh"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_sloosh = Actor(x, y, "Demon", animation_key="A_DEMON_SLOOSH", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_sloosh
+
+
+def gen_demon_kolak(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Kolak"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_kolak = Actor(x, y, "Demon", animation_key="A_DEMON_KOLAK", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_kolak
+
+
+def gen_demon_absodux(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Absodux"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_absodux = Actor(x, y, "Demon", animation_key="A_DEMON_ABSODUX", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_absodux
+
+
+def gen_demon_nergal(coords):
+    x, y = coords
+
+    max_health = 20
+    attack = 8
+    defence = 2
+    hit_chance = 5
+    doge_value = 3
+    xp_granted = 100
+
+    creature_name = "Nergal"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_nergal = Actor(x, y, "Demon", animation_key="A_DEMON_NERGAL", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_nergal
+
+def gen_demon_boomi(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 80
+    doge_value = 1
+    xp_granted = 300
+
+    creature_name = "Creeper"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON", custom_death=death.death_demon_boomi)
+    ai_com = ai.AiChase()
+
+    demon_boomi = Actor(x, y, "Demon", animation_key="A_DEMON_BOOMI", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_boomi
+
 
 def gen_reptile_anaconda(coords):
     x, y = coords
@@ -100,6 +341,581 @@ def gen_slime_small(coords):
                         ai=ai_com)
 
     return small_slime
+
+
+def gen_slime_small_blue(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    small_slime_blue = Actor(x, y, "Small slime blue", animation_key="A_SLIME_SMALL_BLUE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return small_slime_blue
+
+
+def gen_slime_ice(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    ice_slime = Actor(x, y, "Small slime", animation_key="A_SLIME_ICE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return ice_slime
+
+
+def gen_slime_abomination(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    abomination_slime = Actor(x, y, "Abomination Slime", animation_key="A_SLIME_ABOMINATION", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return abomination_slime
+
+
+def gen_cat_cat(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Citty"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_cat = Actor(x, y, "Cat", animation_key="A_CAT_CAT", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_cat
+
+
+def gen_cat_leopard(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Leo"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_leopard = Actor(x, y, "Cat", animation_key="A_CAT_LEOPARD", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_leopard
+
+
+def gen_cat_panther(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "T´Challa"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_panther = Actor(x, y, "Panther", animation_key="A_CAT_PANTHER", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_panther
+
+
+def gen_cat_tiger(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Tigress"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_tiger = Actor(x, y, "Tiger", animation_key="A_CAT_TIGER", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_tiger
+
+
+def gen_cat_lion(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Simba"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_lion = Actor(x, y, "Tiger", animation_key="A_CAT_LION", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_lion
+
+
+def gen_cat_mountain(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Mounty Cat"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_mountain = Actor(x, y, "Mountain Cat", animation_key="A_CAT_MOUNTAIN", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_mountain
+
+
+def gen_cat_snow(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Snowy Cat"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_snow = Actor(x, y, "Snow Cat", animation_key="A_CAT_SNOW", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_snow
+
+
+def gen_cat_shadow(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Nightcrawler"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_shadow = Actor(x, y, "Shadow Cat", animation_key="A_CAT_SHADOW", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_shadow
+
+
+def gen_cat_walking(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Walki-Catty"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_FLESH_NORMAL")
+    ai_com = ai.AiChase()
+
+    cat_walking = Actor(x, y, "Walking Cat", animation_key="A_CAT_WALKING", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cat_walking
+
+
+def gen_slime_blob(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Blobber"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    blob_slime = Actor(x, y, "Slime Blob", animation_key="A_SLIME_BLOB", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return blob_slime
+
+
+def gen_slime_cube(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = "Cubic Chaos"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    cube_slime = Actor(x, y, "Cubic Slime", animation_key="A_SLIME_CUBE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return cube_slime
+
+
+def gen_slime_ring(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    ring_slime = Actor(x, y, "Ring Slime", animation_key="A_SLIME_RING", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return ring_slime
+
+
+def gen_slime_snatcher(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    snatcher_slime = Actor(x, y, "Snatcher Slime", animation_key="A_SLIME_SNTACHER", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return snatcher_slime
+
+
+def gen_slime_sack(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    sack_slime = Actor(x, y, "Sack Slime", animation_key="A_SLIME_SACK", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return sack_slime
+
+
+def gen_slime_mold_yellow(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    yellow_mold = Actor(x, y, "Yellow Mold", animation_key="A_SLIME_MOLD_YELLOW", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return yellow_mold
+
+
+def gen_slime_mold_brown(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    brown_mold = Actor(x, y, "Brown Mold", animation_key="A_SLIME_MOLD_BROWN", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return brown_mold
+
+
+def gen_slime_mold_green(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    green_mold = Actor(x, y, "Green Mold", animation_key="A_SLIME_MOLD_GREEN", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return green_mold
+
+
+def gen_slime_mold_red(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    red_mold = Actor(x, y, "Red Mold", animation_key="A_SLIME_MOLD_RED", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return red_mold
+
+
+def gen_slime_mold_blue(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    blue_mold = Actor(x, y, "Blue Mold", animation_key="A_SLIME_MOLD_BLUE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return blue_mold
+
+
+def gen_slime_mold_purple(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic female")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    purple_mold = Actor(x, y, "Purple Mold", animation_key="A_SLIME_MOLD_PURPLE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return purple_mold
+
+
+def gen_slime_fire(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    small_slime = Actor(x, y, "Small slime", animation_key="A_SLIME_FIRE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return small_slime
+
+
+def gen_slime_ice_fire(coords):
+    x, y = coords
+
+    max_health = 4
+    base_attack = 1
+    hit_chance = 70
+    doge_value = 0
+    xp_granted = 30
+
+    creature_name = tcod.namegen_generate("Celtic male")
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=base_attack,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_SLIME")
+    ai_com = ai.AiChase()
+
+    ice_fire_slime = Actor(x, y, "Hot n Cold Slime", animation_key="A_SLIME_ICE_FIRE", depth=constants.DEPTH_CREATURE,
+                        creature=creature_com,
+                        ai=ai_com)
+
+    return ice_fire_slime
 
 
 def gen_dog_dog(coords):
@@ -383,6 +1199,7 @@ def gen_elemental_icicle(coords):
 
     return elemental
 
+
 def gen_elemental_earth(coords):
     x, y = coords
 
@@ -463,7 +1280,6 @@ def gen_elemental_paper(coords):
     return elemental
 
 
-
 def gen_elemental_slime(coords):
     x, y = coords
 
@@ -516,6 +1332,7 @@ def gen_elemental_flesh(coords):
 
 
     return elemental
+
 
 def gen_elemental_gold(coords):
     x, y = coords
@@ -595,6 +1412,7 @@ def gen_elemental_steel(coords):
                       ai=ai_com)
 
     return elemental
+
 
 def gen_boss_beholder(coords):
     x, y = coords

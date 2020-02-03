@@ -91,3 +91,38 @@ def death_gold_elemental(monster, killer):
                                  msg_color=constants.COLOR_RED)
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a icey mess!", constants.COLOR_GREY)
+
+
+def death_demon_boomi(monster, killer):
+    #x, y = monster.owner.x, monster.owner.y
+
+    #damage, local_radius, max_r = 8, 2, 2
+    local_radius = 2
+
+    player_location = (monster.owner.x, monster.owner.y)
+
+    #point_selected = menu.menu_tile_select(coords_origin=player_location, max_range=max_r, penetrate_walls=False,
+                                           #pierce_creature=False, radius=local_radius)
+
+    # get sequence of tiles
+    tiles_to_damage = game_map.find_radius((monster.owner.x, monster.owner.y),  local_radius)
+
+    creature_hit = False
+
+    # damage all creatures in tiles
+    for (x, y) in tiles_to_damage:
+        creature_to_damage = game_map.check_for_creature(x, y)
+
+        if creature_to_damage:
+            creature_to_damage.creature.take_damage(10, monster)
+
+            if creature_to_damage: # is not config.PLAYER:
+                creature_hit = True
+
+    if creature_hit:
+        config.GAME.game_message(
+            "The Boomi explodes and splashes hot liquid on you!",
+            constants.COLOR_RED)
+
+    else:
+        config.GAME.game_message(monster.name_instance + " explodes, but you doge the fiery parts!", constants.COLOR_RED)
