@@ -253,6 +253,87 @@ def gen_demon_boomi(coords):
     return demon_boomi
 
 
+def gen_demon_flabsy(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 80
+    doge_value = 1
+    xp_granted = 300
+
+    creature_name = "Flabsy"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_flabsy = Actor(x, y, "Demon", animation_key="A_DEMON_FLABSY", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_flabsy
+
+
+def gen_demon_hulk(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 80
+    doge_value = 1
+    xp_granted = 300
+
+    creature_name = "Demon Hulk"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_hulk = Actor(x, y, "Demon", animation_key="A_DEMON_HULK", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_hulk
+
+
+def gen_demon_hulk_hulk(coords):
+    x, y = coords
+
+    max_health = 30
+    attack = 5
+    defence = 2
+    hit_chance = 80
+    doge_value = 1
+    xp_granted = 300
+
+    creature_name = "Icy demon hulk"
+
+    creature_com = Creature(creature_name, hp=max_health, base_atk=attack,
+                            base_def=defence,
+                            base_hit_chance=hit_chance, base_evasion=doge_value, xp_gained=xp_granted,
+                            dead_animation_key="S_DEAD_DEMON")
+    ai_com = ai.AiChase()
+
+    demon_hulk = Actor(x, y, "Demon", animation_key="A_DEMON_HULK", depth=constants.DEPTH_CREATURE,
+                      creature=creature_com,
+                      ai=ai_com)
+
+
+
+    return demon_hulk
+
+
 def gen_reptile_anaconda(coords):
     x, y = coords
 

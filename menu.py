@@ -20,7 +20,7 @@ class MainMenu:
         self.title_y = constants.RECT_WHOLE_SCREEN.height / 2 - 40
         self.title_x = constants.RECT_WHOLE_SCREEN.width / 2
 
-        self.title_text = "Deine Mama Game.exe"
+        self.title_text = "Wer das liest ist doof"
 
         # Button Adresses
         continue_game_button_y = self.title_y + 60
@@ -32,7 +32,7 @@ class MainMenu:
                                          (self.title_x, continue_game_button_y), callback=self.continue_button_callback)
 
         new_game_button = ui.Button(config.SURFACE_MAIN, "New Game", (200, 45), "button_new_game",
-                                    (self.title_x, new_game_button_y), callback=self.newgame_button_callback)
+                                    (self.title_x, new_game_button_y), callback=self.newnewgame_button_callback)
 
         options_button = ui.Button(config.SURFACE_MAIN, "Options", (200, 45), "button_options",
                                    (self.title_x, options_button_y), callback=self.options_button_callback)
@@ -44,7 +44,7 @@ class MainMenu:
                                                constants.RECT_WHOLE_SCREEN,
                                                "menu_container",
                                                [continue_game_button, new_game_button, options_button, quit_button],
-                                               color=constants.COLOR_BLUE_LIGHT,
+                                               color=constants.COLOR_BLUE_DARK,
                                                img=config.ASSETS.MAIN_MENU_BACKGROUND)
 
         # Slider vars #
@@ -52,6 +52,8 @@ class MainMenu:
         sound_effect_slider_y = constants.CAMERA_HEIGHT / 2 - 60
         sound_effect_vol = 0.5
         music_effect_slider_y = sound_effect_slider_y + 70
+
+
 
         self.sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
                                              (slider_x, sound_effect_slider_y),
@@ -108,6 +110,12 @@ class MainMenu:
             print(e)
 
         self.game_main_loop()
+
+    def choose_class_button_callback(self,id):
+        self.choose_class
+
+
+
 
     def newgame_button_callback(self, id):
         config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT * 2, constants.CAMERA_WIDTH * 2)),
@@ -182,6 +190,29 @@ class MainMenu:
         if current_music_volume is not current_val:
             config.PREFERENCES.vol_music = current_val
             config.ASSETS.volume_adjust()
+
+
+    def menu_choose_class(self):
+        menu_close = False
+        while not menu_close:
+            list_of_events = pygame.event.get()
+            mouse_position = pygame.mouse.get_pos()
+
+            game_input = (list_of_events, mouse_position)
+
+            for event in list_of_events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    self.game_exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.preferences_save()
+                        menu_close = True
+
+            self.effect_container.update(game_input)
+            self.effect_container.draw()
+            pygame.display.update()
 
 
 def menu_pause():

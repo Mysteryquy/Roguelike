@@ -294,7 +294,7 @@ gen_monster_dict = {
 }
 
 level_monster_dict = {
-    1 : [( monster_gen.gen_reptile_anaconda, 100),  (monster_gen.gen_rodent_mouse, 3), (monster_gen.gen_demon_boomi, 777) ],
+    1 : [( monster_gen.gen_demon_gronk, 777),  (monster_gen.gen_demon_hulk, 777), (monster_gen.gen_demon_boomi, 777) ],
     2 : [(monster_gen.gen_boss_beholder,777), (monster_gen.gen_rodent_mouse, 3)]
 }
 
