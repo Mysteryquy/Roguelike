@@ -17,11 +17,11 @@ See https://github.com/munificent/hauberk/ for his project and source code
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     level_tile_dict = {
-        1 : ("S_WALL", "S_FLOOR"),
-        2 : ("S_FLOOR", "S_WALL")
+        "DUNGEON1" : ("S_WALL", "S_FLOOR"),
+        "DUNGEON2" : ("S_FLOOR", "S_WALL")
     }
 
-    def __init__(self, wall_texture = "S_WALL", tile_texture="S_FLOOR" ):
+    def __init__(self, level_name):
         self.num_room_tries: int = 50
         self.extra_connector_chance: int = 3
         self.room_extra_size: int = 0
@@ -32,8 +32,7 @@ class DungeonGenerator:
         self.current_map = None
         self.current_map_width: int = 0
         self.current_map_height: int = 0
-        self.wall_texture =  wall_texture
-        self.tile_texture = tile_texture
+        self.wall_texture, self.tile_texture = DungeonGenerator.level_tile_dict[level_name]
 
     def change_level(self, level):
         if level not in DungeonGenerator.level_tile_dict:

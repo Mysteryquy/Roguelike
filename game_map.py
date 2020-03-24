@@ -11,7 +11,6 @@ import tcod.path as path
 from actor import Actor
 
 
-
 def transition_reset():
     for x in range(0, constants.MAP_WIDTH):
         for y in range(0, constants.MAP_HEIGHT):
@@ -19,6 +18,8 @@ def transition_reset():
                 config.GAME.current_map[x][y].draw_on_minimap = True
                 config.GAME.current_map[x][y].draw_on_screen = True
                 config.GAME.current_map[x][y].was_drawn = False
+
+
 class Tile:
     def __init__(self, block_path, texture):
         self.block_path = block_path
@@ -28,7 +29,6 @@ class Tile:
         self.draw_on_minimap = False
         self.draw_on_screen = False
         self.was_drawn = False
-
 
     @property
     def texture(self):
@@ -46,18 +46,62 @@ class Tile:
 
 class DungeonLevel:
 
-    def __init__(self, objects, level_code=constants.level_the_player_is_in):
+    def __init__(self, objects, level_name):
         self.player_x = -1
         self.player_y = -1
-        self.map, self.rooms = create(level=level_code)
+        self.map, self.rooms = create(level_name=level_name)
         self.objects = objects
         self.pathing = path.AStar(config.FOV_MAP, 0)
         self.auto_explore_path = None
         self.stairs = []
-        self.floor = level_code
+        self.name = level_name
+
+    def objects_at_coords(self, coords_x, coords_y):
+        object_options = [obj for obj in self.objects
+                          if obj.x == coords_x and obj.y == coords_y]
+
+        return object_options
+
+    def place_objects(self, first_level=False):
+        top_level = constants.LevelNames.is_first_level(self.name) if not first_level else True
+        final_level = constants.LevelNames.is_last_level(self.name) if not first_level else False
+        room_list = self.rooms
+
+        for room in room_list:
+
+            # Tobias room tile calculation
+            cal_x = room.right - room.left
+            cal_y = room.bottom - room.top
+            room_size = cal_x * cal_y
+
+            room_center = room.center
+            first_room = (room == room_list[0])
+            last_room = (room == room_list[-1])
+
+            if first_room:
+                x, y = room.center
+                x, y = int(x), int(y)
+                config.PLAYER.x, config.PLAYER.y = x, y
+                self.player_x, self.player_y = x,y
 
 
+            if first_room and top_level:
+                x, y = room.center
+                generator.gen_portal(self, room.center)
 
+            if first_room and not top_level:
+                generator.gen_stairs(self, (config.PLAYER.x, config.PLAYER.y), downwards=False)
+
+            if last_room:
+
+                if final_level:
+                    # gen_END_GAME_ITEM(room.center)
+                    # gen_stairs(room.center,downwards=True)
+                    generator.gen_end_game_item(self, room.center)
+                else:
+                    generator.gen_stairs(self, room.center, downwards=True)
+
+            how_much_to_place(self, room_size, room)
 
 
 
@@ -69,62 +113,12 @@ def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
 
 
-def create(level=constants.level_the_player_is_in):
-    gen = DungeonGenerator()
+def create(level_name):
+    gen = DungeonGenerator(level_name)
     new_map = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
     return new_map
 
 
-def place_objects(room_list):
-    current_level = len(config.GAME.maps_previous) + 1
-
-    top_level = current_level == 1
-    final_level = (current_level == constants.MAP_NUM_LEVELS)
-
-    for room in room_list:
-
-        # Tobias room tile calculation
-        cal_x = room.right - room.left
-        cal_y = room.bottom - room.top
-        room_size = cal_x * cal_y
-
-        room_center = room.center
-        first_room = (room == room_list[0])
-        last_room = (room == room_list[-1])
-
-        if first_room:
-            x, y = room.center
-            config.PLAYER.x, config.PLAYER.y = int(x), int(y)
-
-        if first_room and top_level:
-            x, y = room.center
-            generator.gen_portal(room.center)
-
-        if first_room and not top_level:
-            generator.gen_stairs((config.PLAYER.x, config.PLAYER.y), downwards=False)
-
-        if last_room:
-
-            if final_level:
-                # gen_END_GAME_ITEM(room.center)
-                # gen_stairs(room.center,downwards=True)
-                generator.gen_end_game_item(room.center)
-            else:
-                generator.gen_stairs(room.center, downwards=True)
-
-        how_much_to_place(room_size, room)
-        # x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        # y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-
-        # generator.amount_to_gen(room_size)
-
-        # generator.gen_enemy((x, y))
-
-        # x = tcod.random_get_int(None, room.left + 1, room.right - 1)
-        # y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-
-        # if x and y != room_center:
-        # generator.gen_item((x, y))
 
 
 def check_for_creature(x, y, exclude_object=None):
@@ -167,15 +161,10 @@ def make_fov(incoming_map):
 def calculate_fov():
     if config.FOV_CALCULATE:
         config.FOV_CALCULATE = False
+        print(config.PLAYER.x)
         config.FOV_MAP.compute_fov(config.PLAYER.x, config.PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
                                    constants.FOV_ALGO)
 
-
-def objects_at_coords(coords_x, coords_y):
-    object_options = [obj for obj in config.GAME.current_objects
-                      if obj.x == coords_x and obj.y == coords_y]
-
-    return object_options
 
 
 def find_line(coords1, coords2, include_origin=False):
@@ -196,7 +185,7 @@ def find_line(coords1, coords2, include_origin=False):
 
 
 def is_walkable(x, y):
-    return  config.FOV_MAP.walkable[y, x]
+    return config.FOV_MAP.walkable[y, x]
 
 
 def find_radius(coords, radius):
@@ -217,7 +206,7 @@ def find_radius(coords, radius):
     return tile_list
 
 
-def how_much_to_place(room_size, room):
+def how_much_to_place(level, room_size, room):
     if room_size <= 20:
         fuckingree = 3
     elif room_size <= 30:
@@ -231,8 +220,8 @@ def how_much_to_place(room_size, room):
     for i in range(0, fuckingree):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-        if len(objects_at_coords(x, y)) == 0:
-            generator.what_to_gen((x, y))
+        if len(level.objects_at_coords(x, y)) == 0:
+            generator.what_to_gen(level, (x, y))
 
 
 def is_explored(x, y):
@@ -315,7 +304,8 @@ def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int
     random.shuffle(tiles)
     for i, j in tiles:
         x, y = origin_x + i, origin_y + j
-        if x < constants.MAP_WIDTH and y < constants.MAP_HEIGHT and is_walkable(x, y) and is_visible(x, y) and len(objects_at_coords(x, y)) == 0:
+        if x < constants.MAP_WIDTH and y < constants.MAP_HEIGHT and is_walkable(x, y) and is_visible(x, y) and len(
+                objects_at_coords(x, y)) == 0:
             return x, y
 
     return None

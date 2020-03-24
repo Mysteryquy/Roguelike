@@ -2,6 +2,7 @@ import pygame
 import tcod as libtcodpy
 import math
 from enum import Enum
+from typing import List
 
 pygame.init()
 
@@ -126,6 +127,8 @@ print(XP_NEEDED_FOR_NEXT)
 EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
 
 
+
+
 MOVEMENT_DICT = {
     pygame.K_UP : (0,-1),
     pygame.K_DOWN : (0,1),
@@ -167,6 +170,27 @@ TAKES_TURN = { ACTIONS.MOVED,  ACTIONS.PICKED_UP,  ACTIONS.DROP,  ACTIONS.USED, 
 def takes_turn(action):
     return action in TAKES_TURN
 
-ALL_DUNEGON_LEVELS_LIST = [1, 2, 3]
-level_the_player_is_in = ALL_DUNEGON_LEVELS_LIST[0]
+
+
+class LevelNames:
+    level_names: List[str] = ["DUNGEON1", "DUNGEON2", "DUNGEON3"]
+
+    @classmethod
+    def is_last_level(cls, level_name: str) -> bool:
+        return cls.level_names.index(level_name) == len(cls.level_names) - 1
+
+    @classmethod
+    def is_first_level(cls, level_name: str) -> bool:
+        return cls.level_names.index(level_name) == 0
+
+    @classmethod
+    def next_level_name(cls, level_name: str) -> str:
+        if not cls.is_last_level(level_name):
+            return cls.level_names[cls.level_names.index(level_name) + 1]
+    @classmethod
+    def previous_level_name(cls, level_name: str) -> str:
+        if not cls.is_first_level(level_name):
+            return cls.level_names[cls.level_names.index(level_name) - 1]
+
+
 

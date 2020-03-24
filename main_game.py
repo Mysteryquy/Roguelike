@@ -64,7 +64,7 @@ def invoke_command(command):
     for c in arguments:
         print(c)
     if command[0] == "gen_worm":
-        config.GAME.current_objects.append(monster_gen.gen_pest_worm(((int(arguments[1]), int(arguments[2])))))
+        level.objects.append(monster_gen.gen_pest_worm(((int(arguments[1]), int(arguments[2])))))
     elif command[0] == "gen_item":
         generator.gen_item((int(arguments[1]), int(arguments[2])))
 
@@ -251,12 +251,9 @@ def game_handle_keys():
                 else:
                     return ACTIONS.NO_ACTION
 
-            if event.key == pygame.K_a:
-                generator.gen_and_append_enemy((1,1))
-                return ACTIONS.DEBUG
 
             if event.key == pygame.K_g:
-                objects_at_player = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
+                objects_at_player = config.GAME.current_level.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
 
                 for obj in objects_at_player:
                     if obj.item:
@@ -283,9 +280,6 @@ def game_handle_keys():
                 menu.menu_tile_select()
                 return ACTIONS.TILE_SELECT
 
-            if event.key == pygame.K_m:
-                generator.gen_and_append_enemy((config.PLAYER.x, config.PLAYER.y))
-                return ACTIONS.DEBUG
 
             if event.key == pygame.K_x:
                 menu.debug_tile_select()
@@ -313,7 +307,7 @@ def game_handle_keys():
                 return ACTIONS.SPELL
 
             if MOD_KEY and event.key == pygame.K_PERIOD:
-                list_of_objs = game_map.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
+                list_of_objs = config.GAME.current_level.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
                 for obj in list_of_objs:
                     if obj.structure:
                         obj.structure.use()
@@ -361,13 +355,15 @@ def game_handle_keys():
     return ACTIONS.NO_ACTION
 
 
-def game_new(player_name="config.PLAYER"):
+def game_new(player_name):
     # starts a nre game and map
     config.GAME = Game()
+    config.GAME.current_objects.remove(config.PLAYER)
     config.PLAYER = generator.gen_player((0, 0), player_name=player_name)
     config.GAME.current_objects.append(config.PLAYER)
 
-    game_map.place_objects(config.GAME.current_rooms)
+    config.GAME.current_level.place_objects()
+
 
 
 def game_exit():
@@ -415,36 +411,3 @@ if __name__ == '__main__':
     game_initialize()
     config.MAIN_MENU = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
     config.MAIN_MENU.show_menu()
-
-#              .7
-#            .'/
-#           / /
-#          / /
-#         / /
-#        / /
-#       / /
-#      / /
-#     / /         
-#    / /          
-#  __|/
-# ,-\__\
-# |f-"Y\|
-# \()7L/
-# cgD                            __ _
-# |\(                          .'  Y '>,
-#  \ \                        / _   _   \
-#   \\\                       )(_) (_)(|}
-#    \\\                      {  4A   } /
-#     \\\                      \uLuJJ/\l
-#      \\\                     |3    p)/
-#       \\\___ __________      /nnm_n//
-#       c7___-__,__-)\,__)(".  \_>-<_/D
-#                  //V     \_"-._.__G G_c__.-__<"/ ( \
-#                         <"-._>__-,G_.___)\   \7\
-#                        ("-.__.| \"<.__.-" )   \ \
-#                        |"-.__"\  |"-.__.-".\   \ \
-#                        ("-.__"". \"-.__.-".|    \_\
-#                        \"-.__""|!|"-.__.-".)     \ \
-#                         "-.__""\_|"-.__.-"./      \ l
-#                          ".__""">G>-.__.-">       .--,_
-#                              ""  G

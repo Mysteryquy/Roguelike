@@ -32,7 +32,7 @@ class MainMenu:
                                          (self.title_x, continue_game_button_y), callback=self.continue_button_callback)
 
         new_game_button = ui.Button(config.SURFACE_MAIN, "New Game", (200, 45), "button_new_game",
-                                    (self.title_x, new_game_button_y), callback=self.newnewgame_button_callback)
+                                    (self.title_x, new_game_button_y), callback=self.newgame_button_callback)
 
         options_button = ui.Button(config.SURFACE_MAIN, "Options", (200, 45), "button_options",
                                    (self.title_x, options_button_y), callback=self.options_button_callback)

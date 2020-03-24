@@ -129,7 +129,7 @@ def cast_raisedead(caster, value):
         new_creature_coords = game_map.search_empty_tile(caster.x, caster.y, 2, 2, exclude_origin=True)
         if new_creature_coords:
             new_creature = monster_gen.gen_undead_ghost(new_creature_coords, 10)
-            config.GAME.current_objects.append(new_creature)
+            level.objects.append(new_creature)
             corpse.delete()
             config.GAME.game_message("YoU rAiSeD a SpOokY gHoSt!", msg_color=constants.COLOR_GREEN_DARK)
         else:

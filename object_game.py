@@ -7,36 +7,31 @@ import constants
 import game_map
 import render
 from game_map import DungeonLevel
+from typing import List, Dict, Optional
 
 
 class GameState(Enum):
     RUNNING = 1
     PAUSE = 2
 
-
 class Game:
+
+
+
+
+
     def __init__(self):
+        self.state: GameState = GameState.RUNNING
+        self.levels: Dict[str, DungeonLevel] = {}
+        self.message_history: List[str] = []
+        self.create_new_level("DUNGEON1", first_level=True)
+        self.current_level: Optional[DungeonLevel] = self.levels["DUNGEON1"]
+        constants.CURRENT_LEVEL_NAME: str = self.current_level_name
 
-        self.state = GameState.RUNNING
-
-        self.message_history = []
-
-
-        self.current_level = None
-        self.create_new_level("1", place_objects=False)
-
-
-        self.maps_previous = []
-
-        self.maps_next = []
 
     @property
-    def current_floor_number(self):
-        return len(self.maps_previous) +1
-
-    @property
-    def current_floor(self):
-        return self.current_level.floor
+    def current_level_name(self) -> str:
+        return self.current_level.name
 
     @property
     def current_objects(self):
@@ -66,34 +61,17 @@ class Game:
     def auto_explore_path(self, value):
         self.current_level.auto_explore_path = value
 
+    def create_new_level(self, level_name, first_level=False):
+        level = DungeonLevel([config.PLAYER], level_name=level_name)
+        level.place_objects(first_level=first_level)
+        self.levels[level_name] = level
 
-    def transition_init(self, next = True):
-        self.current_level.player_x, self.current_level.player_y = config.PLAYER.x, config.PLAYER.y
-
-        for obj in self.current_objects:
-            obj.animation_destroy()
-
-        if next:
-            self.maps_previous.append(self.current_level)
-
-
-        else:
-            self.maps_next.insert(0, self.current_level)
-
-
-
-    def create_new_level(self, level_code=constants.level_the_player_is_in, initial_stairs=True, place_objects=True):
-        self.current_level = DungeonLevel([config.PLAYER], level_code=level_code)
-        if place_objects:
-            print(self.current_level.rooms)
-            game_map.place_objects(self.current_level.rooms)
         config.PLAYER.animation_init()
 
+        return level
 
-
-
-    def transition_to_level(self, level, new_level=False):
-        self.current_level = level
+    def transition_to_level(self, level_name, new_level=False):
+        self.current_level = self.levels[level_name]
 
         for obj in self.current_objects:
             obj.animation_init()
@@ -105,27 +83,15 @@ class Game:
         config.FOV_CALCULATE = True
         render.fill_surfaces()
 
-    def transition_next(self):
-        self.transition_init(next=True)
-        constants.level_the_player_is_in = constants.ALL_DUNEGON_LEVELS_LIST[(constants.level_the_player_is_in + 1) - 1]
-
-        if len(self.maps_next) == 0:
-            self.create_new_level()
-            self.transition_to_level(self.current_level, new_level=True)
-
-        else:
-            self.transition_to_level(self.maps_next[0])
-            del self.maps_next[0]
-
-
-    def transition_previous(self):
-        if len(self.maps_previous) > 0:
-            self.transition_init(next=False)
-            self.transition_to_level(self.maps_previous[-1])
-            del self.maps_previous[-1]
-
-        else:
-            self.game_message("There is no previous level", constants.COLOR_WHITE)
+    def transition(self, to_level):
+        self.current_level.player_x, self.current_level.player_y = config.PLAYER.x, config.PLAYER.y
+        constants.CURRENT_LEVEL_NAME = to_level
+        make_new = to_level not in self.levels
+        if make_new:
+            level = self.create_new_level(level_name=to_level)
+            level.place_objects()
+        self.transition_to_level(to_level, new_level=make_new)
+        self.current_level = self.levels[to_level]
 
     def game_message(self, game_msg, msg_color=constants.COLOR_GREY):
         self.message_history.append((game_msg, msg_color))

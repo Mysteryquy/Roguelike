@@ -41,7 +41,7 @@ class Item:
 
     ## Drop Item
     def drop(self, new_x: int, new_y: int):
-        config.GAME.current_objects.append(self.owner)
+        level.objects.append(self.owner)
         self.owner.animation_init()
         self.container.inventory.remove(self.owner)
         self.owner.x = new_x

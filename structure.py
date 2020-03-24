@@ -24,16 +24,14 @@ class Structure(ABC):
 
 class Stairs(Structure):
 
-    def __init__(self, downwards: bool = True):
+    def __init__(self, leads_to, downwards):
         super().__init__()
+        self.leads_to = leads_to
         self.downwards = downwards
 
     def use(self):
 
-        if self.downwards:
-            config.GAME.transition_next()
-        else:
-            config.GAME.transition_previous()
+        config.GAME.transition(self.leads_to)
 
     def update(self):
         pass

@@ -15,13 +15,13 @@ from structure import ExitPortal, Stairs, Structure
 import random
 import numpy.random
 
+
 ##PLAYER##
 def gen_player(coords, player_name="Player"):
     x, y = coords
-    print(coords)
     container_com = Container()
     creature_com = Creature(player_name, base_atk=666, base_def=1, custom_death=death.death_player, base_evasion=20,
-                            base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER, strength = 10,
+                            base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER, strength=10,
                             dexterity=7, intelligence=5)
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                    container=container_com)
@@ -30,30 +30,33 @@ def gen_player(coords, player_name="Player"):
 
 
 ##STRUCTURES##
-def gen_stairs(coords, downwards=True):
+def gen_stairs(level, coords, downwards=True):
     x, y = coords
-    stairs_com = Stairs() if downwards else Stairs(downwards)
+    if downwards:
+        stairs_com = Stairs(constants.LevelNames.next_level_name(level.name), downwards=downwards)
+    else:
+        stairs_com = Stairs(constants.LevelNames.previous_level_name(level.name), downwards=downwards)
+
     animation_key = "S_STAIRS_DOWN" if downwards else "S_STAIRS_UP"
     stairs = Actor(x, y, "stairs", animation_key=animation_key, depth=constants.DEPTH_STRUCTURES,
                    structure=stairs_com, draw_explored=True)
 
-    config.GAME.current_objects.append(stairs)
+    level.objects.append(stairs)
     print("dddd")
-    config.GAME.stairs.append(stairs)
-    print(len(config.GAME.stairs))
+    level.stairs.append(stairs)
 
 
-def gen_portal(coords):
+def gen_portal(level, coords):
     x, y = coords
 
     port_com = ExitPortal()
     portal = Actor(x, y, "exit portal", animation_key="S_END_GAME_PORTAL_CLOSED", depth=constants.DEPTH_STRUCTURES,
                    structure=port_com, draw_explored=True)
 
-    config.GAME.current_objects.append(portal)
+    level.objects.append(portal)
 
 
-def gen_end_game_item(coords):
+def gen_end_game_item(level, coords):
     x, y, = coords
 
     item_com = Item(pickup_text=constants.END_GAME_ITEM_NAME)
@@ -61,25 +64,23 @@ def gen_end_game_item(coords):
     return_object = Actor(x, y, constants.END_GAME_ITEM_NAME, animation_key="S_END_GAME_ITEM",
                           depth=constants.DEPTH_ITEM, item=item_com)
 
-    config.GAME.current_objects.append(return_object)
+    level.objects.append(return_object)
 
 
-##ITEMS##
-
-def gen_and_append_item(coords):
+def gen_and_append_item(level, coords):
     random_number = tcod.random_get_int(None, 1, 3)
 
     if random_number == 1:
-        new_item = gen_weapon(coords)
+        new_item = gen_weapon(level, coords)
     elif random_number == 2:
-        new_item = gen_scroll(coords)
+        new_item = gen_scroll(level, coords)
     else:
-        new_item = gen_armor_shield(coords)
+        new_item = gen_armor_shield(level, coords)
     print(new_item.name_object)
-    config.GAME.current_objects.append(new_item)
+    level.objects.append(new_item)
 
 
-def gen_scroll_lighning(coords):
+def gen_scroll_lighning(level, coords):
     x, y = coords
 
     damage = tcod.random_get_int(None, 5, 7)
@@ -93,7 +94,7 @@ def gen_scroll_lighning(coords):
     return return_object
 
 
-def gen_scroll_fireball(coords):
+def gen_scroll_fireball(level, coords):
     x, y = coords
 
     damage = tcod.random_get_int(None, 2, 4)
@@ -108,7 +109,7 @@ def gen_scroll_fireball(coords):
     return return_object
 
 
-def gen_scroll_confusion(coords):
+def gen_scroll_confusion(level, coords):
     x, y = coords
 
     effect_length = tcod.random_get_int(None, 5, 10)
@@ -121,7 +122,7 @@ def gen_scroll_confusion(coords):
     return return_object
 
 
-def gen_scroll_teleportation(coords):
+def gen_scroll_teleportation(level, coords):
     x, y = coords
 
     item_com = Item(use_function=casting.cast_teleportation, pickup_text="Scroll of Teleportation")
@@ -132,7 +133,7 @@ def gen_scroll_teleportation(coords):
     return return_object
 
 
-def gen_potion_buffstats(coords):
+def gen_potion_buffstats(level, coords):
     x, y = coords
 
     item_com = Item(use_function=casting.cast_buffstats, pickup_text="Potion of Statpower")
@@ -143,7 +144,7 @@ def gen_potion_buffstats(coords):
     return return_object
 
 
-def gen_weapon_sword(coords):
+def gen_weapon_sword(level, coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
@@ -165,7 +166,7 @@ longsword_name_dict = {
 }
 
 
-def gen_weapon_longsword(coords):
+def gen_weapon_longsword(level, coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
@@ -181,7 +182,7 @@ def gen_weapon_longsword(coords):
     return return_object
 
 
-def gen_weapon_longaxe_1(coords):
+def gen_weapon_longaxe_1(level, coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
@@ -196,7 +197,7 @@ def gen_weapon_longaxe_1(coords):
     return return_object
 
 
-def gen_weapon_longaxe_2(coords):
+def gen_weapon_longaxe_2(level, coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
@@ -223,13 +224,12 @@ shield_name_dict = {
 }
 
 
-def gen_armor_shield(coords):
+def gen_armor_shield(level, coords):
     x, y = coords
 
     bonus = tcod.random_get_int(None, 1, 2)
     n = random.choice(list(shield_name_dict))
     random_name = shield_name_dict[n]
-
 
     equipment_com = Equipment(defense_bonus=bonus, equip_text=random_name, value=100,
                               pickup_text=random_name)
@@ -241,7 +241,7 @@ def gen_armor_shield(coords):
     return return_object
 
 
-def gen_and_append_gold(coords):
+def gen_and_append_gold(level, coords):
     x, y = coords
 
     value = tcod.random_get_int(None, 1, 100)
@@ -258,20 +258,20 @@ def gen_and_append_gold(coords):
     return_object = Actor(x, y, "Gold", animation_key=pic, depth=constants.DEPTH_ITEM,
                           item=Gold(value))
 
-    config.GAME.current_objects.append(return_object)
+    level.objects.append(return_object)
 
 
-def what_to_gen(coords):
+def what_to_gen(level, coords):
     # Change to 3 to see buggy gold
     RNG = tcod.random_get_int(None, 1, 3)
     x, y = coords
 
     if RNG == 1:
-        gen_and_append_enemy((x, y))
+        gen_and_append_enemy(level, (x, y))
     elif RNG == 2:
-        gen_and_append_item((x, y))
+        gen_and_append_item(level, (x, y))
     elif RNG == 3:
-        gen_and_append_gold((x, y))
+        gen_and_append_gold(level, (x, y))
     # More stuff to come!
 
 
@@ -294,22 +294,21 @@ gen_monster_dict = {
 }
 
 level_monster_dict = {
-    1 : [( monster_gen.gen_demon_gronk, 777),  (monster_gen.gen_demon_hulk, 777), (monster_gen.gen_demon_boomi, 777) ],
-    2 : [(monster_gen.gen_boss_beholder,777), (monster_gen.gen_rodent_mouse, 3)]
+    "DUNGEON1": [(monster_gen.gen_slime_small,100)],
+    "DUNGEON2": [(monster_gen.gen_boss_beholder, 777), (monster_gen.gen_rodent_mouse, 3)],
+    "DUNGEON3": [(monster_gen.gen_cat_cat, 1)]
 }
 
 
-
-def gen_and_append_enemy(coords, level=constants.level_the_player_is_in):
-    monsters_and_weight = level_monster_dict[level]
+def gen_and_append_enemy(level, coords):
+    monsters_and_weight = level_monster_dict[level.name]
     monsters = [monster for monster, _ in monsters_and_weight]  # anaconda,mouse,potato
     sum_weights = sum([weight for _, weight in monsters_and_weight])
     probabilities = [weight / sum_weights for _, weight in monsters_and_weight]  # 100/880, 3/880, 777/880
     monster_function = numpy.random.choice(monsters, 1, p=probabilities)[0]
-    new_enemy = monster_function(coords)
+    new_enemy = monster_function(level, coords)
 
-    config.GAME.current_objects.append(new_enemy)
-
+    level.objects.append(new_enemy)
 
 
 gen_weapon_dict = {
@@ -320,12 +319,12 @@ gen_weapon_dict = {
 }
 
 
-def gen_weapon(coords):
+def gen_weapon(level, coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
     gen_function = random.choice(gen_weapon_dict)
 
-    new_item = gen_function(coords)
+    new_item = gen_function(level, coords)
 
     return new_item
 
@@ -339,11 +338,11 @@ gen_scroll_dict = {
 }
 
 
-def gen_scroll(coords):
+def gen_scroll(level, coords):
     random_number = tcod.random_get_int(None, 0, 200)
 
     gen_function = random.choice(gen_scroll_dict)
 
-    new_item = gen_function(coords)
+    new_item = gen_function(level, coords)
 
     return new_item

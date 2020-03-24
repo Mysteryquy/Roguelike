@@ -59,7 +59,7 @@ def death_worm(monster, killer,):
         new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
         if new_coords:
             new_mob = monster_gen.gen_pest_worm(new_coords, monster.name_instance)
-            config.GAME.current_objects.append(new_mob)
+            level.objects.append(new_mob)
             config.GAME.game_message(monster.name_instance + " has halved and its other half came to life!", msg_color=constants.COLOR_RED)
             pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/soundeffects/bite-small.wav"))
     else:
@@ -75,7 +75,7 @@ def death_ice_elemental(monster, killer,):
         new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
         if new_coords:
             new_mob = monster_gen.gen_elemental_icicle(new_coords, monster.name_instance)
-            config.GAME.current_objects.append(new_mob)
+            level.objects.append(new_mob)
             config.GAME.game_message(monster.name_instance + " was smashed but small pieces still remain!", msg_color=constants.COLOR_RED)
     else:
         config.GAME.game_message(monster.name_instance + " is smashed to a icey mess!", constants.COLOR_GREY)
@@ -86,7 +86,7 @@ def death_gold_elemental(monster, killer):
     new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
     if new_coords:
         new_mob = generator.gen_and_append_gold(new_coords)
-        config.GAME.current_objects.append(new_mob)
+        level.objects.append(new_mob)
         config.GAME.game_message(monster.name_instance + " was smashed but small pieces still remain!",
                                  msg_color=constants.COLOR_RED)
     else:
