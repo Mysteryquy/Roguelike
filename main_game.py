@@ -364,6 +364,10 @@ def game_new(player_name):
 
     config.GAME.current_level.place_objects()
 
+    game_map.make_fov(config.GAME.current_map)
+    config.FOV_CALCULATE = True
+    game_map.calculate_fov()
+
 
 
 def game_exit():

@@ -21,15 +21,11 @@ class Status(Enum):
 
 
 class Creature:
-
-
-
     class CreatureAlignment(Enum):
         FRIEND = 1
         NEUTRAL = 2
         FOE = 3
         PLAYER = 4
-
 
         @classmethod
         def can_bump(cls, c1, c2):
@@ -39,18 +35,20 @@ class Creature:
                 return c2.alignment == cls.FRIEND or c2.alignment == cls.PLAYER
             elif c1.alignment == cls.PLAYER:
                 return c2.alignment == cls.FOE
+
         @classmethod
         def can_swap(cls, c1, c2):
             return c1.alignment == cls.PLAYER and c2.alignment == cls.FRIEND
 
-
-
-    def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10, base_hit_chance: int = 70,
-                 base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None, death_text=" died horribly",
-                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, onhit_effects=None, alignment: CreatureAlignment = CreatureAlignment.FOE,
-                 strength = 0,
-                 dexterity = 0,
-                 intelligence = 0
+    def __init__(self, name_instance: str, base_atk: int = 2, base_def: int = 0, hp: int = 10,
+                 base_hit_chance: int = 70,
+                 base_evasion: int = 0, level: int = 1, xp_gained: int = 0, current_xp: int = 0, custom_death=None,
+                 death_text=" died horribly",
+                 dead_animation_key=None, max_mana: int = 100, current_mana: int = 10, onhit_effects=None,
+                 alignment: CreatureAlignment = CreatureAlignment.FOE,
+                 strength=0,
+                 dexterity=0,
+                 intelligence=0
                  ):
         self._intelligence = 0
         self._strength = 0
@@ -80,7 +78,6 @@ class Creature:
         self.dexterity = dexterity
         self.strength = strength
 
-
     @property
     def dexterity(self):
         return self._dexterity
@@ -88,9 +85,9 @@ class Creature:
     @dexterity.setter
     def dexterity(self, value):
         self._dexterity = value
-        self.base_evasion += value*2
-        self.base_hit_chance += value*2
-        #rechne rest...
+        self.base_evasion += value * 2
+        self.base_hit_chance += value * 2
+        # rechne rest...
 
     @property
     def strength(self):
@@ -101,21 +98,18 @@ class Creature:
         dstr = value - self._strength
         self._strength = value
         self.base_atk += dstr
-        self.maxhp += dstr*2
-        #rechne rest aus
+        self.maxhp += dstr * 2
+        # rechne rest aus
 
     @property
     def intelligence(self):
         return self._intelligence
 
-
     @intelligence.setter
     def intelligence(self, value):
         dint = value - self._intelligence
         self._intelligence = value
-        self.max_mana += dint*2
-
-
+        self.max_mana += dint * 2
 
     def add_int(self, value):
         self.intelligence += value
@@ -135,7 +129,7 @@ class Creature:
 
         target = game_map.check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
-        if target and Creature.CreatureAlignment.can_bump(self, target.creature) :
+        if target and Creature.CreatureAlignment.can_bump(self, target.creature):
             # im Tuturial ist das print unten rot aber anscheined geht es trotzdem
             self.attack(target)
         elif target and Creature.CreatureAlignment.can_swap(self, target.creature):
@@ -171,8 +165,6 @@ class Creature:
 
         if damage_dealt > 0 and self.owner is config.PLAYER:
             pygame.mixer.Sound.play(config.RANDOM_ENGINE.choice(config.ASSETS.snd_list_hit))
-
-
 
     def take_damage(self, damage, attacker):
         self.hp -= damage
@@ -249,4 +241,3 @@ class Creature:
 
     def add_onhit_effect(self, effect):
         self.onhit_effects.append(effect)
-
