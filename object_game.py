@@ -1,9 +1,6 @@
 from enum import Enum
 
-import tcod.path as path
-
-import config
-import constants
+from src import config, constants
 import game_map
 import render
 from game_map import DungeonLevel

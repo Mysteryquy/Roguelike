@@ -1,7 +1,6 @@
 import pygame
 
-import config
-import constants
+from src import config, constants
 import game_map
 import render
 import ui
@@ -120,7 +119,7 @@ class MainMenu:
     def newgame_button_callback(self, id):
         config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT * 2, constants.CAMERA_WIDTH * 2)),
                                  (0, 0))
-        input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.RECT_WHOLE_SCREEN.width/2 - 500/2 ,
+        input_field = ui.Textfield(config.SURFACE_MAIN, pygame.Rect(constants.RECT_WHOLE_SCREEN.width / 2 - 500 / 2,
                                                                     constants.RECT_WHOLE_SCREEN.height / 2, 500, 60),
                                    "name_input",
                                    constants.COLOR_GREY, constants.COLOR_WHITE,
@@ -409,7 +408,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
             for x, y in previous_drawn:
                 if x >= constants.MAP_WIDTH+1 or y >= constants.MAP_HEIGHT+1:
                     continue
-                if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x,y):
+                if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x, y):
                     config.SURFACE_MAP.blit(config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],
                                             (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:

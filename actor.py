@@ -1,83 +1,3 @@
-# coding=utf-8
-from __future__ import annotations
-
-from typing import Optional
-import math
-
-import config
-import constants
-import game_map
-from ai import Ai
-from container import Container
-from equipment import Equipment
-from item import Item
-from structure import Structure
-
-
-class Actor:
-
-    def __init__(self, x: int, y: int, name_object: str, animation_key: str,
-                 animation_speed: float = 1.0, depth: int = 0,
-                 creature=None, ai: Optional[Ai] = None, container: Optional[Container] = None,
-                 item: Optional[Item] = None, equipment: Optional[Equipment] = None,
-                 state: Optional[str] = None, structure: Optional[Structure] = None,
-                 draw_explored: bool = False, is_corpse: bool = False):
-        self.x = x
-        self.y = y
-        self.name_object = name_object
-        self.animation_key = animation_key
-        self.animation = config.ASSETS.animation_dict[self.animation_key]  # number of images
-        self.animation_speed = animation_speed / 1.0  # in seconds
-        self.depth = depth
-
-        self.draw_explored = draw_explored
-        self.is_corpse = is_corpse
-
-        # animation flicker speed
-        self.flicker_speed = self.animation_speed / len(self.animation)
-        self.flicker_timer = 0.0
-        self.sprite_image = 0  # s
-        self.effects = []
-
-        self.creature = creature
-        if self.creature:
-            self.creature.owner = self
-
-        self.ai = ai
-        if self.ai:
-            self.ai.owner = self
-
-        self.container = container
-        if self.container:
-            self.container.owner = self
-
-        self.item = item
-        if self.item:
-            self.item.owner = self
-
-        self.equipment = equipment
-        if self.equipment:
-            self.equipment.owner = self
-
-        self.structure = structure
-        if self.structure:
-            self.structure.owner = self
-
-        self.state = state
-        if self.state:
-            self.state.owner = self
-
-    @property
-    def display_name(self):
-
-        if self.creature:
-            return self.creature.name_instance + " the " + self.name_object
-
-        if self.item:
-            if self.equipment and self.equipment.equipped:
-                return self.name_object + "(equipped)"
-            else:
-                return self.name_object
 
     def draw(self):
         is_visible = config.FOV_MAP.fov[self.y, self.x]
@@ -108,12 +28,6 @@ class Actor:
                                         (self.x * constants.CELL_WIDTH, self.y * constants.CELL_HEIGHT),
                                         special_flags=special_flags)
 
-    def update(self):
-        if self.ai:
-            self.ai.take_turn()
-        if self.structure:
-            self.structure.update()
-        self.check_effects()
 
 
     def distance_to(self, other: Actor):

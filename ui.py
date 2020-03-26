@@ -1,7 +1,6 @@
 import pygame
-import config
+from src import config, constants
 
-import constants
 from render import draw_text
 
 
@@ -155,7 +154,7 @@ class Slider(UiElement):
         pygame.draw.rect(self.surface, self.fg_color, self.fg_rect)
         pygame.draw.rect(self.surface, constants.COLOR_BLACK, self.grip_tab)
         draw_text(self.surface, self.string, (self.bg_rect.x, self.bg_rect.y - 30), constants.COLOR_BLACK,
-                         center=True)
+                  center=True)
 
 
 class Textfield(UiElement):
@@ -292,7 +291,7 @@ class FillBar(UiElement):
         pygame.draw.rect(self.surface, self.fg_color, self.fg_rect)
         draw_text(self.surface, self.print_text_format.format(self.string, self.current_value, self.max_value)
                   , (self.rect.centerx, self.rect.centery), self.text_color,
-                         center=True, font=config.ASSETS.FONT_FANTY)
+                  center=True, font=config.ASSETS.FONT_FANTY)
 
         #if self.border:
         #    self.surface.blit(self.border, self.rect)
@@ -356,7 +355,8 @@ class GuiContainer(UiContainer):
             self.items["xp_bar"].string = "MAX LEVEL"
         else:
             self.items["xp_bar"].update(
-                (config.PLAYER.creature.current_xp - ( constants.XP_NEEDED[config.PLAYER.creature.level-1] if config.PLAYER.creature.level != 1 else 0),
+                (config.PLAYER.creature.current_xp - (constants.XP_NEEDED[
+                                                          config.PLAYER.creature.level - 1] if config.PLAYER.creature.level != 1 else 0),
                  constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))
 
         self.items["str"].update(config.PLAYER.creature.strength)

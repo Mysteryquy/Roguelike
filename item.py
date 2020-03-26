@@ -3,8 +3,7 @@ from __future__ import annotations
 
 from typing import Optional, Any, Callable
 
-import config
-
+from src import config
 
 
 class Item:

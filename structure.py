@@ -3,9 +3,8 @@ from abc import ABC, abstractmethod
 
 import pygame
 
-import constants
 import render
-import config
+from src import config, constants
 
 
 class Structure(ABC):

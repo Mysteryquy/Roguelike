@@ -4,8 +4,7 @@ from abc import ABC, abstractmethod
 import tcod
 
 import casting
-import config
-import constants
+from src import config, constants
 import game_map
 
 

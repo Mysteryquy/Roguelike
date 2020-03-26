@@ -1,7 +1,6 @@
 import pygame
 
-import config
-import constants
+from src import config, constants
 from typing import Tuple
 
 

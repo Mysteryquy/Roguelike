@@ -2,8 +2,7 @@
 import tcod
 
 import casting
-import config
-import constants
+from src import constants
 import death
 import monster_gen
 from actor import Actor
@@ -11,13 +10,14 @@ from container import Container
 from creature import Creature
 from equipment import Equipment
 from item import Item, Gold
-from structure import ExitPortal, Stairs, Structure
+from structure import ExitPortal, Stairs
 import random
 import numpy.random
 
 
 ##PLAYER##
 def gen_player(coords, player_name="Player"):
+    # player is always generated at the current dungeon level
     x, y = coords
     container_com = Container()
     creature_com = Creature(player_name, base_atk=666, base_def=1, custom_death=death.death_player, base_evasion=20,

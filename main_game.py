@@ -12,9 +12,8 @@ import tcod.map
 from object_game import GameState
 import assets
 import camera
-import config
+from src import config, constants
 # gamefiles
-import constants
 import game_map
 import generator
 import menu
@@ -23,7 +22,7 @@ import render
 from object_game import Game
 from ui import Textfield, GuiContainer, FillBar, TextPane
 from casting import cast_buffstats, cast_raisedead
-from constants import ACTIONS
+from src.constants import ACTIONS
 
 
 #     _______.___________..______       __    __    ______ .___________.
@@ -219,11 +218,11 @@ def game_handle_keys():
         if event.type == pygame.MOUSEBUTTONDOWN:
             #start autoexplore weird
             x,y = pygame.mouse.get_pos()
-            x,y = config.CAMERA.coords_from_position(x,y)
+            x,y = config.CAMERA.coords_from_position(x, y)
             if game_map.is_explored(x,y):
                 #game_map.start_auto_explore()
                 config.AUTO_WALKING = True
-                config.GAME.auto_explore_path = iter(game_map.get_path_from_player(x,y))
+                config.GAME.auto_explore_path = iter(game_map.get_path_from_player(x, y))
 
 
 
@@ -356,7 +355,6 @@ def game_handle_keys():
 
 
 def game_new(player_name):
-    # starts a nre game and map
     config.GAME = Game()
     config.GAME.current_objects.remove(config.PLAYER)
     config.PLAYER = generator.gen_player((0, 0), player_name=player_name)

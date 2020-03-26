@@ -1,5 +1,4 @@
-import config
-import constants
+from src import config, constants
 from item import Item
 
 

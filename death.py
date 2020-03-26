@@ -4,11 +4,9 @@ import os
 import pygame
 import tcod
 
-import config
-import constants
+from src import config, constants
 import monster_gen
 import render
-import menu
 import game_map
 
 

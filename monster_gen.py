@@ -2,8 +2,7 @@ import tcod
 
 import ai
 import casting
-import config
-import constants
+from src import constants
 import death
 from actor import Actor, TemporaryActor
 from creature import Creature
@@ -30,8 +29,8 @@ def gen_demon_pillus(level, coords):
     ai_com = ai.AiChase()
 
     demon_pillus = Actor(x, y, "Demon", animation_key="A_DEMON_PILLUS", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
 
 
@@ -57,8 +56,8 @@ def gen_demon_buffla(level, coords):
     ai_com = ai.AiChase()
 
     demon_buffla = Actor(x, y, "Demon", animation_key="A_DEMON_BUFFLA", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
 
 
@@ -84,8 +83,8 @@ def gen_demon_avin(level, coords):
     ai_com = ai.AiChase()
 
     demon_avin = Actor(x, y, "Demon", animation_key="A_DEMON_AVIN", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
 
 
@@ -111,8 +110,8 @@ def gen_demon_gronk(level, coords):
     ai_com = ai.AiChase()
 
     demon_gronk = Actor(x, y, "Demon", animation_key="A_DEMON_GRONK", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                        creature=creature_com,
+                        ai=ai_com)
 
 
 
@@ -138,8 +137,8 @@ def gen_demon_sloosh(level, coords):
     ai_com = ai.AiChase()
 
     demon_sloosh = Actor(x, y, "Demon", animation_key="A_DEMON_SLOOSH", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
 
 
@@ -165,8 +164,8 @@ def gen_demon_kolak(level, coords):
     ai_com = ai.AiChase()
 
     demon_kolak = Actor(x, y, "Demon", animation_key="A_DEMON_KOLAK", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                        creature=creature_com,
+                        ai=ai_com)
 
 
 
@@ -192,8 +191,8 @@ def gen_demon_absodux(level, coords):
     ai_com = ai.AiChase()
 
     demon_absodux = Actor(x, y, "Demon", animation_key="A_DEMON_ABSODUX", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                          creature=creature_com,
+                          ai=ai_com)
 
 
 
@@ -219,8 +218,8 @@ def gen_demon_nergal(level, coords):
     ai_com = ai.AiChase()
 
     demon_nergal = Actor(x, y, "Demon", animation_key="A_DEMON_NERGAL", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
 
 
@@ -245,8 +244,8 @@ def gen_demon_boomi(level, coords):
     ai_com = ai.AiChase()
 
     demon_boomi = Actor(x, y, "Demon", animation_key="A_DEMON_BOOMI", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                        creature=creature_com,
+                        ai=ai_com)
 
 
 
@@ -272,8 +271,8 @@ def gen_demon_flabsy(level, coords):
     ai_com = ai.AiChase()
 
     demon_flabsy = Actor(x, y, "Demon", animation_key="A_DEMON_FLABSY", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
 
 
@@ -299,8 +298,8 @@ def gen_demon_hulk(level, coords):
     ai_com = ai.AiChase()
 
     demon_hulk = Actor(x, y, "Demon", animation_key="A_DEMON_HULK", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
 
 
@@ -326,8 +325,8 @@ def gen_demon_hulk_hulk(level, coords):
     ai_com = ai.AiChase()
 
     demon_hulk = Actor(x, y, "Demon", animation_key="A_DEMON_HULK", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
 
 
@@ -441,8 +440,8 @@ def gen_slime_small_blue(level, coords):
     ai_com = ai.AiChase()
 
     small_slime_blue = Actor(x, y, "Small slime blue", animation_key="A_SLIME_SMALL_BLUE", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                             creature=creature_com,
+                             ai=ai_com)
 
     return small_slime_blue
 
@@ -464,8 +463,8 @@ def gen_slime_ice(level, coords):
     ai_com = ai.AiChase()
 
     ice_slime = Actor(x, y, "Small slime", animation_key="A_SLIME_ICE", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                      creature=creature_com,
+                      ai=ai_com)
 
     return ice_slime
 
@@ -487,8 +486,8 @@ def gen_slime_abomination(level, coords):
     ai_com = ai.AiChase()
 
     abomination_slime = Actor(x, y, "Abomination Slime", animation_key="A_SLIME_ABOMINATION", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                              creature=creature_com,
+                              ai=ai_com)
 
     return abomination_slime
 
@@ -510,8 +509,8 @@ def gen_cat_cat(level, coords):
     ai_com = ai.AiChase()
 
     cat_cat = Actor(x, y, "Cat", animation_key="A_CAT_CAT", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                    creature=creature_com,
+                    ai=ai_com)
 
     return cat_cat
 
@@ -579,8 +578,8 @@ def gen_cat_tiger(level, coords):
     ai_com = ai.AiChase()
 
     cat_tiger = Actor(x, y, "Tiger", animation_key="A_CAT_TIGER", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                      creature=creature_com,
+                      ai=ai_com)
 
     return cat_tiger
 
@@ -602,8 +601,8 @@ def gen_cat_lion(level, coords):
     ai_com = ai.AiChase()
 
     cat_lion = Actor(x, y, "Tiger", animation_key="A_CAT_LION", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                     creature=creature_com,
+                     ai=ai_com)
 
     return cat_lion
 
@@ -625,8 +624,8 @@ def gen_cat_mountain(level, coords):
     ai_com = ai.AiChase()
 
     cat_mountain = Actor(x, y, "Mountain Cat", animation_key="A_CAT_MOUNTAIN", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                         creature=creature_com,
+                         ai=ai_com)
 
     return cat_mountain
 
@@ -648,8 +647,8 @@ def gen_cat_snow(level, coords):
     ai_com = ai.AiChase()
 
     cat_snow = Actor(x, y, "Snow Cat", animation_key="A_CAT_SNOW", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                     creature=creature_com,
+                     ai=ai_com)
 
     return cat_snow
 
@@ -671,8 +670,8 @@ def gen_cat_shadow(level, coords):
     ai_com = ai.AiChase()
 
     cat_shadow = Actor(x, y, "Shadow Cat", animation_key="A_CAT_SHADOW", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return cat_shadow
 
@@ -717,8 +716,8 @@ def gen_slime_blob(level, coords):
     ai_com = ai.AiChase()
 
     blob_slime = Actor(x, y, "Slime Blob", animation_key="A_SLIME_BLOB", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return blob_slime
 
@@ -740,8 +739,8 @@ def gen_slime_cube(level, coords):
     ai_com = ai.AiChase()
 
     cube_slime = Actor(x, y, "Cubic Slime", animation_key="A_SLIME_CUBE", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return cube_slime
 
@@ -763,8 +762,8 @@ def gen_slime_ring(level, coords):
     ai_com = ai.AiChase()
 
     ring_slime = Actor(x, y, "Ring Slime", animation_key="A_SLIME_RING", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return ring_slime
 
@@ -786,8 +785,8 @@ def gen_slime_snatcher(level, coords):
     ai_com = ai.AiChase()
 
     snatcher_slime = Actor(x, y, "Snatcher Slime", animation_key="A_SLIME_SNTACHER", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                           creature=creature_com,
+                           ai=ai_com)
 
     return snatcher_slime
 
@@ -809,8 +808,8 @@ def gen_slime_sack(level, coords):
     ai_com = ai.AiChase()
 
     sack_slime = Actor(x, y, "Sack Slime", animation_key="A_SLIME_SACK", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return sack_slime
 
@@ -855,8 +854,8 @@ def gen_slime_mold_brown(level, coords):
     ai_com = ai.AiChase()
 
     brown_mold = Actor(x, y, "Brown Mold", animation_key="A_SLIME_MOLD_BROWN", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return brown_mold
 
@@ -878,8 +877,8 @@ def gen_slime_mold_green(level, coords):
     ai_com = ai.AiChase()
 
     green_mold = Actor(x, y, "Green Mold", animation_key="A_SLIME_MOLD_GREEN", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                       creature=creature_com,
+                       ai=ai_com)
 
     return green_mold
 
@@ -901,8 +900,8 @@ def gen_slime_mold_red(level, coords):
     ai_com = ai.AiChase()
 
     red_mold = Actor(x, y, "Red Mold", animation_key="A_SLIME_MOLD_RED", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                     creature=creature_com,
+                     ai=ai_com)
 
     return red_mold
 
@@ -924,8 +923,8 @@ def gen_slime_mold_blue(level, coords):
     ai_com = ai.AiChase()
 
     blue_mold = Actor(x, y, "Blue Mold", animation_key="A_SLIME_MOLD_BLUE", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                      creature=creature_com,
+                      ai=ai_com)
 
     return blue_mold
 
@@ -993,8 +992,8 @@ def gen_slime_ice_fire(level, coords):
     ai_com = ai.AiChase()
 
     ice_fire_slime = Actor(x, y, "Hot n Cold Slime", animation_key="A_SLIME_ICE_FIRE", depth=constants.DEPTH_CREATURE,
-                        creature=creature_com,
-                        ai=ai_com)
+                           creature=creature_com,
+                           ai=ai_com)
 
     return ice_fire_slime
 
@@ -1167,8 +1166,8 @@ def gen_undead_ghost(coords, duration):
     ai_com = ai.AiChase()
 
     ghost = TemporaryActor(x=x, y=y, name_object="Ghost", animation_key="A_UNDEAD_GHOST", duration=10, depth=constants.DEPTH_CREATURE,
-                   creature=creature_com,
-                   ai=ai_com)
+                           creature=creature_com,
+                           ai=ai_com)
 
     return ghost
 
@@ -1192,8 +1191,8 @@ def gen_elemental_potato(level, coords):
     ai_com = ai.AiChase()
 
     elemental = Actor(x, y, "Elemental", animation_key="A_ELEMENTAL_POTATO", depth=constants.DEPTH_CREATURE,
-                   creature=creature_com,
-                   ai=ai_com)
+                      creature=creature_com,
+                      ai=ai_com)
 
     return elemental
 
@@ -1514,8 +1513,8 @@ def gen_boss_beholder(level, coords):
     ai_com = ai.AiChase()
 
     beholder = Actor(x, y, "Boss", animation_key="A_BOSS_BEHOLDER", depth=constants.DEPTH_CREATURE,
-                      creature=creature_com,
-                      ai=ai_com)
+                     creature=creature_com,
+                     ai=ai_com)
 
 
 

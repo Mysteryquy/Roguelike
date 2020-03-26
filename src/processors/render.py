@@ -1,4 +1,4 @@
-import esper
+from src import esper
 
 
 class RenderProcessor(esper.Processor):

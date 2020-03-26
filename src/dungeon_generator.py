@@ -4,7 +4,7 @@ import random
 from typing import List, Tuple
 
 import numpy as np
-import pygame
+from pygame import Rect
 
 import game_map as mp
 
@@ -17,8 +17,8 @@ See https://github.com/munificent/hauberk/ for his project and source code
 class DungeonGenerator:
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     level_tile_dict = {
-        "DUNGEON1" : ("S_WALL", "S_FLOOR"),
-        "DUNGEON2" : ("S_FLOOR", "S_WALL")
+        "DUNGEON1": ("S_WALL", "S_FLOOR"),
+        "DUNGEON2": ("S_FLOOR", "S_WALL")
     }
 
     def __init__(self, level_name):
@@ -36,14 +36,14 @@ class DungeonGenerator:
 
     def change_level(self, level):
         if level not in DungeonGenerator.level_tile_dict:
-            return
-        w,t = DungeonGenerator.level_tile_dict[level]
+            raise KeyError("no such level")
+        w, t = DungeonGenerator.level_tile_dict[level]
         self.tile_texture = t
         self.wall_texture = w
 
-
     def generate(self, map_width: int, map_height: int) -> Tuple[List[List[Tile]], List[pygame.Rect]]:
-        self.current_map = [[mp.Tile(True, self.wall_texture) for y in range(0, map_height)] for x in range(0, map_width)]
+        self.current_map = [[mp.Tile(True, self.wall_texture) for y in range(0, map_height)] for x in
+                            range(0, map_width)]
         self.regions = np.zeros((map_width, map_height))
         self.current_map_width = map_width
         self.current_map_height = map_height

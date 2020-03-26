@@ -2,9 +2,7 @@
 
 
 from abc import ABC, abstractmethod
-import constants
-import config
-from creature import Creature
+from src import config, constants
 from actor import Actor
 from creature import Status
 class Effect(ABC):
@@ -122,7 +120,7 @@ class DamageOverTimeEffect(Effect):
 
     def update(self):
         self.owner.creature.take_damage(self.damage, self.applier)
-        config.GAME.game_message(self.owner.name_object + " takes " + str(self.damage) +" from " + self.applier.name_object, constants.COLOR_BLUE)
+        config.GAME.game_message(self.owner.name_object + " takes " + str(self.damage) + " from " + self.applier.name_object, constants.COLOR_BLUE)
 
     def stop(self):
         pass

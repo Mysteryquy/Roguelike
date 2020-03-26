@@ -1,11 +1,9 @@
 import ai
-import config
-import constants
+from src import config, constants
 import game_map
 import menu
 import tcod
 import pygame
-import render
 import monster_gen
 import math
 from effect import StatusEffect

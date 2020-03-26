@@ -3,8 +3,7 @@ from __future__ import annotations
 import pygame
 import tcod
 
-import config
-import constants
+from src import config, constants
 import game_map
 from enum import Enum
 from actor import Actor

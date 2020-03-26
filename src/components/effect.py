@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict
 
-import config
+from src import config
 from creature import Status
 
 

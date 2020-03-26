@@ -1,5 +1,5 @@
-import esper
-from components.ai import Ai
+from src import esper
+from src.components import Ai
 
 
 class AiProcessor(esper.Processor):

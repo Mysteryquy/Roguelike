@@ -1,7 +1,6 @@
 import pygame
 
-import config
-import constants
+from src import config, constants
 
 
 # noinspection PyArgumentEqualDefault
@@ -55,13 +54,13 @@ class Assets:
         }
 
         self.MINIMAP_YELLOW_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
-                                                         constants.COLOR_YELLOW)
+                                                    constants.COLOR_YELLOW)
         self.MINIMAP_GOLD_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                   constants.COLOR_YELLOW_DARK_GOLD)
         self.MINIMAP_RED_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
-                                                  constants.COLOR_RED_DARK)
+                                                 constants.COLOR_RED_DARK)
         self.MINIMAP_WHITE_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
-                                                  constants.COLOR_WHITE)
+                                                   constants.COLOR_WHITE)
 
         self.MAP_DARK_GREY_RECT = get_surface_rect(constants.CELL_WIDTH, constants.CELL_HEIGHT,
                                                    constants.COLOR_DARK_GREY)
