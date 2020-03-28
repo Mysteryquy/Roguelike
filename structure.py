@@ -7,36 +7,7 @@ import render
 from src import config, constants
 
 
-class Structure(ABC):
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    @abstractmethod
-    def use(self):
-        pass
-
-    @abstractmethod
-    def update(self):
-        pass
-
-
-class Stairs(Structure):
-
-    def __init__(self, leads_to, downwards):
-        super().__init__()
-        self.leads_to = leads_to
-        self.downwards = downwards
-
-    def use(self):
-
-        config.GAME.transition(self.leads_to)
-
-    def update(self):
-        pass
-
-
-class ExitPortal(Structure):
+class ExitPortal():
     def __init__(self):
         super().__init__()
         self.open_animation = "S_END_GAME_PORTAL_OPENED"
@@ -78,7 +49,8 @@ class ExitPortal(Structure):
 
             render.draw_text(config.SURFACE_MAIN, "YOU WON!", screen_center, constants.COLOR_BLACK, center=True)
             render.draw_text(config.SURFACE_MAIN, "Your win was recorded in your win file",
-                             (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100), constants.COLOR_BLUE,
+                             (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100),
+                             constants.COLOR_BLUE,
                              center=True)
 
             pygame.display.update()

@@ -22,7 +22,7 @@ class DungeonLevel:
     def create_entity(self, *components):
         """
         creates an entity with the given components
-        :param components: 
+        :param components:
         :return:
         """
         self.world.create_entity(components)

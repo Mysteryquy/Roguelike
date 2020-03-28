@@ -1,43 +1,34 @@
+from typing import Tuple
+
 import pygame
 
 from src import config, constants
 
 
-def draw_text(display_surface, text_to_display, T_coords, text_color, back_color=None, center=False, font=None):
+def draw_text(display_surface, text_to_display, coords, text_color, back_color=None, center=False,
+              font=config.ASSETS.FONT_DEBUG_MESSAGE):
     # This function takes in some text and display
 
-    font = font if font else config.ASSETS.FONT_DEBUG_MESSAGE
-
     text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color, font)
-    if not center:
-        text_rect.topleft = T_coords
+    if center:
+        text_rect.center = coords
     else:
-        text_rect.center = T_coords
+        text_rect.topleft = coords
 
     display_surface.blit(text_surf, text_rect)
 
 
-def draw_tile_rect(coords, color=None, tile_alpha=None, mark=None):
+def draw_tile_rect(coords: Tuple[int, int], color=constants.COLOR_WHITE, tile_alpha=200, mark=False):
     x, y = coords
-
-    if color:
-        local_color = color
-    else:
-        local_color = constants.COLOR_WHITE
-
-    if tile_alpha:
-        local_alpha = tile_alpha
-    else:
-        local_alpha = 200
 
     new_x = x * constants.CELL_WIDTH
     new_y = y * constants.CELL_HEIGHT
 
     new_surface = pygame.Surface((constants.CELL_WIDTH, constants.CELL_HEIGHT))
 
-    new_surface.fill(local_color)
+    new_surface.fill(color)
 
-    new_surface.set_alpha(local_alpha)
+    new_surface.set_alpha(tile_alpha)
 
     if mark:
         draw_text(new_surface, "X", (constants.CELL_WIDTH / 2, constants.CELL_HEIGHT / 2), constants.COLOR_BLACK,
@@ -55,17 +46,8 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
     return text_surface, text_surface.get_rect()
 
 
-def helper_text_height(font):
-    (width, height) = font.size("A")
-    # font_object = font.render("a", False, (0,0,0))
-    # font_rect = font_object.get_rect
-    return height
 
 
-def helper_text_width(font):
-    (width, height) = font.size("A")
-
-    return width
 
 def draw_menu():
     # clear the surface
@@ -79,6 +61,7 @@ def draw_menu():
     # print(CAMERA.rectangle)
 
     draw_debug()
+
 
 def draw_game():
     # clear the surface
@@ -158,8 +141,7 @@ def draw_messages():
     else:
         to_draw = config.GAME.message_history[-constants.NUM_MESSAGES:]
 
-    text_height = helper_text_height(config.ASSETS.FONT_MESSAGE_TEXT)
-
+    _, text_height = config.ASSETS.FONT_MESSAGE_TEXT.size("A")
     start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
     for i, (message, color) in enumerate(to_draw):
@@ -169,7 +151,6 @@ def draw_messages():
 def draw_mini_map(map_to_draw):
     for x in range(constants.MAP_WIDTH):
         for y in range(constants.MAP_HEIGHT):
-
             is_visible = config.FOV_MAP.fov[y, x]
             if map_to_draw[x][y].explored and not map_to_draw[x][y].block_path:
                 if is_visible:

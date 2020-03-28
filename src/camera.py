@@ -1,6 +1,6 @@
 import pygame
 
-from src import config, constants
+from src import constants
 from typing import Tuple
 
 
@@ -15,10 +15,10 @@ class Camera:
     def __init__(self):
         self._rect = pygame.Rect(0, 0, constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT)
 
-    def update(self):
-        self.x = Camera.scrolling_map(config.PLAYER.x * constants.CELL_WIDTH, constants.CAMERA_WIDTH / 2,
+    def update(self, player_x, player_y):
+        self.x = Camera.scrolling_map(player_x * constants.CELL_WIDTH, constants.CAMERA_WIDTH / 2,
                                       constants.CAMERA_WIDTH, constants.MAP_WIDTH * constants.CELL_WIDTH)
-        self.y = Camera.scrolling_map(config.PLAYER.y * constants.CELL_HEIGHT, constants.CAMERA_HEIGHT / 2,
+        self.y = Camera.scrolling_map(player_y* constants.CELL_HEIGHT, constants.CAMERA_HEIGHT / 2,
                                       constants.CAMERA_HEIGHT, constants.MAP_HEIGHT * constants.CELL_HEIGHT)
 
     @property

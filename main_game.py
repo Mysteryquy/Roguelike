@@ -10,9 +10,7 @@ import pygame
 import tcod
 import tcod.map
 from object_game import GameState
-import assets
-import camera
-from src import config, constants
+from src import config, constants, camera, assets
 # gamefiles
 import game_map
 import generator
@@ -57,15 +55,6 @@ class Preferences:
 # |  |__| |  /  _____  \  |  |  |  | |  |____
 # \______| /__/     \__\ |__|  |__| |_______|
 
-
-def invoke_command(command):
-    arguments = command.split()
-    for c in arguments:
-        print(c)
-    if command[0] == "gen_worm":
-        level.objects.append(monster_gen.gen_pest_worm(((int(arguments[1]), int(arguments[2])))))
-    elif command[0] == "gen_item":
-        generator.gen_item((int(arguments[1]), int(arguments[2])))
 
 
 def game_main_loop():
@@ -205,120 +194,7 @@ def setup_gui(rest_of_screen_w):
 
 def game_handle_keys():
     # get config.PLAYER input
-    keys_list = pygame.key.get_pressed()
-    events_list = pygame.event.get()
 
-    # Check for mid key
-    MOD_KEY = (keys_list[pygame.K_RSHIFT] or keys_list[pygame.K_LSHIFT])
-
-    # process input
-
-    for event in events_list:
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            #start autoexplore weird
-            x,y = pygame.mouse.get_pos()
-            x,y = config.CAMERA.coords_from_position(x, y)
-            if game_map.is_explored(x,y):
-                #game_map.start_auto_explore()
-                config.AUTO_WALKING = True
-                config.GAME.auto_explore_path = iter(game_map.get_path_from_player(x, y))
-
-
-
-
-        if config.CONSOLE.active:
-            if config.CONSOLE.react(event):
-                command = config.CONSOLE.text_ready
-                invoke_command(command)
-            return ACTIONS.CONSOLE
-        if config.CONSOLE.update_activate(event):
-            return ACTIONS.CONSOLE
-        if event.type == pygame.QUIT:
-            return ACTIONS.QUIT
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                return ACTIONS.QUIT
-
-            if event.key in constants.MOVEMENT_DICT.keys():
-                dx, dy = constants.MOVEMENT_DICT[event.key]
-                if game_map.is_walkable(config.PLAYER.x + dx, config.PLAYER.y + dy):
-                    config.PLAYER.move(dx, dy)
-                    config.FOV_CALCULATE = True
-                    return ACTIONS.MOVED
-                else:
-                    return ACTIONS.NO_ACTION
-
-
-            if event.key == pygame.K_g:
-                objects_at_player = config.GAME.current_level.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
-
-                for obj in objects_at_player:
-                    if obj.item:
-                        print(obj.name_object)
-                        obj.item.pick_up(config.PLAYER)
-                return ACTIONS.PICKED_UP
-
-            if event.key == pygame.K_d:
-                if len(config.PLAYER.container.inventory) > 0:
-                    config.PLAYER.container.inventory[-1].item.drop(config.PLAYER.x, config.PLAYER.y)
-                return ACTIONS.DROP
-
-            if event.key == pygame.K_p:
-                config.GAME.game_message("Game resumed", constants.COLOR_WHITE)
-                menu.menu_pause()
-                return ACTIONS.PAUSE
-
-            if event.key == pygame.K_i:
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound("data/audio/soundeffects/leather_inventory.wav"))
-                menu.menu_inventory()
-                return ACTIONS.INVENTORY
-
-            if event.key == pygame.K_l:
-                menu.menu_tile_select()
-                return ACTIONS.TILE_SELECT
-
-
-            if event.key == pygame.K_x:
-                menu.debug_tile_select()
-                return ACTIONS.DEBUG
-
-            if event.key == pygame.K_s:
-                config.GAME.transition_next()
-                return ACTIONS.DEBUG
-
-            if event.key == pygame.K_1:
-                config.GAME.game_message("Player position: " + str((config.PLAYER.x, config.PLAYER.y)))
-                return ACTIONS.DEBUG
-
-            if event.key == pygame.K_2:
-                config.GAME.game_message("Camera position: " + str(config.CAMERA.cam_map_coord))
-                return ACTIONS.DEBUG
-
-            if event.key == pygame.K_b:
-                game_save(display_message=True)
-                game_load()
-                return ACTIONS.DEBUG
-
-            if event.key == pygame.K_r:
-                cast_raisedead(config.PLAYER, 10)
-                return ACTIONS.SPELL
-
-            if MOD_KEY and event.key == pygame.K_PERIOD:
-                list_of_objs = config.GAME.current_level.objects_at_coords(config.PLAYER.x, config.PLAYER.y)
-                for obj in list_of_objs:
-                    if obj.structure:
-                        obj.structure.use()
-                return ACTIONS.USED
-
-            if event.key == pygame.K_BACKQUOTE:
-                game_map.start_auto_explore()
-                return ACTIONS.AUTOEXPLORED
-
-            if event.key == pygame.K_v:
-                cast_buffstats(config.PLAYER, 10)
-                return ACTIONS.SPELL
 
     if config.AUTO_EXPLORING:
 
