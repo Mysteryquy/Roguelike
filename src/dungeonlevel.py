@@ -1,3 +1,6 @@
+from typing import List
+
+import pygame
 from tcod import path
 
 from src import constants, config, esper
@@ -11,6 +14,8 @@ class DungeonLevel:
         self.player_x = -1
         self.player_y = -1
         gen = DungeonGenerator(level_name)
+        self.fov_map = None
+        # raise AttributeError("FOV_MAP INIT HERE")
         self.map, self.rooms = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
         self.pathing = path.AStar(config.FOV_MAP, 0)
         self.auto_explore_path = None
@@ -20,20 +25,21 @@ class DungeonLevel:
             for cs in entities:
                 self.world.create_entity(cs)
 
-    def add_processor(self, processor, priority):
-        self.world.add_processor(self, )
+    def add_processor(self, processor: esper.Processor, priority=1) -> None:
+        self.world.add_processor(self, processor, priority=priority)
 
-    def create_entity(self, *components):
+    def create_entity(self, *components) -> None:
         """
         creates an entity with the given components
         :param components:
-        :return:
+        :return: nothing
         """
         self.world.create_entity(components)
 
-    def entities_at_coords(self, x: int, y: int, *components):
+    def entities_at_coords(self, x: int, y: int, exclude_ent=None, *components):
         """
         gives the objects at the given coordinates (= Entities with Position component with position = (x,y)
+        :param exclude_ent:
         :param x: x position
         :param y: y position
         :param components: if you only want entities with the specific components
@@ -42,8 +48,18 @@ class DungeonLevel:
         objects = []
         for ent, pos in self.world.get_component(Position, components):
             if pos.x == x and pos.y == y:
-                objects.append(ent)
+                if not exclude_ent or exclude_ent != ent:
+                    objects.append(ent)
         return objects
+
+    def is_visible(self, x, y):
+        return self.fov_map.fov[y, x]
+
+    def is_walkable(self, x, y):
+        return self.fov_map.walkable[y, x]
+
+    def is_explored(self, x, y):
+        return self.map[x][y].explored
 
     def place_objects(self, first_level=False):
         top_level = constants.LevelNames.is_first_level(self.name) if not first_level else True

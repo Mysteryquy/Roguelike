@@ -10,7 +10,11 @@ from container import Container
 from creature import Creature
 from equipment import Equipment
 from item import Item, Gold
-from structure import ExitPortal, Stairs
+from src.components.exitportal import ExitPortal
+from src.components.name import Name
+from src.components.position import Position
+from src.components.render import Renderable
+from src.components.stairs import Stairs
 import random
 import numpy.random
 
@@ -23,37 +27,30 @@ def gen_player(coords, player_name="Player"):
     creature_com = Creature(player_name, base_atk=666, base_def=1, custom_death=death.death_player, base_evasion=20,
                             base_hit_chance=100, alignment=Creature.CreatureAlignment.PLAYER, strength=10,
                             dexterity=7, intelligence=5)
+
     player = Actor(x, y, "python", animation_key="A_PLAYER", animation_speed=0.5, creature=creature_com,
                    container=container_com)
 
     return player
 
 
-##STRUCTURES##
 def gen_stairs(level, coords, downwards=True):
     x, y = coords
-    if downwards:
-        stairs_com = Stairs(constants.LevelNames.next_level_name(level.name), downwards=downwards)
-    else:
-        stairs_com = Stairs(constants.LevelNames.previous_level_name(level.name), downwards=downwards)
+    towards = constants.LevelNames.next_level_name(level.name) if downwards \
+        else constants.LevelNames.previous_level_name(level.name)
 
     animation_key = "S_STAIRS_DOWN" if downwards else "S_STAIRS_UP"
-    stairs = Actor(x, y, "stairs", animation_key=animation_key, depth=constants.DEPTH_STRUCTURES,
-                   structure=stairs_com, draw_explored=True)
 
-    level.objects.append(stairs)
-    print("dddd")
-    level.stairs.append(stairs)
+    level.add_entity(Stairs(towards, downwards), Position(x, y),
+                     Renderable(animation_key=animation_key, depth=constants.DEPTH_STRUCTURES, draw_explored=True),
+                     Name("Stairs"))
 
 
 def gen_portal(level, coords):
     x, y = coords
-
-    port_com = ExitPortal()
-    portal = Actor(x, y, "exit portal", animation_key="S_END_GAME_PORTAL_CLOSED", depth=constants.DEPTH_STRUCTURES,
-                   structure=port_com, draw_explored=True)
-
-    level.objects.append(portal)
+    level.add_entity(ExitPortal(), Position(x,y), Name("Exit Portal"),
+                     Renderable(animation_key="S_END_GAME_PORTAL_CLOSED",
+                                depth=constants.DEPTH_STRUCTURES, draw_explored=True))
 
 
 def gen_end_game_item(level, coords):
@@ -294,7 +291,7 @@ gen_monster_dict = {
 }
 
 level_monster_dict = {
-    "DUNGEON1": [(monster_gen.gen_slime_small,100)],
+    "DUNGEON1": [(monster_gen.gen_slime_small, 100)],
     "DUNGEON2": [(monster_gen.gen_boss_beholder, 777), (monster_gen.gen_rodent_mouse, 3)],
     "DUNGEON3": [(monster_gen.gen_cat_cat, 1)]
 }

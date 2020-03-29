@@ -2,5 +2,5 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ExitPortal:
-    open: bool = False
+class Temporary:
+    remaining_turns: int

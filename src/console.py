@@ -1,4 +1,4 @@
-import generator
+from src import generator
 import monster_gen
 
 

@@ -1,3 +1,5 @@
+import math
+
 from src import esper
 from src.components.attacker import Attacker
 from src.components.block import BlocksMovement
@@ -17,4 +19,11 @@ class MovementProcessor(esper.Processor):
                 if self.level.world.has_component(ent, Attacker) and to_attack:
                     self.world.remove_component(ent, MovementAction)
                     self.world.add_component(ent, MeleeAttackAction(to_attack))
+            else:
+                # can freely move
+                pos.x, pos.y = goal_x, goal_y
 
+
+def distance_between(pos1: Position, pos2: Position) -> float:
+    dx, dy = pos1.x - pos2.x, pos1.y - pos2.y
+    return math.hypot(dx, dy)

@@ -64,7 +64,6 @@ def draw_game():
     # clear the surface
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
     config.CAMERA.update()
-    # fill_surfaces()
     config.GUI.update(None)
     config.GUI.draw()
     # draw the map

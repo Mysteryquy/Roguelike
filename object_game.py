@@ -3,19 +3,17 @@ from enum import Enum
 from src import config, constants
 import game_map
 import render
-from game_map import DungeonLevel
 from typing import List, Dict, Optional
+
+from src.dungeonlevel import DungeonLevel
 
 
 class GameState(Enum):
     RUNNING = 1
     PAUSE = 2
 
+
 class Game:
-
-
-
-
 
     def __init__(self):
         self.state: GameState = GameState.RUNNING
@@ -24,7 +22,6 @@ class Game:
         self.create_new_level("DUNGEON1", first_level=True)
         self.current_level: Optional[DungeonLevel] = self.levels["DUNGEON1"]
         constants.CURRENT_LEVEL_NAME: str = self.current_level_name
-
 
     @property
     def current_level_name(self) -> str:

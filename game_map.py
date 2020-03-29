@@ -1,7 +1,6 @@
 import tcod
 
-from src import config, constants
-import generator
+from src import config, constants, generator
 from structure import Structure
 import random
 
@@ -39,19 +38,8 @@ class Tile:
         self._texture_explored = value + "_EXPLORED"
 
 
-
-
-
-def is_visible(x, y):
-    return config.FOV_MAP.fov[y, x]
-
-
 def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
-
-
-
-
 
 
 def check_for_creature(x, y, exclude_object=None):
@@ -99,7 +87,6 @@ def calculate_fov():
                                    constants.FOV_ALGO)
 
 
-
 def find_line(coords1, coords2, include_origin=False):
     """Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)"""
 
@@ -115,10 +102,6 @@ def find_line(coords1, coords2, include_origin=False):
         tmp = tcod.line_iter(x1, y1, x2, y2)
         tmp.__next__()
         return list(tmp)
-
-
-def is_walkable(x, y):
-    return config.FOV_MAP.walkable[y, x]
 
 
 def find_radius(coords, radius):
