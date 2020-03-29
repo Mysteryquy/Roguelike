@@ -4,9 +4,11 @@ import random
 from typing import List, Tuple
 
 import numpy as np
+import pygame
 from pygame import Rect
 
 import game_map as mp
+from src.tile import Tile
 
 """
 This is basically a Python version of Bob Nystrom's Dungeon Generator written in Dart.

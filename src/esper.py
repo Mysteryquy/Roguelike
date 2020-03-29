@@ -1,4 +1,5 @@
 import time as _time
+from abc import ABC
 
 from functools import lru_cache as _lru_cache
 from typing import List as _List
@@ -8,6 +9,7 @@ from typing import Any as _Any
 from typing import Tuple as _Tuple
 from typing import Iterable as _Iterable
 
+from src.dungeonlevel import DungeonLevel
 
 version = '1.3'
 
@@ -15,7 +17,7 @@ C = _TypeVar('C')
 P = _TypeVar('P')
 
 
-class Processor:
+class Processor(ABC):
     """Base class for all Processors to inherit from.
 
     Processor instances must contain a `process` method. Other than that,
@@ -25,10 +27,14 @@ class Processor:
     appropriate world methods there, such as
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
-    world = None
+    level: DungeonLevel = None
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
+
+    @property
+    def world(self):
+        return self.level.world
 
 
 class World:
@@ -38,6 +44,7 @@ class World:
     is also responsible for executing all Processors assigned to it for each
     frame of your game.
     """
+
     def __init__(self, timed=False):
         self._processors = []
         self._next_entity_id = 0
@@ -60,16 +67,16 @@ class World:
         self._entities.clear()
         self.clear_cache()
 
-    def add_processor(self, processor_instance: Processor, priority=0) -> None:
+    def add_processor(self, level: DungeonLevel, processor_instance: Processor, priority=0) -> None:
         """Add a Processor instance to the World.
-
+        :param level: the dungeon level to which the processor will be added
         :param processor_instance: An instance of a Processor,
                subclassed from the Processor class
         :param priority: A higher number is processed first.
         """
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
-        processor_instance.world = self
+        processor_instance.level = level
         self._processors.append(processor_instance)
         self._processors.sort(key=lambda proc: proc.priority, reverse=True)
 
@@ -80,7 +87,7 @@ class World:
         """
         for processor in self._processors:
             if type(processor) == processor_type:
-                processor.world = None
+                processor.level = None
                 self._processors.remove(processor)
 
     def get_processor(self, processor_type: _Type[P]) -> P:

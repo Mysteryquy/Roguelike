@@ -46,9 +46,6 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
     return text_surface, text_surface.get_rect()
 
 
-
-
-
 def draw_menu():
     # clear the surface
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)

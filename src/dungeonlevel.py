@@ -7,7 +7,7 @@ from src.dungeon_generator import DungeonGenerator
 
 class DungeonLevel:
 
-    def __init__(self, entities, level_name):
+    def __init__(self, level_name, entities=None):
         self.player_x = -1
         self.player_y = -1
         gen = DungeonGenerator(level_name)
@@ -16,8 +16,12 @@ class DungeonLevel:
         self.auto_explore_path = None
         self.name = level_name
         self.world = esper.World()
-        for components_of_entity in entities:
-            self.world.create_entity(components_of_entity)  # create entity with given components
+        if entities:
+            for cs in entities:
+                self.world.create_entity(cs)
+
+    def add_processor(self, processor, priority):
+        self.world.add_processor(self, )
 
     def create_entity(self, *components):
         """

@@ -1,10 +1,12 @@
+from abc import ABC
+
 import pygame
 from src import config, constants
 
 from render import draw_text
 
 
-class UiElement:
+class UiElement(ABC):
     def __init__(self, surface: pygame.Surface, rect: pygame.Rect, id: str, callback=None):
         self.surface = surface
         self.rect = rect

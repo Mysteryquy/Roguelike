@@ -10,7 +10,7 @@ import pygame
 import tcod
 import tcod.map
 from object_game import GameState
-from src import config, constants, camera, assets
+from src import config, camera, assets
 # gamefiles
 import game_map
 import generator
@@ -54,7 +54,6 @@ class Preferences:
 # |  | |_ |   /  /_\  \   |  |\/|  | |   __|
 # |  |__| |  /  _____  \  |  |  |  | |  |____
 # \______| /__/     \__\ |__|  |__| |_______|
-
 
 
 def game_main_loop():
@@ -118,6 +117,7 @@ def game_initialize():
     info = pygame.display.Info()
     screen_width, screen_height = info.current_w, info.current_h
 
+    from src import constants
     constants.CAMERA_WIDTH = int(round(screen_width * constants.CAMERA_WIDTH_FRACT))
     constants.CAMERA_HEIGHT = int(round(screen_height * constants.CAMERA_HEIGHT_FRACT))
 
@@ -135,8 +135,6 @@ def game_initialize():
 
     config.SURFACE_MINI_MAP = pygame.Surface(
         (rest_of_screen_w, rest_of_screen_w))
-
-
 
     print("x:")
     print(screen_height - constants.CAMERA_HEIGHT)
@@ -195,7 +193,6 @@ def setup_gui(rest_of_screen_w):
 def game_handle_keys():
     # get config.PLAYER input
 
-
     if config.AUTO_EXPLORING:
 
         x, y = next(config.GAME.auto_explore_path, (0, 0))
@@ -241,7 +238,6 @@ def game_new(player_name):
     game_map.make_fov(config.GAME.current_map)
     config.FOV_CALCULATE = True
     game_map.calculate_fov()
-
 
 
 def game_exit():
