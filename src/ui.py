@@ -2,8 +2,10 @@ from abc import ABC
 
 import pygame
 from src import config, constants
+from src.components.health import Health
+from src.components.stats import Stats
 
-from render import draw_text
+from src.render_helper import draw_text
 
 
 class UiElement(ABC):
@@ -335,8 +337,11 @@ class GuiContainer(UiContainer):
             element.draw()
 
     def update(self, player_input):
+        health = config.GAME.current_level.world.component_for_player(Health)
+        stats = config.GAME.current_level.world.component_for_player(Stats)
         self.items["health_bar"].update(
-            (config.PLAYER.creature.hp, config.PLAYER.creature.maxhp))
+            (health.current_health, health.max_health))
+        """
         self.items["mana_bar"].update(
             (config.PLAYER.creature.current_mana, config.PLAYER.creature.max_mana))
         if config.PLAYER.creature.level == constants.MAX_LEVEL:
@@ -348,6 +353,8 @@ class GuiContainer(UiContainer):
                                                           config.PLAYER.creature.level - 1] if config.PLAYER.creature.level != 1 else 0),
                  constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))
 
-        self.items["str"].update(config.PLAYER.creature.strength)
-        self.items["dex"].update(config.PLAYER.creature.dexterity)
-        self.items["int"].update(config.PLAYER.creature.intelligence)
+        """
+        self.items["str"].update(stats.strength)
+        self.items["dex"].update(stats.dexterity)
+        self.items["int"].update(stats.intelligence)
+

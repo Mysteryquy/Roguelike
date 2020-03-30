@@ -1,8 +1,9 @@
 import tcod
 
-from src import config, constants, generator
-from structure import Structure
+from src import config, constants
 import random
+
+from src.components.position import Position
 
 
 def transition_reset():
@@ -69,24 +70,6 @@ def check_for_creature(x, y, exclude_object=None):
                 return target
 
 
-def make_fov(incoming_map):
-    config.FOV_MAP = tcod.map.Map(constants.MAP_WIDTH, constants.MAP_HEIGHT)
-
-    for y in range(constants.MAP_HEIGHT):
-        for x in range(constants.MAP_WIDTH):
-            # same as before, but now we have array for walkable and transparent
-            config.FOV_MAP.walkable[y, x] = not incoming_map[x][y].block_path
-            config.FOV_MAP.transparent[y, x] = not incoming_map[x][y].block_path
-
-
-def calculate_fov():
-    if config.FOV_CALCULATE:
-        config.FOV_CALCULATE = False
-        print(config.PLAYER.x)
-        config.FOV_MAP.compute_fov(config.PLAYER.x, config.PLAYER.y, constants.TORCH_RADIUS, constants.FOV_LIGHT_WALLS,
-                                   constants.FOV_ALGO)
-
-
 def find_line(coords1, coords2, include_origin=False):
     """Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)"""
 
@@ -143,7 +126,7 @@ def how_much_to_place(level, room_size, room):
 def is_explored(x, y):
     return config.GAME.current_map[x][y].explored
 
-
+"""
 def get_path_from_player(goal_x: int, goal_y: int):
     return config.GAME.pathing.get_path(config.PLAYER.x, config.PLAYER.y, goal_x, goal_y)
 
@@ -210,7 +193,7 @@ def autoexplore_new_goal():
         config.CANNOT_AUTOEXPLORE_FURTHER = True
         return False
 
-
+"""
 def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int, exclude_origin: bool = False):
     tiles = []
     for i in list(range(-radius_x, radius_x + 1)):

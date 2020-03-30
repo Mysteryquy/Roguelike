@@ -4,10 +4,8 @@ import os
 import pygame
 import tcod
 
-from src import config, constants
+from src import config, constants, map_helper, render_helper
 import monster_gen
-import render
-import game_map
 
 
 def death_player(player, killer):
@@ -17,10 +15,10 @@ def death_player(player, killer):
 
     screen_center = (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2)
 
-    render.draw_text(config.SURFACE_MAIN, "lol nibba u dead!", screen_center, constants.COLOR_WHITE, center=True)
-    render.draw_text(config.SURFACE_MAIN, "Check the legacy file to know what beat yo ass up",
-                     (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100), constants.COLOR_WHITE,
-                     center=True)
+    render_helper.draw_text(config.SURFACE_MAIN, "lol nibba u dead!", screen_center, constants.COLOR_WHITE, center=True)
+    render_helper.draw_text(config.SURFACE_MAIN, "Check the legacy file to know what beat yo ass up",
+                            (constants.RECT_WHOLE_SCREEN.width / 2, constants.RECT_WHOLE_SCREEN.height / 2 + 100), constants.COLOR_WHITE,
+                            center=True)
 
     pygame.display.update()
 
@@ -54,7 +52,7 @@ def death_worm(monster, killer,):
     if chance < 2:
 
         x, y = monster.owner.x, monster.owner.y
-        new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+        new_coords = map_helper.search_empty_tile(x, y, 2, 2, exclude_origin=True)
         if new_coords:
             new_mob = monster_gen.gen_pest_worm(new_coords, monster.name_instance)
             level.objects.append(new_mob)
@@ -70,7 +68,7 @@ def death_ice_elemental(monster, killer,):
     if chance < 1:
 
         x, y = monster.owner.x, monster.owner.y
-        new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+        new_coords = map_helper.search_empty_tile(x, y, 2, 2, exclude_origin=True)
         if new_coords:
             new_mob = monster_gen.gen_elemental_icicle(new_coords, monster.name_instance)
             level.objects.append(new_mob)
@@ -81,7 +79,7 @@ def death_ice_elemental(monster, killer,):
 
 def death_gold_elemental(monster, killer):
     x, y = monster.owner.x, monster.owner.y
-    new_coords = game_map.search_empty_tile(x, y, 2, 2, exclude_origin=True)
+    new_coords = map_helper.search_empty_tile(x, y, 2, 2, exclude_origin=True)
     if new_coords:
         new_mob = generator.gen_and_append_gold(new_coords)
         level.objects.append(new_mob)
@@ -103,13 +101,13 @@ def death_demon_boomi(monster, killer):
                                            #pierce_creature=False, radius=local_radius)
 
     # get sequence of tiles
-    tiles_to_damage = game_map.find_radius((monster.owner.x, monster.owner.y),  local_radius)
+    tiles_to_damage = map_helper.find_radius((monster.owner.x, monster.owner.y), local_radius)
 
     creature_hit = False
 
     # damage all creatures in tiles
     for (x, y) in tiles_to_damage:
-        creature_to_damage = game_map.check_for_creature(x, y)
+        creature_to_damage = map_helper.check_for_creature(x, y)
 
         if creature_to_damage:
             creature_to_damage.creature.take_damage(10, monster)

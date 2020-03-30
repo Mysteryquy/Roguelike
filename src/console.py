@@ -2,7 +2,7 @@ from src import generator
 import monster_gen
 
 
-def invoke_command(command):
+def invoke_command(level, command):
     arguments = command.split()
     for c in arguments:
         print(c)

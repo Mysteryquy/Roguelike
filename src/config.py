@@ -1,6 +1,6 @@
 # coding=utf-8
+
 ASSETS = None
-PLAYER = None
 PREFERENCES = None
 GAME = None
 FOV_CALCULATE = True

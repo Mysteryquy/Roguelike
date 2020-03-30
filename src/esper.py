@@ -9,8 +9,6 @@ from typing import Any as _Any
 from typing import Tuple as _Tuple
 from typing import Iterable as _Iterable
 
-from src.dungeonlevel import DungeonLevel
-
 version = '1.3'
 
 C = _TypeVar('C')
@@ -27,14 +25,14 @@ class Processor(ABC):
     appropriate world methods there, such as
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
-    level: DungeonLevel = None
+
+    def __init__(self, level=None):
+        self.level = level
+        self.player = None
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
 
-    @property
-    def world(self):
-        return self.level.world
 
 
 class World:
@@ -51,6 +49,7 @@ class World:
         self._components = {}
         self._entities = {}
         self._dead_entities = set()
+        self._player = self.create_entity()
         if timed:
             self.process_times = {}
             self._process = self._timed_process
@@ -67,7 +66,7 @@ class World:
         self._entities.clear()
         self.clear_cache()
 
-    def add_processor(self, level: DungeonLevel, processor_instance: Processor, priority=0) -> None:
+    def add_processor(self, level, processor_instance: Processor, priority=0) -> None:
         """Add a Processor instance to the World.
         :param level: the dungeon level to which the processor will be added
         :param processor_instance: An instance of a Processor,
@@ -77,6 +76,7 @@ class World:
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
         processor_instance.level = level
+        processor_instance.player = self._player
         self._processors.append(processor_instance)
         self._processors.sort(key=lambda proc: proc.priority, reverse=True)
 
@@ -164,6 +164,9 @@ class World:
         """
         return self._entities[entity][component_type]
 
+    def component_for_player(self, component):
+        return self.component_for_entity(self._player, component)
+
     def components_for_entity(self, entity: int) -> _Tuple[C, ...]:
         """Retrieve all Components for a specific Entity, as a Tuple.
 
@@ -179,6 +182,9 @@ class World:
         assigned to the passed Entity ID.
         """
         return tuple(self._entities[entity].values())
+
+    def components_for_player(self):
+        return self.components_for_entity(self._player)
 
     def has_component(self, entity: int, component_type: _Any) -> bool:
         """Check if a specific Entity has a Component of a certain type.
@@ -221,6 +227,13 @@ class World:
 
         self._entities[entity][component_type] = component_instance
         self.clear_cache()
+
+    def add_components(self, entity: int, *components):
+        for component in components:
+            self.add_component(entity, component)
+
+    def add_components_to_player(self, *components):
+        self.add_components(self._player, *components)
 
     def remove_component(self, entity: int, component_type: _Any) -> int:
         """Remove a Component instance from an Entity, by type.

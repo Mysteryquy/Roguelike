@@ -14,7 +14,3 @@ class Renderable:
     flicker_timer: float = 0.0
     sprite_image: int = 0
     draw_explored: bool = False
-
-    @property
-    def animation(self):
-        return config.ASSETS.animation_dict

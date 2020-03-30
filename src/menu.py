@@ -1,9 +1,6 @@
 import pygame
 
-from src import config, constants
-import game_map
-import render
-import ui
+from src import config, constants, map_helper, render_helper, ui
 
 
 class MainMenu:
@@ -92,8 +89,8 @@ class MainMenu:
 
             self.button_container.draw()
 
-            render.draw_text(config.SURFACE_MAIN, self.title_text, (self.title_x, self.title_y), constants.COLOR_RED,
-                             center=True)
+            render_helper.draw_text(config.SURFACE_MAIN, self.title_text, (self.title_x, self.title_y), constants.COLOR_RED,
+                                    center=True)
 
             pygame.display.update()
 
@@ -104,7 +101,7 @@ class MainMenu:
         # try to load game, start new if problems
         try:
             self.game_load()
-            render.fill_surfaces()
+            render_helper.fill_surfaces()
         except Exception as e:
             print(e)
 
@@ -143,7 +140,7 @@ class MainMenu:
         pygame.mixer.music.load(config.ASSETS.music_lvl_1)
         pygame.mixer.music.play(-1)
         self.game_new(player_name)
-        render.fill_surfaces()
+        render_helper.fill_surfaces()
         self.game_main_loop()
 
     def options_button_callback(self, id):
@@ -225,8 +222,8 @@ def menu_pause():
     menu_text = "PAUSED"
     menu_font = config.ASSETS.FONT_DEBUG_MESSAGE
 
-    text_height = render.helper_text_height(menu_font)
-    text_width = len(menu_text) * render.helper_text_width(menu_font)
+    text_height = render_helper.helper_text_height(menu_font)
+    text_width = len(menu_text) * render_helper.helper_text_width(menu_font)
 
     while not menu_close:
 
@@ -239,9 +236,9 @@ def menu_pause():
                 if event.key == pygame.K_p:
                     menu_close = True
 
-        render.draw_text(config.SURFACE_MAIN, menu_text,
-                         ((window_width / 2) - (text_width / 2), (window_height / 2) - (text_height / 2)),
-                         constants.COLOR_BLACK, constants.COLOR_WHITE)
+        render_helper.draw_text(config.SURFACE_MAIN, menu_text,
+                                ((window_width / 2) - (text_width / 2), (window_height / 2) - (text_height / 2)),
+                                constants.COLOR_BLACK, constants.COLOR_WHITE)
 
         config.CLOCK.tick(constants.GAME_FPS)
 
@@ -267,7 +264,7 @@ def menu_inventory():
     menu_text_font = config.ASSETS.FONT_MESSAGE_TEXT
 
     # Helper var
-    menu_text_height = render.helper_text_height(menu_text_font)
+    menu_text_height = render_helper.helper_text_height(menu_text_font)
 
     local_inventory_surface = pygame.Surface((menu_width, menu_height))
 
@@ -310,15 +307,15 @@ def menu_inventory():
         for line, (name) in enumerate(print_list):
 
             if int(line) == int(mouse_line_selection) and mouse_in_window:
-                render.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
-                                 constants.COLOR_WHITE, constants.COLOR_GREY)
+                render_helper.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                                        constants.COLOR_WHITE, constants.COLOR_GREY)
 
             else:
-                render.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
-                                 constants.COLOR_WHITE)
+                render_helper.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                                        constants.COLOR_WHITE)
 
         # Render Game
-        render.draw_menu()
+        render_helper.draw_menu()
 
         # Display Menu
         config.SURFACE_MAIN.blit(local_inventory_surface, (menu_x, menu_y))
@@ -328,19 +325,19 @@ def menu_inventory():
         pygame.display.update()
 
 
-def debug_tile_select():
-    x, y = menu_tile_select()
-    objects = game_map.objects_at_coords(x, y)
+def debug_tile_select(level):
+    x, y = menu_tile_select(level)
+    objects = level.objects_at_coords(x, y)
     config.GAME.game_message("Mouse position: " + str((x, y)))
 
 
-def debug_tile_select_pathing():
-    (x, y) = menu_tile_select()
+def debug_tile_select_pathing(level):
+    x, y = menu_tile_select(level)
     print("Path from" + str((config.PLAYER.x, config.PLAYER.y)) + " to " + str((x, y)) + " :" + str(
-        game_map.get_path_from_player(x, y)))
+        map_helper.get_path_from_player(x, y)))
 
 
-def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
+def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
     """
     """
     # This menu let the player select a tile.
@@ -364,15 +361,15 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
         valid_tiles = []
 
         if coords_origin:
-            full_list_tiles = game_map.find_line(coords_origin, (int_x, int_y))
+            full_list_tiles = map_helper.find_line(coords_origin, (int_x, int_y))
             for i, (x, y) in enumerate(full_list_tiles):
 
                 valid_tiles.append((x, y))
 
-                if not penetrate_walls and not game_map.is_walkable(x, y):
+                if not penetrate_walls and not level.is_walkable(x, y):
                     break
 
-                if not pierce_creature and game_map.check_for_creature(x, y):
+                if not pierce_creature and map_helper.check_for_creature(x, y):
                     break
 
             if max_range:
@@ -393,7 +390,7 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
                 if event.button == 1:
                     if previous:
                         for x, y in previous_drawn:
-                            if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x, y):
+                            if config.GAME.current_map[x][y].was_drawn and not level.is_visible(x, y):
                                 config.SURFACE_MAP.blit(
                                     config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],
                                     (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
@@ -402,13 +399,13 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
                                                         (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     return valid_tiles[-1]
 
-        render.draw_game()
+        render_helper.draw_game()
 
         if previous:
             for x, y in previous_drawn:
                 if x >= constants.MAP_WIDTH+1 or y >= constants.MAP_HEIGHT+1:
                     continue
-                if config.GAME.current_map[x][y].was_drawn and not game_map.is_visible(x, y):
+                if config.GAME.current_map[x][y].was_drawn and not level.is_visible(x, y):
                     config.SURFACE_MAP.blit(config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],
                                             (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                 else:
@@ -420,20 +417,20 @@ def menu_tile_select(coords_origin=None, max_range=None, penetrate_walls=True, p
 
         # Draw Rectangle at mouse position on top of game, dont draw the last tile in grey
         for (tile_x, tile_y) in valid_tiles[:-1]:
-            render.draw_tile_rect((tile_x, tile_y), constants.COLOR_GREY)
-            if not game_map.is_visible(tile_x, tile_y):
+            render_helper.draw_tile_rect((tile_x, tile_y), constants.COLOR_GREY)
+            if not level.is_visible(tile_x, tile_y):
                 previous_drawn.append((tile_x, tile_y))
         last_tile_x, last_tile_y = valid_tiles[-1]
-        render.draw_tile_rect((last_tile_x, last_tile_y), constants.COLOR_RED, mark="X")
-        if not game_map.is_visible(last_tile_x, last_tile_y):
+        render_helper.draw_tile_rect((last_tile_x, last_tile_y), constants.COLOR_RED, mark="X")
+        if not level.is_visible(last_tile_x, last_tile_y):
             previous_drawn.append((last_tile_x, last_tile_y))
 
         if radius:
-            area_effect = game_map.find_radius(valid_tiles[-1], radius)
+            area_effect = map_helper.find_radius(valid_tiles[-1], radius)
 
             for (tile_x, tile_y) in area_effect:
-                render.draw_tile_rect((tile_x, tile_y))
-                if not game_map.is_visible(tile_x, tile_y):
+                render_helper.draw_tile_rect((tile_x, tile_y))
+                if not level.is_visible(tile_x, tile_y):
                     previous_drawn.append((tile_x, tile_y))
         config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
 

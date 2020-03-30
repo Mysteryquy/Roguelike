@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from src.components.position import Position
+
 
 class AiType(Enum):
     AI_FLEE = auto()
@@ -10,6 +12,23 @@ class AiType(Enum):
 
 @dataclass
 class Ai:
-    """ component holds the AI of an entity"""
-    type: AiType
-    args = None  # for arguments to the AI type (e.g. AI_CHASE who is the AI chasing?)
+    """ component for entity that has an ai """
+
+
+@dataclass
+class AiFlee(Ai):
+    target: Position
+    act_unseen: bool = False
+
+
+@dataclass
+class AiChase(Ai):
+    target: Position
+    act_unseen: bool = False
+
+
+@dataclass
+class AiConfuse(Ai):
+    duration: int
+    old_ai: Ai
+    act_unseen: bool = True

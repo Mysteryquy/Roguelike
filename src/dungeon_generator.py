@@ -5,9 +5,8 @@ from typing import List, Tuple
 
 import numpy as np
 import pygame
-from pygame import Rect
 
-import game_map as mp
+from src import map_helper as mp
 from src.tile import Tile
 
 """
@@ -57,7 +56,6 @@ class DungeonGenerator:
 
         self.connect_regions()
         self.remove_dead_ends()
-        mp.make_fov(self.current_map)
         return self.current_map, self.rooms
 
     def start_region(self) -> None:
