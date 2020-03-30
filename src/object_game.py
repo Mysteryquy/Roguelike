@@ -4,6 +4,8 @@ from src import config, constants, map_helper, render_helper
 from typing import List, Dict, Optional
 
 from src.components.action import HasAction
+from src.components.attacker import Attacker
+from src.components.block import BlocksMovement
 from src.components.energy import Energy
 from src.components.health import Health
 from src.components.name import Name
@@ -73,7 +75,9 @@ class Game:
                                                  Stats(10, 10, 10),
                                                  Energy(100),
                                                  Renderable(animation_key="A_PLAYER", animation_speed=1.0),
-                                                 HasAction()
+                                                 Attacker(attack=666, hit_chance=100, evasion_chance=10, defense=5),
+                                                 Stats(strength=10, dexterity=10, intelligence=10),
+                                                 BlocksMovement()
                                                  )
 
         level.init_processors(game_save=self.game_save, game_load=self.game_load)

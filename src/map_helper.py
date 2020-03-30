@@ -1,6 +1,6 @@
 import tcod
 
-from src import config, constants
+from src import config, constants, generator
 import random
 
 from src.components.position import Position
@@ -106,20 +106,11 @@ def find_radius(coords, radius):
 
 
 def how_much_to_place(level, room_size, room):
-    if room_size <= 20:
-        fuckingree = 3
-    elif room_size <= 30:
-        fuckingree = 4
-    elif room_size <= 40:
-        fuckingree = 5
-    elif room_size <= 50:
-        fuckingree = 6
-    else:
-        fuckingree = 2
-    for i in range(0, fuckingree):
+    count = 2
+    for i in range(0, count):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-        if len(level.objects_at_coords(x, y)) == 0:
+        if len(level.entities_at_coords(x, y)) == 0:
             generator.what_to_gen(level, (x, y))
 
 

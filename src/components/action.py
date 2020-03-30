@@ -36,5 +36,10 @@ class UseStairsAction(Action):
 
 
 @dataclass
+class MeleeAttackAction(Action):
+    target: int
+
+
+@dataclass
 class StartAutoexploreAction(Action):
     pass

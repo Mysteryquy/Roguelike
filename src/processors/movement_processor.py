@@ -4,7 +4,7 @@ from src import esper, config
 from src.components.attacker import Attacker
 from src.components.block import BlocksMovement
 from src.components.health import Health
-from src.components.action import MovementAction
+from src.components.action import MovementAction, MeleeAttackAction
 from src.components.position import Position
 
 
@@ -18,7 +18,7 @@ class MovementProcessor(esper.Processor):
                 to_attack = next((e for e in ents if self.level.world.has_component(e, Health)), None)
                 if self.level.world.has_component(ent, Attacker) and to_attack:
                     self.level.world.remove_component(ent, MovementAction)
-                    # self.level.add_component(ent, MeleeAttackAction(to_attack))
+                    self.level.world.add_component(ent, MeleeAttackAction(to_attack))
             else:
                 # can freely move
                 if self.level.is_walkable(goal_x, goal_y):

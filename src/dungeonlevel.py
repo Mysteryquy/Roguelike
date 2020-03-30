@@ -3,11 +3,13 @@ from typing import List
 import pygame
 from tcod import path, tcod
 
-from src import constants, config, esper, generator
+from src import constants, config, esper, generator, map_helper
 from src.components.position import Position
 from src.dungeon_generator import DungeonGenerator
 from src.processors.ai_processor import AiProcessor
+from src.processors.attack_processor import AttackProcessor
 from src.processors.energy_processor import EnergyProcessor
+from src.processors.health_processor import HealthProcessor
 from src.processors.input_processor import InputProcessor
 from src.processors.movement_processor import MovementProcessor
 from src.processors.render_processor import RenderProcessor
@@ -45,18 +47,20 @@ class DungeonLevel:
                                      constants.FOV_ALGO)
 
     def init_processors(self, game_load, game_save):
+        self.render_processor = RenderProcessor(self)
         self.world.add_processor(self, EnergyProcessor(), priority=1000)
         self.world.add_processor(self, InputProcessor(game_load=game_load, game_save=game_save), priority=999)
         self.world.add_processor(self, AiProcessor(), priority=998)
         self.world.add_processor(self, MovementProcessor(), priority=997)
+        self.world.add_processor(self, AttackProcessor(), priority=900)
+        self.world.add_processor(self, HealthProcessor(), priority=600)
         self.world.add_processor(self, RoundCounterProcessor(), priority=11)
-        self.world.add_processor(self, RenderProcessor(self), priority=10)
+        self.world.add_processor(self, self.render_processor, priority=10)
         self.world.add_processor(self, StairProcessor())
 
     def entities_at_coords(self, x: int, y: int, *components, **kwargs):
         """
         gives the objects at the given coordinates (= Entities with Position component with position = (x,y)
-        :param exclude_ent:
         :param x: x position
         :param y: y position
         :param components: if you only want entities with the specific components
@@ -90,6 +94,8 @@ class DungeonLevel:
             cal_x = room.right - room.left
             cal_y = room.bottom - room.top
 
+            room_size = cal_x * cal_y
+
             first_room = (room == room_list[0])
             last_room = (room == room_list[-1])
 
@@ -119,4 +125,4 @@ class DungeonLevel:
                 else:
                     generator.gen_stairs(self, room.center, leads_to=constants.LevelNames.next_level_name(self.name))
 
-            # how_much_to_place(self, room_size, room)
+            map_helper.how_much_to_place(self, room_size, room)

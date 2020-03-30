@@ -24,7 +24,7 @@ class Preferences:
 
 def game_main_loop():
     game_quit = False
-
+    config.GAME.current_level.render_processor.process()
     while not game_quit:
         if config.GAME.state == GameState.RUNNING:
             config.GAME.current_level.world.process()
