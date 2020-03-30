@@ -26,7 +26,7 @@ MOVEMENT_DICT = {
 
 
 class InputProcessor(esper.Processor):
-    def __init__(self, game_save, game_load, level = None):
+    def __init__(self, game_save, game_load, level=None):
         super().__init__(level)
         self.game_save = game_save
         self.game_load = game_load
@@ -58,10 +58,9 @@ class InputProcessor(esper.Processor):
                     return ACTIONS.QUIT
                 """
                 if event.type == pygame.KEYDOWN:
-                    """
+
                     if event.key == pygame.K_ESCAPE:
-                        return ACTIONS.QUIT
-                    """
+                        pygame.quit()
 
                     if event.key in MOVEMENT_DICT.keys():
                         dx, dy = MOVEMENT_DICT[event.key]
@@ -115,4 +114,3 @@ class InputProcessor(esper.Processor):
                         # TODO CHANGE THIS
                         # cast_buffstats(config.PLAYER, 10)
                         # return ACTIONS.SPELL
-

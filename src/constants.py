@@ -13,8 +13,8 @@ CELL_HEIGHT = 32
 SPRITE_WIDTH = 16
 SPRITE_HEIGHT = 16
 
-MAP_WIDTH = 25
-MAP_HEIGHT = 25
+MAP_WIDTH = 19
+MAP_HEIGHT = 19
 # Map limitations (must be odd number)
 assert MAP_WIDTH % 2 == 1
 assert MAP_HEIGHT % 2 == 1

@@ -3,6 +3,7 @@ from enum import Enum
 from src import config, constants, map_helper, render_helper
 from typing import List, Dict, Optional
 
+from src.components.action import HasAction
 from src.components.energy import Energy
 from src.components.health import Health
 from src.components.name import Name
@@ -71,21 +72,22 @@ class Game:
                                                  Name(self.player_name), Health(100),
                                                  Stats(10, 10, 10),
                                                  Energy(100),
-                                                 Renderable(animation_key="A_PLAYER", animation_speed=1.0)
+                                                 Renderable(animation_key="A_PLAYER", animation_speed=1.0),
+                                                 HasAction()
                                                  )
-        level.place_objects(first_level=first_level)
+
         level.init_processors(game_save=self.game_save, game_load=self.game_load)
         self.levels[level_name] = level
         return level
 
-    def transition_to_level(self, level_name, new_level=False):
+    def _transition_to_level(self, level_name):
 
         for ent, _ in self.current_level.world.get_component(Persistent):
             if self.current_level.world.has_component(ent, Player):
                 # player is not removed as entity, just delete its components
                 for comp in self.current_level.world.components_for_entity(ent):
                     self.levels[level_name].world.add_component(ent, comp)
-                    self.current_level.world.remove_component(ent, comp)
+                    self.current_level.world.remove_component(ent, type(comp))
             else:
                 for comp in self.current_level.world.components_for_entity(ent):
                     self.levels[level_name].world.add_component(ent, comp)
@@ -94,8 +96,8 @@ class Game:
         self.current_level = self.levels[level_name]
 
         map_helper.transition_reset()
-        map_helper.make_fov(self.current_map)
         config.FOV_CALCULATE = True
+        self.current_level.calculate_fov()
         render_helper.fill_surfaces()
 
     def transition(self, to_level):
@@ -103,8 +105,9 @@ class Game:
         make_new = to_level not in self.levels
         if make_new:
             level = self.create_new_level(level_name=to_level)
+        self._transition_to_level(to_level)
+        if make_new:
             level.place_objects()
-        self.transition_to_level(to_level, new_level=make_new)
         self.current_level = self.levels[to_level]
 
     def game_message(self, game_msg, msg_color=constants.COLOR_GREY):

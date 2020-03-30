@@ -3,7 +3,7 @@ from typing import List
 import pygame
 from tcod import path, tcod
 
-from src import constants, config, esper
+from src import constants, config, esper, generator
 from src.components.position import Position
 from src.dungeon_generator import DungeonGenerator
 from src.processors.ai_processor import AiProcessor
@@ -11,6 +11,8 @@ from src.processors.energy_processor import EnergyProcessor
 from src.processors.input_processor import InputProcessor
 from src.processors.movement_processor import MovementProcessor
 from src.processors.render_processor import RenderProcessor
+from src.processors.roundcounter_processor import RoundCounterProcessor
+from src.processors.stair_processor import StairProcessor
 
 
 class DungeonLevel:
@@ -47,20 +49,11 @@ class DungeonLevel:
         self.world.add_processor(self, InputProcessor(game_load=game_load, game_save=game_save), priority=999)
         self.world.add_processor(self, AiProcessor(), priority=998)
         self.world.add_processor(self, MovementProcessor(), priority=997)
-        self.world.add_processor(self, RenderProcessor(self))
+        self.world.add_processor(self, RoundCounterProcessor(), priority=11)
+        self.world.add_processor(self, RenderProcessor(self), priority=10)
+        self.world.add_processor(self, StairProcessor())
 
-    def add_processor(self, processor: esper.Processor, priority=1) -> None:
-        self.world.add_processor(self, processor, priority=priority)
-
-    def create_entity(self, *components) -> None:
-        """
-        creates an entity with the given components
-        :param components:
-        :return: nothing
-        """
-        self.world.create_entity(components)
-
-    def entities_at_coords(self, x: int, y: int, exclude_ent=None, *components):
+    def entities_at_coords(self, x: int, y: int, *components, **kwargs):
         """
         gives the objects at the given coordinates (= Entities with Position component with position = (x,y)
         :param exclude_ent:
@@ -72,7 +65,7 @@ class DungeonLevel:
         objects = []
         for ent, tpl in self.world.get_components(Position, *components):
             if tpl[0].x == x and tpl[0].y == y:
-                if not exclude_ent or exclude_ent != ent:
+                if "exclude_ent" not in kwargs or not kwargs["exclude_ent"] or kwargs["exclude_ent"] != ent:
                     objects.append(ent)
         return objects
 
@@ -86,6 +79,7 @@ class DungeonLevel:
         return self.map[x][y].explored
 
     def place_objects(self, first_level=False):
+        pos = self.world.component_for_player(Position)
         top_level = constants.LevelNames.is_first_level(self.name) if not first_level else True
         final_level = constants.LevelNames.is_last_level(self.name) if not first_level else False
         room_list = self.rooms
@@ -95,9 +89,7 @@ class DungeonLevel:
             # Tobias room tile calculation
             cal_x = room.right - room.left
             cal_y = room.bottom - room.top
-            room_size = cal_x * cal_y
 
-            room_center = room.center
             first_room = (room == room_list[0])
             last_room = (room == room_list[-1])
 
@@ -107,14 +99,15 @@ class DungeonLevel:
                 pos = self.world.component_for_player(Position)
                 pos.x, pos.y = x, y
                 self.player_x, self.player_y = x, y
+                config.FOV_CALCULATE = True
 
             if first_room and top_level:
                 x, y = room.center
                 # generator.gen_portal(self, room.center)
 
             if first_room and not top_level:
-                print("KEK")
-                # generator.gen_stairs(self, (config.PLAYER.x, config.PLAYER.y), downwards=False)
+                generator.gen_stairs(self, (pos.x, pos.y), leads_to=constants.LevelNames.previous_level_name(self.name)
+                                     , downwards=False)
 
             if last_room:
 
@@ -124,7 +117,6 @@ class DungeonLevel:
                     # gen_stairs(room.center,downwards=True)
                     # generator.gen_end_game_item(self, room.center)
                 else:
-                    print("KEK")
-                    # generator.gen_stairs(self, room.center, downwards=True)
+                    generator.gen_stairs(self, room.center, leads_to=constants.LevelNames.next_level_name(self.name))
 
             # how_much_to_place(self, room_size, room)

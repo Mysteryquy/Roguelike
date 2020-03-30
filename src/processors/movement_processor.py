@@ -12,7 +12,7 @@ class MovementProcessor(esper.Processor):
     def process(self):
         for ent, (pos, movement_action) in self.level.world.get_components(Position, MovementAction):
             goal_x, goal_y = pos.x + movement_action.dx, pos.y + movement_action.dy
-            ents = self.level.entities_at_coords(goal_x, goal_y, BlocksMovement)
+            ents = self.level.entities_at_coords(goal_x, goal_y, BlocksMovement, exclude_ent=None)
             if len(ents) > 0:
                 # cannot use movement action, see if maybe melee attack action may be used instead
                 to_attack = next((e for e in ents if self.level.world.has_component(e, Health)), None)
