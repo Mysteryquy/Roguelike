@@ -9,17 +9,17 @@ class CreatureAlignment(Enum):
     PLAYER = 4
 
     @classmethod
-    def can_bump(cls, c1, c2):
-        if c1.alignment == cls.FRIEND:
-            return c2.alignment == cls.FOE
-        elif c1.alignment == cls.FOE:
-            return c2.alignment == cls.FRIEND or c2.alignment == cls.PLAYER
-        elif c1.alignment == cls.PLAYER:
-            return c2.alignment == cls.FOE
+    def can_bump(cls, a1, a2):
+        if a1 == cls.FRIEND:
+            return a2 == cls.FOE
+        elif a1 == cls.FOE:
+            return a2 == cls.FRIEND or a2 == cls.PLAYER
+        elif a1 == cls.PLAYER:
+            return a2 == cls.FOE
 
     @classmethod
-    def can_swap(cls, c1, c2):
-        return c1.alignment == cls.PLAYER and c2.alignment == cls.FRIEND
+    def can_swap(cls, a1, a2):
+        return a1 == cls.PLAYER and a2 == cls.FRIEND
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src import config, constants, map_helper, render_helper
+from src import config, constants, map_helper, render_helper, generator
 from typing import List, Dict, Optional
 
 from src.components.action import HasAction
@@ -70,15 +70,8 @@ class Game:
     def create_new_level(self, level_name, first_level=False, create_player=False):
         level = DungeonLevel(level_name=level_name)
         if create_player:
-            level.world.add_components_to_player(Player(), Persistent(), Position(0, 0),
-                                                 Name(self.player_name), Health(100),
-                                                 Stats(10, 10, 10),
-                                                 Energy(100),
-                                                 Renderable(animation_key="A_PLAYER", animation_speed=1.0),
-                                                 Attacker(attack=666, hit_chance=100, evasion_chance=10, defense=5),
-                                                 Stats(strength=10, dexterity=10, intelligence=10),
-                                                 BlocksMovement()
-                                                 )
+            generator.gen_player(level, (0,0), self.player_name)
+
 
         level.init_processors(game_save=self.game_save, game_load=self.game_load)
         self.levels[level_name] = level

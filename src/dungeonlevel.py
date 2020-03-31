@@ -8,6 +8,7 @@ from src.components.position import Position
 from src.dungeon_generator import DungeonGenerator
 from src.processors.ai_processor import AiProcessor
 from src.processors.attack_processor import AttackProcessor
+from src.processors.death_processor import DeathProcessor
 from src.processors.energy_processor import EnergyProcessor
 from src.processors.health_processor import HealthProcessor
 from src.processors.input_processor import InputProcessor
@@ -55,7 +56,8 @@ class DungeonLevel:
         self.world.add_processor(self, AttackProcessor(), priority=900)
         self.world.add_processor(self, HealthProcessor(), priority=600)
         self.world.add_processor(self, RoundCounterProcessor(), priority=11)
-        self.world.add_processor(self, self.render_processor, priority=10)
+        self.world.add_processor(self, DeathProcessor(), priority=6)
+        self.world.add_processor(self, self.render_processor, priority=5)
         self.world.add_processor(self, StairProcessor())
 
     def entities_at_coords(self, x: int, y: int, *components, **kwargs):

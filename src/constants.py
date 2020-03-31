@@ -91,55 +91,7 @@ DEPTH_ITEM = 2
 DEPTH_CORPSE = 100
 DEPTH_STRUCTURES = 101
 
-# xp related stuff
-XP_NEEDED = {
-    1: 300,
-    2: 700,
-    3: 1200,
-    4: 1800,
-    5: 2500,
-}
-
-MAX_LEVEL = max(XP_NEEDED.keys())
-
-XP_NEEDED_FOR_NEXT = {}
-for i in XP_NEEDED.keys():
-    if i < MAX_LEVEL:
-        XP_NEEDED_FOR_NEXT[i] = XP_NEEDED[i + 1] - XP_NEEDED[i]
-    else:
-        XP_NEEDED_FOR_NEXT[i] = math.inf
-
-print(XP_NEEDED_FOR_NEXT)
-
 EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
-
-# xp related stuff
-XP_NEEDED = {
-    1: 300,
-    2: 700,
-    3: 1200,
-    4: 1800,
-    5: 2500,
-}
-
-MAX_LEVEL = max(XP_NEEDED.keys())
-
-XP_NEEDED_FOR_NEXT = {}
-for i in XP_NEEDED.keys():
-    if i < MAX_LEVEL:
-        XP_NEEDED_FOR_NEXT[i] = XP_NEEDED[i + 1] - XP_NEEDED[i]
-    else:
-        XP_NEEDED_FOR_NEXT[i] = math.inf
-
-print(XP_NEEDED_FOR_NEXT)
-
-EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
-
-DEPTH_PLAYER = -100
-DEPTH_CREATURE = 1
-DEPTH_ITEM = 2
-DEPTH_CORPSE = 100
-DEPTH_STRUCTURES = 101
 
 
 class LevelNames:

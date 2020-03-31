@@ -5,4 +5,12 @@ from typing import Any
 @dataclass
 class Death:
     """ component for an entity that may die """
+    killer: int = None
+    animation_key: str = None  # signals whether the entity should remain on the ground or be deleted
     custom_death: Any = None
+
+
+@dataclass
+class Dead:
+    """ component for dead entity """
+    pass
