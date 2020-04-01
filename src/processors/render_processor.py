@@ -40,7 +40,7 @@ class RenderProcessor(esper.Processor):
             explored_draw = render.draw_explored and self.level.is_explored(pos.x, pos.y) and not is_visible
             special_flags = constants.EXPLORED_DRAW_FLAGS if explored_draw else 0
 
-            if is_visible or explored_draw:
+            if render.draw and (is_visible or explored_draw):
                 animation = config.ASSETS.animation_dict[render.animation_key]
                 if len(animation) == 1:
                     config.SURFACE_MAP.blit(animation[0],

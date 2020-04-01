@@ -12,3 +12,9 @@ class Health:
 class TakeDamageEvent:
     damage: int
     source: str = None
+
+
+@dataclass
+class HealthBonus:
+    bonus: int
+    increase_max_health: bool = False

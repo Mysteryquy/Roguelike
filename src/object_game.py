@@ -28,6 +28,7 @@ class Game:
         self.state: GameState = GameState.RUNNING
         self.levels: Dict[str, DungeonLevel] = {}
         self.message_history: List[str] = []
+        self.message_history_old_length: int = 0
         self.game_save = game_save
         self.game_load = game_load
         self.player_name = player_name
@@ -82,11 +83,11 @@ class Game:
         for ent, _ in self.current_level.world.get_component(Persistent):
             if self.current_level.world.has_component(ent, Player):
                 # player is not removed as entity, just delete its components
-                for comp in self.current_level.world.components_for_entity(ent):
+                for comp in self.current_level.world.all_components_for_entity(ent):
                     self.levels[level_name].world.add_component(ent, comp)
                     self.current_level.world.remove_component(ent, type(comp))
             else:
-                for comp in self.current_level.world.components_for_entity(ent):
+                for comp in self.current_level.world.all_components_for_entity(ent):
                     self.levels[level_name].world.add_component(ent, comp)
                 self.current_level.world.delete_entity(ent, immediate=True)
 
@@ -100,6 +101,7 @@ class Game:
     def transition(self, to_level):
         constants.CURRENT_LEVEL_NAME = to_level
         make_new = to_level not in self.levels
+        level = None
         if make_new:
             level = self.create_new_level(level_name=to_level)
         self._transition_to_level(to_level)

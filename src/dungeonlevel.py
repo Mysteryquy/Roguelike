@@ -8,11 +8,13 @@ from src.components.position import Position
 from src.dungeon_generator import DungeonGenerator
 from src.processors.ai_processor import AiProcessor
 from src.processors.attack_processor import AttackProcessor
+from src.processors.autoexplore_processor import AutoExploreProcessor
 from src.processors.death_processor import DeathProcessor
 from src.processors.energy_processor import EnergyProcessor
 from src.processors.health_processor import HealthProcessor
 from src.processors.input_processor import InputProcessor
 from src.processors.movement_processor import MovementProcessor
+from src.processors.pickup_processor import PickUpProcessor
 from src.processors.render_processor import RenderProcessor
 from src.processors.roundcounter_processor import RoundCounterProcessor
 from src.processors.stair_processor import StairProcessor
@@ -51,8 +53,10 @@ class DungeonLevel:
         self.render_processor = RenderProcessor(self)
         self.world.add_processor(self, EnergyProcessor(), priority=1000)
         self.world.add_processor(self, InputProcessor(game_load=game_load, game_save=game_save), priority=999)
-        self.world.add_processor(self, AiProcessor(), priority=998)
-        self.world.add_processor(self, MovementProcessor(), priority=997)
+        self.world.add_processor(self, AutoExploreProcessor(), priority=997)
+        self.world.add_processor(self, AiProcessor(), priority=995)
+        self.world.add_processor(self, MovementProcessor(), priority=990)
+        self.world.add_processor(self, PickUpProcessor(), priority=950)
         self.world.add_processor(self, AttackProcessor(), priority=900)
         self.world.add_processor(self, HealthProcessor(), priority=600)
         self.world.add_processor(self, RoundCounterProcessor(), priority=11)
@@ -74,6 +78,28 @@ class DungeonLevel:
                 if "exclude_ent" not in kwargs or not kwargs["exclude_ent"] or kwargs["exclude_ent"] != ent:
                     objects.append(ent)
         return objects
+
+    def get_visible_components(self, *components, **kwargs):
+        res = []
+        for ent, tpl in self.world.get_components(Position, *components):
+            if self.is_visible(tpl[0].x, tpl[0].y) and \
+                    ("exclude_ent" not in kwargs or not kwargs["exclude_ent"] or kwargs["exclude_ent"] != ent):
+                res.append((ent, tpl[1:]))
+
+        return res
+
+    def get_visible_component(self, component_type, exclude_ent=None):
+        res = []
+        for ent, tpl in self.world.get_components(Position, component_type):
+            if self.is_visible(tpl[0].x, tpl[0].y) and \
+                    (not exclude_ent or exclude_ent != ent):
+                res.append((ent, tpl[1]))
+
+        return res
+
+    def components_at_coords(self, x: int, y: int, *components, **kwargs):
+        return [tpl[1:] for ent, tpl in self.world.get_components(Position, *components)
+                if tpl[0].x == x and tpl[0].y == y]
 
     def is_visible(self, x, y):
         return self.fov_map.fov[y, x]

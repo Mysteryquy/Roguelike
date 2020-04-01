@@ -1,6 +1,8 @@
 import pygame
 
 from src import config, constants, map_helper, render_helper, ui
+from src.components.container import Container
+from src.components.name import Name
 
 
 class MainMenu:
@@ -212,7 +214,8 @@ class MainMenu:
 
 
 def menu_pause():
-    # This Menu pauses the game and displays a simple message in the center of THE MAP (not the screen [danke markus mit deinem vollbild kack :P])
+    # This Menu pauses the game and displays a simple message in the center of THE MAP (not the screen [danke markus
+    # mit deinem vollbild kack :P])
 
     menu_close = False
 
@@ -221,9 +224,7 @@ def menu_pause():
 
     menu_text = "PAUSED"
     menu_font = config.ASSETS.FONT_DEBUG_MESSAGE
-
-    text_height = render_helper.helper_text_height(menu_font)
-    text_width = len(menu_text) * render_helper.helper_text_width(menu_font)
+    text_height, text_width = render_helper.helper_text_dimensions(menu_font)
 
     while not menu_close:
 
@@ -264,7 +265,7 @@ def menu_inventory():
     menu_text_font = config.ASSETS.FONT_MESSAGE_TEXT
 
     # Helper var
-    menu_text_height = render_helper.helper_text_height(menu_text_font)
+    menu_text_height, _ = render_helper.helper_text_dimensions(menu_text_font)
 
     local_inventory_surface = pygame.Surface((menu_width, menu_height))
 
@@ -272,10 +273,11 @@ def menu_inventory():
 
         # Clear the menu
         local_inventory_surface.fill(constants.COLOR_BLACK)
+        container = config.GAME.current_level.world.component_for_player(Container)
+        print_list = ["Gold(" + str(container.gold) + ")"]
+        for ent_item in container.inventory:
+            print_list.append(config.GAME.current_level.world.component_for_entity(ent_item, Name).name)
 
-        # TODO Register Changes
-        print_list = [obj.display_name for obj in config.PLAYER.container.inventory]
-        print_list.insert(0, "Gold(" + str(config.PLAYER.container.gold) + ")")
         events_list = pygame.event.get()
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -317,12 +319,16 @@ def menu_inventory():
         # Render Game
         render_helper.draw_menu()
 
+
         # Display Menu
         config.SURFACE_MAIN.blit(local_inventory_surface, (menu_x, menu_y))
 
         config.CLOCK.tick(constants.GAME_FPS)
 
         pygame.display.update()
+
+    render_helper.fill_surfaces()
+    map_helper.transition_reset()
 
 
 def debug_tile_select(level):

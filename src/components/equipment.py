@@ -13,3 +13,5 @@ class EquipSlots(Enum):
 @dataclass
 class Equipment:
     equip_slot: EquipSlots
+    worn: bool = False
+    wearer: int = None

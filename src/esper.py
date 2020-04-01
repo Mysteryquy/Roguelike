@@ -2,12 +2,16 @@ import time as _time
 from abc import ABC
 
 from functools import lru_cache as _lru_cache
-from typing import List as _List
+from typing import List as _List, List
 from typing import Type as _Type
 from typing import TypeVar as _TypeVar
 from typing import Any as _Any
 from typing import Tuple as _Tuple
 from typing import Iterable as _Iterable
+
+import pygame
+
+from src.components.position import Position
 
 version = '1.3'
 
@@ -32,7 +36,6 @@ class Processor(ABC):
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
-
 
 
 class World:
@@ -167,7 +170,13 @@ class World:
     def component_for_player(self, component):
         return self.component_for_entity(self._player, component)
 
-    def components_for_entity(self, entity: int) -> _Tuple[C, ...]:
+    def components_for_player(self, *component_types):
+        return self.components_for_entity(self._player, *component_types)
+
+    def components_for_entity(self, entity: int, *component_types):
+        return tuple((self.component_for_entity(entity, comp) for comp in component_types))
+
+    def all_components_for_entity(self, entity: int) -> _Tuple[C, ...]:
         """Retrieve all Components for a specific Entity, as a Tuple.
 
         Retrieve all Components for a specific Entity. The method is probably
@@ -182,9 +191,6 @@ class World:
         assigned to the passed Entity ID.
         """
         return tuple(self._entities[entity].values())
-
-    def components_for_player(self):
-        return self.components_for_entity(self._player)
 
     def has_component(self, entity: int, component_type: _Any) -> bool:
         """Check if a specific Entity has a Component of a certain type.
@@ -294,6 +300,21 @@ class World:
     @_lru_cache()
     def get_components(self, *component_types: _Type):
         return [query for query in self._get_components(*component_types)]
+
+    def get_components_at_coords(self, x: int, y: int, *component_types):
+        return [(ent, cs[1:]) for ent, cs in self.get_components(Position, *component_types)
+                if cs[0].x == x and cs[0].y == y]
+
+    def get_component_at_coords(self, x: int, y: int, component_type):
+        return [(ent, comp) for ent, (pos, comp) in self.get_components(Position, component_type)
+                if pos.x == x and pos.y == y]
+
+    def get_components_in_rect(self, rect: pygame.Rect, *component_types):
+        res = []
+        for ent, tpl in self.get_components(Position, *component_types):
+            if rect.collidepoint(tpl[0].x, tpl[0].y):
+                res.append((ent, tpl[1:]))
+        return res
 
     def try_component(self, entity: int, component_type: _Type):
         """Try to get a single component type for an Entity.

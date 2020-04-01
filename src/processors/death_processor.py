@@ -19,6 +19,7 @@ class DeathProcessor(esper.Processor):
 
             if death.killer:
                 killer_name = next(self.level.world.try_component(death.killer, Name))
+                assert killer_name is not None
                 config.GAME.game_message(name.name + " is slain by " + killer_name.name, constants.COLOR_RED)
                 killer_xp = next(self.level.world.try_component(death.killer, Experience), None)
                 killed_xp = next(self.level.world.try_component(ent, Experience), None)
@@ -28,6 +29,6 @@ class DeathProcessor(esper.Processor):
             else:
                 config.GAME.game_message(name.name + " dies", constants.COLOR_RED_LIGHT)
             if death.custom_death:
-                death.custom_death()
+                death.custom_death(ent)
 
             self.level.world.delete_entity(ent)

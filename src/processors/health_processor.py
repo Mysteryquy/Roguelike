@@ -14,8 +14,6 @@ class HealthProcessor(esper.Processor):
             config.GAME.game_message(name.name + " is dealt " + str(damage_event.damage) + " damage " + optional,
                                      msg_color=constants.COLOR_RED)
             if health.current_health - damage_event.damage <= 0:
-                print("hello")
-                print(self.level.world.components_for_entity(ent))
                 health.current_health = 0
                 death = next(self.level.world.try_component(ent, Death), None)
                 if death:

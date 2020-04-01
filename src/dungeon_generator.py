@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import annotations
 import random
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import numpy as np
 import pygame
@@ -16,19 +16,20 @@ See https://github.com/munificent/hauberk/ for his project and source code
 
 
 class DungeonGenerator:
-    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    level_tile_dict = {
+    directions: List[Tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    level_tile_dict: Dict[str, Tuple[str, str]] = {
         "DUNGEON1": ("S_WALL", "S_FLOOR"),
-        "DUNGEON2": ("S_FLOOR", "S_WALL")
+        "DUNGEON2": ("S_FLOOR", "S_WALL"),
+        "DUNGEON3": ("S_WALL", "S_FLOOR")
     }
 
-    def __init__(self, level_name):
+    def __init__(self, level_name: str):
         self.num_room_tries: int = 50
         self.extra_connector_chance: int = 3
         self.room_extra_size: int = 0
         self.winding_percent: int = 70
         self.rooms: List[pygame.Rect] = []
-        self.regions = []
+        self.regions: List = []
         self.current_region: int = 0
         self.current_map = None
         self.current_map_width: int = 0

@@ -77,7 +77,7 @@ COLOR_YELLOW_DARK_GOLD = (128, 128, 0)
 COLOR_DEFAULT_BG = COLOR_GREY
 
 # FOV SETTINGS Er hat anstelle der Null "libcod.FOV_BASIC" da stehen
-FOV_ALGO = libtcodpy.FOV_DIAMOND
+FOV_ALGO = libtcodpy.FOV_BASIC
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 8
 

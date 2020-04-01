@@ -5,6 +5,7 @@ from src.components.action import MovementAction, UseStairsAction, StartAutoexpl
 from src.components.action import PickUpAction
 
 from src.components.action import HasAction, DropAction
+from src.components.autoexplore import AutoExploring
 from src.components.player import Player
 from src.components.position import Position
 
@@ -104,8 +105,10 @@ class InputProcessor(esper.Processor):
 
                 if mod_key and event.key == pygame.K_PERIOD:
                     self.level.world.add_component(self.player, UseStairsAction())
+                    if self.level.world.has_component(self.player, AutoExploring):
+                        self.level.world.remove(self.player, AutoExploring)
 
-                if event.key == pygame.K_BACKQUOTE:
+                if event.key == event.key == pygame.K_BACKQUOTE:
                     self.level.world.add_component(self.player, StartAutoexploreAction())
 
                 if event.key == pygame.K_v:

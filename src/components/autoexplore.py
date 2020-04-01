@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple, Iterable
 
 
 @dataclass
 class AutoExploring:
-    path: List[int, int]
+    path: Iterable[Tuple[int, int]]
+    stairs_goal: bool = False
     pass

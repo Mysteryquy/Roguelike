@@ -2,7 +2,8 @@ from typing import Tuple
 
 import pygame
 
-from src import config, constants
+from src import config, constants, map_helper, assets
+from src.components.position import Position
 
 
 def draw_text(display_surface, text_to_display, coords, text_color, back_color=None, center=False,
@@ -48,7 +49,15 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
 
 
 def draw_messages():
-    if len(config.GAME.message_history) <= constants.NUM_MESSAGES:
+    history_length = len(config.GAME.message_history)
+
+    if history_length == config.GAME.message_history_old_length:
+        # nothing to draw here, just old stuff
+        return
+
+    # fill_surfaces()
+    map_helper.transition_reset()
+    if history_length <= constants.NUM_MESSAGES:
         to_draw = config.GAME.message_history
     else:
         to_draw = config.GAME.message_history[-constants.NUM_MESSAGES:]
@@ -56,14 +65,23 @@ def draw_messages():
     _, text_height = config.ASSETS.FONT_MESSAGE_TEXT.size("A")
     start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
 
+    max_length = 400
+    max_height = constants.NUM_MESSAGES * text_height
+    surf = assets.get_surface_rect(max_length, max_height, constants.COLOR_DARK_GREY)
+    rect = pygame.Rect((0, start_y + max_height), (max_length, max_height))
+    config.SURFACE_MAIN.blit(surf, rect)
+
     for i, (message, color) in enumerate(to_draw):
         draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
+
+    config.GAME.message_history_old_length = history_length
 
 
 def draw_menu():
     # clear the surface
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
-    config.CAMERA.update()
+    pos = config.GAME.current_level.world.component_for_player(Position)
+    config.CAMERA.update(pos.x, pos.y)
     # fill_surfaces()
     # draw the map
     config.GUI.update(None)
@@ -77,6 +95,8 @@ def fill_surfaces():
     config.SURFACE_MAP.fill(constants.COLOR_DARK_GREY)
     config.SURFACE_MINI_MAP.fill(constants.COLOR_BLACK)
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
+    if config.GAME:
+        config.GAME.message_history_old_length = 0
 
 
 def draw_debug():
@@ -87,3 +107,7 @@ def draw_debug():
     draw_text(config.SURFACE_MAIN, "Turn: " + str(config.ROUND_COUNTER), (0, 20),
               constants.COLOR_WHITE,
               constants.COLOR_BLACK)
+
+
+def helper_text_dimensions(font):
+    return font.size("A")

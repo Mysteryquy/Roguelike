@@ -1,11 +1,14 @@
+import random
+
 import numpy
 from tcod import tcod
 
-from src import monster_gen
+from src import monster_gen, item_gen
 from src import constants
 from src.components.alignment import CreatureAlignment, Alignment
 from src.components.attacker import Attacker
 from src.components.block import BlocksMovement
+from src.components.container import Container
 from src.components.death import Death
 from src.components.energy import Energy
 from src.components.experience import Experience
@@ -17,6 +20,7 @@ from src.components.position import Position
 from src.components.render import Renderable
 from src.components.stairs import Stairs
 from src.components.stats import Stats
+import src.death as _death
 
 
 def gen_stairs(level, coords, leads_to, downwards=True):
@@ -29,26 +33,12 @@ def gen_stairs(level, coords, leads_to, downwards=True):
 
 def what_to_gen(level, coords):
     # Change to 3 to see buggy gold
-    rng = 1
+    rng = random.randint(1, 2)
     x, y = coords
     if rng == 1:
-        gen_and_append_enemy(level, (x, y))
-
-
-level_monster_dict = {
-    "DUNGEON1": [(monster_gen.gen_demon_avin, 100)],
-    "DUNGEON2": [(monster_gen.gen_demon_avin, 100)],
-    "DUNGEON3": [(monster_gen.gen_demon_avin, 1)]
-}
-
-
-def gen_and_append_enemy(level, coords):
-    monsters_and_weight = level_monster_dict[level.name]
-    monsters = [monster for monster, _ in monsters_and_weight]
-    sum_weights = sum([weight for _, weight in monsters_and_weight])
-    probabilities = [weight / sum_weights for _, weight in monsters_and_weight]
-    monster_function = numpy.random.choice(monsters, 1, p=probabilities)[0]
-    monster_function(level, coords)
+        monster_gen.gen_and_append_enemy(level, coords)
+    if rng == 2:
+        item_gen.gen_item(level, coords)
 
 
 def gen_player(level, coords, player_name):
@@ -63,5 +53,6 @@ def gen_player(level, coords, player_name):
                                          BlocksMovement(),
                                          Alignment(CreatureAlignment.PLAYER),
                                          Experience(),
-                                         Death(animation_key="S_DEAD_DEMON")
+                                         Container(),
+                                         Death(animation_key="S_DEAD_DEMON", custom_death=_death.death_player)
                                          )

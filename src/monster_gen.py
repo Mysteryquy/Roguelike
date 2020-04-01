@@ -1,3 +1,5 @@
+import numpy
+
 from src import constants
 from src.components.ai import AiChase
 from src.components.alignment import Alignment, CreatureAlignment
@@ -25,3 +27,21 @@ def gen_demon_avin(level, coords):
                               Experience(on_death=100),
                               Death(animation_key="S_DEAD_DEMON")
                               )
+
+
+level_monster_dict = {
+    "DUNGEON1": [(gen_demon_avin, 100)],
+    "DUNGEON2": [(gen_demon_avin, 100)],
+    "DUNGEON3": [(gen_demon_avin, 1)]
+}
+
+
+def gen_and_append_enemy(level, coords):
+    monsters_and_weight = level_monster_dict[level.name]
+    monsters = [monster for monster, _ in monsters_and_weight]
+    sum_weights = sum([weight for _, weight in monsters_and_weight])
+    probabilities = [weight / sum_weights for _, weight in monsters_and_weight]
+    monster_function = numpy.random.choice(monsters, 1, p=probabilities)[0]
+    monster_function(level, coords)
+
+
