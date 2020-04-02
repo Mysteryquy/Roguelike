@@ -146,6 +146,13 @@ class Assets:
             "A_ELEMENTAL_FLESH": get_animation_from_files(7, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_MIMIC": get_animation_from_files(0, 8, "data/tilesets/Characters/Elemental", num_sprites=1),
             "A_BOSS_BEHOLDER": get_animation_from_files(2, 5, "data/tilesets/Characters/Elemental", num_sprites=2),
+            "A_AQUATIC_PIRANHA": get_animation_from_files(0, 4, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_JELLYFISH": get_animation_from_files(0, 6, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_JELLYOWAR": get_animation_from_files(0, 7, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_SHARK": get_animation_from_files(1, 0, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_SHARK_WHITE": get_animation_from_files(1, 1, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_SHARK_GOLD": get_animation_from_files(1, 2, "data/tilesets/Characters/Aquatic", num_sprites=2),
+            "A_AQUATIC_WHALE": get_animation_from_files(1, 4, "data/tilesets/Characters/Aquatic", num_sprites=2),
 
 
             ## ITEMS ##
@@ -186,6 +193,7 @@ class Assets:
             "S_FLESH_DOG": get_animation_from_files(7, 0, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_FLESH_SNAIL": get_animation_from_files(2, 3, "data/tilesets/Items/Flesh", num_sprites=1),
             "S_DEAD_DEMON": get_animation_from_files(4, 13, "data/tilesets/Objects/Decor", num_sprites=1),
+            "S_FLESH_FISH": get_animation_from_files(2, 4, "data/tilesets/Items/Flesh", num_sprites=1),
 
             "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
             "S_STAIRS_UP": self.S_STAIRS_UP,
