@@ -110,7 +110,8 @@ def how_much_to_place(level, room_size, room):
     for i in range(0, count):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
         y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
-        if len(level.only_entities_at_coords(x, y)) == 0:
+        ent = level.first_entity_at_position(Position(x, y))
+        if not ent:
             generator.what_to_gen(level, (x, y))
 
 

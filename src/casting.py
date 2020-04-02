@@ -1,26 +1,24 @@
 from src import config
 from src.components.health import Health, HealEvent
 from src.components.name import Name
+from src.components.position import Position
 
 
-def cast_heal(caster: int, args):
+def cast_heal(caster: int, target=0, amount=0):
     name, health = config.GAME.current_level.world.components_for_entity(caster, Name, Health)
     target_name = " themself"
+    if target != caster:
+        target_name = config.GAME.current_level.world.component_for_entity(target, Name)
+    config.GAME.current_level.world.add_component(target, HealEvent(amount=amount))
+    config.GAME.game_message(name.name + " heals " + target_name + " for " + str(amount))
 
-    if args["target"] != caster:
-        target = config.GAME.current_level.world.component_for_entity(args["target"], Name)
-    config.GAME.current_level.world.add_component(args["target"], HealEvent(amount=args["amount"]))
-    config.GAME.game_message(name.name + " heals " + target_name + " for " + str(args["amount"]))
 
-"""
-def cast_lightning(caster, T_damage_maxrange, coords=None):
-    damage, m_range = T_damage_maxrange
-
-    player_location = (caster.x, caster.y)
+def cast_lightning(caster: int, damage: int, max_range: int, coords=None):
+    pos = config.GAME.current_level.world.component_for_entity(caster, Position)
 
     # prompt player for a tile
     if not coords:
-        point_selected = menu.menu_tile_select(coords_origin=player_location, max_range=m_range, penetrate_walls=False)
+        point_selected = menu.menu_tile_select(coords_origin=(pos.x, pos.y), max_range=max_range, penetrate_walls=False)
     else:
         point_selected = coords
 
@@ -138,4 +136,3 @@ def cast_buffstats(caster, value):
     # TODO Fix stat drawing
     # TODO Fix unupdating stats
     # TODO Add current HP while buffing it
-"""

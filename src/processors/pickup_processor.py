@@ -15,14 +15,14 @@ class Render(object):
 class PickUpProcessor(esper.Processor):
     def process(self):
         for ent, (pos, _, container, name) in self.level.world.get_components(Position, PickUpAction, Container, Name):
-            for ent_gold, gold in self.level.get_entity_component_at_coords(pos.x, pos.y, Gold):
+            for ent_gold, gold in self.level.get_entity_component_at_position(pos, Gold):
                 print(gold)
                 container.gold += gold.amount
                 config.GAME.game_message(name.name + " picks up " + str(gold.amount) + " Gold")
                 self.level.world.delete_entity(ent_gold, immediate=True)
 
             for ent_item, (item, render, name_item) in \
-                    self.level.get_entity_components_at_coords(pos.x, pos.y, Item, Renderable, Name, exclude_ent=ent):
+                    self.level.get_entity_components_at_position(pos, Item, Renderable, Name, exclude_ent=ent):
                 config.GAME.game_message(name.name + " picks up the " + name_item.name)
                 container.inventory.append(ent_item)
                 item.container = container

@@ -11,35 +11,32 @@ from src.components.position import Position
 
 class MovementProcessor(esper.Processor):
     def process(self):
-        for ent, (pos, movement_action) in self.level.world.get_components(Position, MovementAction):
-            goal_x, goal_y = pos.x + movement_action.dx, pos.y + movement_action.dy
-            ents = self.level.only_entities_at_coords(goal_x, goal_y, BlocksMovement, exclude_ent=None)
-            if len(ents) > 0:
-                self.level.world.remove_component(ent, MovementAction)
+        for ent, (pos, movement_action, alignment) in \
+                self.level.world.get_components(Position, MovementAction, Alignment):
+
+            goal = Position(pos.x + movement_action.dx, pos.y + movement_action.dy)
+            self.level.world.remove_component(ent, MovementAction)
+            target = self.level.first_entity_components_at_position(goal,
+                                                                  BlocksMovement, Alignment, exclude_ent=None)
+            if target:
+                target_ent, (_, alignment_target) = target
                 # cannot use movement action normally, check other stuff
-                target = next((e for e in ents if self.level.world.has_component(e, BlocksMovement)), None)
-                assert target is not None
-                assert self.level.world.has_component(ent, Alignment)
-                alignment_mover = self.level.world.component_for_entity(ent, Alignment)
-                alignment_target = self.level.world.component_for_entity(target, Alignment).alignment if \
-                    self.level.world.has_component(target, Alignment) else None
 
                 if alignment_target:
                     # if the target has no alignment, no action is made
-                    if CreatureAlignment.can_bump(alignment_mover.alignment, alignment_target):
+                    if CreatureAlignment.can_bump(alignment.alignment, alignment_target.alignment):
                         if self.level.world.has_component(ent, Attacker):
-                            self.level.world.add_component(ent, MeleeAttackAction(target))
-                    elif CreatureAlignment.can_swap(alignment_mover.alignment, alignment_target):
+                            self.level.world.add_component(ent, MeleeAttackAction(target_ent))
+                    elif CreatureAlignment.can_swap(alignment.alignment, alignment_target.alignment):
                         pos2 = self.level.world.component_for_entity(target, Position)
                         tmp = pos
                         pos.x, pos.y = pos2.x, pos2.y
                         pos2.x, pos2.y = tmp.x, tmp.y
             else:
                 # can freely move
-                if self.level.is_walkable(goal_x, goal_y):
-                    pos.x, pos.y = goal_x, goal_y
+                if self.level.is_walkable_position(goal):
+                    pos.x, pos.y = goal.x, goal.y
                     config.FOV_CALCULATE = True
-                self.level.world.remove_component(ent, MovementAction)
 
 
 def distance_between(pos1: Position, pos2: Position) -> float:

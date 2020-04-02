@@ -331,17 +331,6 @@ def menu_inventory():
     map_helper.transition_reset()
 
 
-def debug_tile_select(level):
-    x, y = menu_tile_select(level)
-    objects = level.objects_at_coords(x, y)
-    config.GAME.game_message("Mouse position: " + str((x, y)))
-
-
-def debug_tile_select_pathing(level):
-    x, y = menu_tile_select(level)
-    print("Path from" + str((config.PLAYER.x, config.PLAYER.y)) + " to " + str((x, y)) + " :" + str(
-        map_helper.get_path_from_player(x, y)))
-
 
 def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
     """

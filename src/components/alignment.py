@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 
+
+
 class CreatureAlignment(Enum):
     FRIEND = 1
     NEUTRAL = 2

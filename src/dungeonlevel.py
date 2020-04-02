@@ -66,49 +66,45 @@ class DungeonLevel:
         self.world.add_processor(self, self.render_processor, priority=5)
         self.world.add_processor(self, StairProcessor())
 
-    def only_entities_at_coords(self, x: int, y: int, *components, exclude_ent=None):
+    def only_entities_at_position(self, pos: Position, *components, exclude_ent=None):
         """
         gives the objects at the given coordinates (= Entities with Position component with position = (x,y)
-        :param x: x position
-        :param y: y position
+        :param pos:
+        :param exclude_ent:
         :param components: if you only want entities with the specific components
         :return: the wanted entities
         """
-        objects = []
-        for ent, tpl in self.world.get_components(Position, *components):
-            if tpl[0].x == x and tpl[0].y == y:
-                if not exclude_ent or exclude_ent != ent:
-                    objects.append(ent)
-        return objects
+        return (ent for ent, (p, *_) in self.world.get_components(Position, *components)
+                if p == pos and (not exclude_ent or exclude_ent != ent))
 
-    def first_entity_at_coords(self, x: int, y: int, *components, exclude_ent=None) -> Optional[int]:
-        for ent, tpl in self.world.get_components(Position, *components):
-            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+    def first_entity_at_position(self, pos: Position, *components, exclude_ent=None) -> Optional[int]:
+        for ent, (p, *_) in self.world.get_components(Position, *components):
+            if p == pos and (not exclude_ent or exclude_ent != ent):
                 return ent
         return None
 
-    def first_entity_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
-        for ent, tpl in self.world.get_components(Position, component_type):
-            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
-                return ent, tpl[1]
+    def first_entity_component_at_position(self, pos: Position, component_type, exclude_ent=None):
+        for ent, (p, *comps) in self.world.get_components(Position, component_type):
+            if p == pos and (not exclude_ent or exclude_ent != ent):
+                return ent, comps
         return None
 
-    def first_entity_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
-        for ent, tpl in self.world.get_components(Position, *components):
-            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
-                return ent, tpl[1:]
+    def first_entity_components_at_position(self, pos: Position, *components, exclude_ent=None):
+        for ent, (p, *comps) in self.world.get_components(Position, *components):
+            if p == pos and (not exclude_ent or exclude_ent != ent):
+                return ent, comps
         return None
 
-    def first_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
-        for ent, tpl in self.world.get_components(Position, component_type):
-            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
-                return tpl[1]
+    def first_component_at_position(self, pos: Position, component_type, exclude_ent=None):
+        for ent, (p, comp) in self.world.get_components(Position, component_type):
+            if p == pos and (not exclude_ent or exclude_ent != ent):
+                return comp
         return None
 
-    def first_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
-        for ent, tpl in self.world.get_components(Position, *components):
-            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
-                return tpl[1:]
+    def first_components_at_position(self, pos: Position, *components, exclude_ent=None):
+        for ent, (p, *comps) in self.world.get_components(Position, *components):
+            if p == pos and (not exclude_ent or exclude_ent != ent):
+                return comps
         return None
 
     def get_visible_entity_components(self, *components, exclude_ent=None):
@@ -119,13 +115,8 @@ class DungeonLevel:
         :return: a list of (ent, components) tuples with the corresponding components,
                  note that components is a list
         """
-        res = []
-        for ent, tpl in self.world.get_components(Position, *components):
-            if self.is_visible(tpl[0].x, tpl[0].y) and \
-                    (not exclude_ent or exclude_ent != ent):
-                res.append((ent, tpl[1:]))
-
-        return res
+        return ((ent, comps) for ent, (pos, *comps) in self.world.get_components(Position, *components)
+                if self.is_visible_position(pos) and (not exclude_ent or exclude_ent != ent))
 
     def get_visible_entity_component(self, component_type, exclude_ent: Optional[int] = None):
         """
@@ -134,42 +125,27 @@ class DungeonLevel:
         :param exclude_ent: exclude a specific entity
         :return: a list of (ent, component) tuples with the corresponding component
         """
-        res = []
-        for ent, tpl in self.world.get_components(Position, component_type):
-            if self.is_visible(tpl[0].x, tpl[0].y) and \
-                    (not exclude_ent or exclude_ent != ent):
-                res.append((ent, tpl[1]))
+        return ((ent, comp) for ent, (pos, comp) in self.world.get_components(Position, component_type)
+                if self.is_visible_position(pos) and (not exclude_ent or exclude_ent != ent))
 
-        return res
-
-    def only_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
+    def only_components_at_position(self, pos: Position, *component_types, exclude_ent=None):
         """
         helper method to find specific components  at the coordinates. Note that this does not give the entities
         for tuples use
+        :param pos:
         :param exclude_ent: exclude specific entity
-        :param x: x coordinate
-        :param y: y coordinate
-        :param components:
-        :param kwargs:
         :return:
         """
-        return [tpl[1:] for ent, tpl in self.world.get_components(Position, *components)
-                if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or ent != exclude_ent)]
+        return (comps for ent, (p, *comps) in self.world.get_components(Position, *component_types)
+                if p == pos and (not exclude_ent or ent != exclude_ent))
 
-    def get_entity_components_at_coords(self, x: int, y: int, *component_types, exclude_ent=None):
-        return [(ent, cs[1:]) for ent, cs in self.world.get_components(Position, *component_types)
-                if cs[0].x == x and cs[0].y == y and (not exclude_ent or ent != exclude_ent)]
+    def get_entity_components_at_position(self, pos: Position, *component_types, exclude_ent=None):
+        return ((ent, comps) for ent, (p, *comps) in self.world.get_components(Position, *component_types)
+                if p == pos and (not exclude_ent or ent != exclude_ent))
 
-    def get_entity_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
-        return [(ent, comp) for ent, (pos, comp) in self.world.get_components(Position, component_type)
-                if pos.x == x and pos.y == y and (not exclude_ent or ent != exclude_ent)]
-
-    def get_entity_components_in_rect(self, rect: pygame.Rect, *component_types, exclude_ent=None):
-        res = []
-        for ent, tpl in self.world.get_components(Position, *component_types):
-            if rect.collidepoint(tpl[0].x, tpl[0].y) and (not exclude_ent or ent != exclude_ent):
-                res.append((ent, tpl[1:]))
-        return res
+    def get_entity_component_at_position(self, pos: Position, component_type, exclude_ent=None):
+        return ((ent, comp) for ent, (p, comp) in self.world.get_components(Position, component_type)
+                if p == pos and (not exclude_ent or ent != exclude_ent))
 
     def is_visible(self, x, y):
         return self.fov_map.fov[y, x]
@@ -179,6 +155,15 @@ class DungeonLevel:
 
     def is_explored(self, x, y):
         return self.map[x][y].explored
+
+    def is_visible_position(self, pos: Position):
+        return self.fov_map.fov[pos.y, pos.x]
+
+    def is_walkable_position(self, pos: Position):
+        return self.fov_map.walkable[pos.y, pos.x]
+
+    def is_explored_position(self, pos: Position):
+        return self.map[pos.x][pos.y].explored
 
     def place_objects(self, first_level=False):
         pos = self.world.component_for_player(Position)
