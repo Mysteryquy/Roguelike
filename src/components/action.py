@@ -1,6 +1,9 @@
 from dataclasses import dataclass
+from enum import Enum
+from typing import Dict, Any
 
 from src.components.item import Item
+from src.resources.spells import Spells
 
 
 @dataclass
@@ -43,3 +46,9 @@ class MeleeAttackAction(Action):
 @dataclass
 class StartAutoexploreAction(Action):
     pass
+
+
+@dataclass
+class SpellcastAction(Action):
+    spell: Spells
+    args: Dict[str, Any]

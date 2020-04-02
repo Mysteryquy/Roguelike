@@ -14,7 +14,7 @@ class AutoExploreProcessor(esper.Processor):
                                                                         Position, Alignment):
             print("KEK")
             self.level.world.remove_component(ent, StartAutoexploreAction)
-            for ent2, alignment2 in self.level.get_visible_component(Alignment, exclude_ent=ent):
+            for ent2, alignment2 in self.level.get_visible_entity_component(Alignment, exclude_ent=ent):
                 if CreatureAlignment.can_bump(alignment.alignment, alignment2.alignment):
                     config.GAME.game_message("ENEMY NEARBY! Cannot explore", constants.COLOR_RED_LIGHT)
                     return
@@ -34,7 +34,7 @@ class AutoExploreProcessor(esper.Processor):
                 self.level.world.remove_component(ent, AutoExploring)
             else:
                 flag = False
-                for ent2, alignment2 in self.level.get_visible_component(Alignment, exclude_ent=ent):
+                for ent2, alignment2 in self.level.get_visible_entity_component(Alignment, exclude_ent=ent):
                     if CreatureAlignment.can_bump(alignment.alignment, alignment2.alignment):
                         flag = True
                         break

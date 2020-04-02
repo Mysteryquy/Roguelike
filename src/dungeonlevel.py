@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import pygame
 from tcod import path, tcod
@@ -17,6 +17,7 @@ from src.processors.movement_processor import MovementProcessor
 from src.processors.pickup_processor import PickUpProcessor
 from src.processors.render_processor import RenderProcessor
 from src.processors.roundcounter_processor import RoundCounterProcessor
+from src.processors.spellcast_processor import SpellcastProcessor
 from src.processors.stair_processor import StairProcessor
 
 
@@ -54,6 +55,7 @@ class DungeonLevel:
         self.world.add_processor(self, EnergyProcessor(), priority=1000)
         self.world.add_processor(self, InputProcessor(game_load=game_load, game_save=game_save), priority=999)
         self.world.add_processor(self, AutoExploreProcessor(), priority=997)
+        self.world.add_processor(self, SpellcastProcessor(), priority=996)
         self.world.add_processor(self, AiProcessor(), priority=995)
         self.world.add_processor(self, MovementProcessor(), priority=990)
         self.world.add_processor(self, PickUpProcessor(), priority=950)
@@ -64,7 +66,7 @@ class DungeonLevel:
         self.world.add_processor(self, self.render_processor, priority=5)
         self.world.add_processor(self, StairProcessor())
 
-    def entities_at_coords(self, x: int, y: int, *components, **kwargs):
+    def only_entities_at_coords(self, x: int, y: int, *components, exclude_ent=None):
         """
         gives the objects at the given coordinates (= Entities with Position component with position = (x,y)
         :param x: x position
@@ -75,20 +77,63 @@ class DungeonLevel:
         objects = []
         for ent, tpl in self.world.get_components(Position, *components):
             if tpl[0].x == x and tpl[0].y == y:
-                if "exclude_ent" not in kwargs or not kwargs["exclude_ent"] or kwargs["exclude_ent"] != ent:
+                if not exclude_ent or exclude_ent != ent:
                     objects.append(ent)
         return objects
 
-    def get_visible_components(self, *components, **kwargs):
+    def first_entity_at_coords(self, x: int, y: int, *components, exclude_ent=None) -> Optional[int]:
+        for ent, tpl in self.world.get_components(Position, *components):
+            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+                return ent
+        return None
+
+    def first_entity_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
+        for ent, tpl in self.world.get_components(Position, component_type):
+            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+                return ent, tpl[1]
+        return None
+
+    def first_entity_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
+        for ent, tpl in self.world.get_components(Position, *components):
+            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+                return ent, tpl[1:]
+        return None
+
+    def first_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
+        for ent, tpl in self.world.get_components(Position, component_type):
+            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+                return tpl[1]
+        return None
+
+    def first_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
+        for ent, tpl in self.world.get_components(Position, *components):
+            if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or exclude_ent != ent):
+                return tpl[1:]
+        return None
+
+    def get_visible_entity_components(self, *components, exclude_ent=None):
+        """
+        helper method to get specific components that are visible to the player
+        :param exclude_ent: exclude a specific entity
+        :param components: the wanted component types
+        :return: a list of (ent, components) tuples with the corresponding components,
+                 note that components is a list
+        """
         res = []
         for ent, tpl in self.world.get_components(Position, *components):
             if self.is_visible(tpl[0].x, tpl[0].y) and \
-                    ("exclude_ent" not in kwargs or not kwargs["exclude_ent"] or kwargs["exclude_ent"] != ent):
+                    (not exclude_ent or exclude_ent != ent):
                 res.append((ent, tpl[1:]))
 
         return res
 
-    def get_visible_component(self, component_type, exclude_ent=None):
+    def get_visible_entity_component(self, component_type, exclude_ent: Optional[int] = None):
+        """
+        helper method to get specific component that is visible to the player
+        :param component_type: the wanted component
+        :param exclude_ent: exclude a specific entity
+        :return: a list of (ent, component) tuples with the corresponding component
+        """
         res = []
         for ent, tpl in self.world.get_components(Position, component_type):
             if self.is_visible(tpl[0].x, tpl[0].y) and \
@@ -97,9 +142,34 @@ class DungeonLevel:
 
         return res
 
-    def components_at_coords(self, x: int, y: int, *components, **kwargs):
+    def only_components_at_coords(self, x: int, y: int, *components, exclude_ent=None):
+        """
+        helper method to find specific components  at the coordinates. Note that this does not give the entities
+        for tuples use
+        :param exclude_ent: exclude specific entity
+        :param x: x coordinate
+        :param y: y coordinate
+        :param components:
+        :param kwargs:
+        :return:
+        """
         return [tpl[1:] for ent, tpl in self.world.get_components(Position, *components)
-                if tpl[0].x == x and tpl[0].y == y]
+                if tpl[0].x == x and tpl[0].y == y and (not exclude_ent or ent != exclude_ent)]
+
+    def get_entity_components_at_coords(self, x: int, y: int, *component_types, exclude_ent=None):
+        return [(ent, cs[1:]) for ent, cs in self.world.get_components(Position, *component_types)
+                if cs[0].x == x and cs[0].y == y and (not exclude_ent or ent != exclude_ent)]
+
+    def get_entity_component_at_coords(self, x: int, y: int, component_type, exclude_ent=None):
+        return [(ent, comp) for ent, (pos, comp) in self.world.get_components(Position, component_type)
+                if pos.x == x and pos.y == y and (not exclude_ent or ent != exclude_ent)]
+
+    def get_entity_components_in_rect(self, rect: pygame.Rect, *component_types, exclude_ent=None):
+        res = []
+        for ent, tpl in self.world.get_components(Position, *component_types):
+            if rect.collidepoint(tpl[0].x, tpl[0].y) and (not exclude_ent or ent != exclude_ent):
+                res.append((ent, tpl[1:]))
+        return res
 
     def is_visible(self, x, y):
         return self.fov_map.fov[y, x]

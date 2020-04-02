@@ -13,7 +13,7 @@ class MovementProcessor(esper.Processor):
     def process(self):
         for ent, (pos, movement_action) in self.level.world.get_components(Position, MovementAction):
             goal_x, goal_y = pos.x + movement_action.dx, pos.y + movement_action.dy
-            ents = self.level.entities_at_coords(goal_x, goal_y, BlocksMovement, exclude_ent=None)
+            ents = self.level.only_entities_at_coords(goal_x, goal_y, BlocksMovement, exclude_ent=None)
             if len(ents) > 0:
                 self.level.world.remove_component(ent, MovementAction)
                 # cannot use movement action normally, check other stuff

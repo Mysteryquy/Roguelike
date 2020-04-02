@@ -11,6 +11,11 @@ from typing import Iterable as _Iterable
 
 import pygame
 
+"""
+Source: https://github.com/benmoran56/esper
+some modifications were made
+"""
+
 from src.components.position import Position
 
 version = '1.3'
@@ -301,20 +306,6 @@ class World:
     def get_components(self, *component_types: _Type):
         return [query for query in self._get_components(*component_types)]
 
-    def get_components_at_coords(self, x: int, y: int, *component_types):
-        return [(ent, cs[1:]) for ent, cs in self.get_components(Position, *component_types)
-                if cs[0].x == x and cs[0].y == y]
-
-    def get_component_at_coords(self, x: int, y: int, component_type):
-        return [(ent, comp) for ent, (pos, comp) in self.get_components(Position, component_type)
-                if pos.x == x and pos.y == y]
-
-    def get_components_in_rect(self, rect: pygame.Rect, *component_types):
-        res = []
-        for ent, tpl in self.get_components(Position, *component_types):
-            if rect.collidepoint(tpl[0].x, tpl[0].y):
-                res.append((ent, tpl[1:]))
-        return res
 
     def try_component(self, entity: int, component_type: _Type):
         """Try to get a single component type for an Entity.

@@ -15,6 +15,11 @@ class TakeDamageEvent:
 
 
 @dataclass
+class HealEvent:
+    amount: int
+
+
+@dataclass
 class HealthBonus:
     bonus: int
     increase_max_health: bool = False

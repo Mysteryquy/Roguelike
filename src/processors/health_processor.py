@@ -1,11 +1,16 @@
 from src import esper, config, constants
 from src.components.death import Dead, Death
-from src.components.health import TakeDamageEvent, Health
+from src.components.health import TakeDamageEvent, Health, HealEvent
 from src.components.name import Name
 
 
 class HealthProcessor(esper.Processor):
     def process(self):
+        for ent, (name, health, heal_event) in self.level.world.get_components(Name, Health, HealEvent):
+            health.current_health = min(health.max_health, health.current_health + heal_event.amount)
+            config.GAME.game_message(name.name + " gets healed.", constants.COLOR_YELLOW)
+            self.level.world.remove_component(ent, HealEvent)
+
         for ent, (name, health, damage_event) in self.level.world.get_components(Name, Health, TakeDamageEvent):
             optional = ""
             if damage_event.source:
@@ -22,4 +27,3 @@ class HealthProcessor(esper.Processor):
             else:
                 health.current_health -= damage_event.damage
             self.level.world.remove_component(ent, TakeDamageEvent)
-

@@ -1,13 +1,14 @@
 import pygame
 
-from src import esper, config, constants, menu
-from src.components.action import MovementAction, UseStairsAction, StartAutoexploreAction
+from src import esper, config, constants, menu, casting
+from src.components.action import MovementAction, UseStairsAction, StartAutoexploreAction, SpellcastAction
 from src.components.action import PickUpAction
 
 from src.components.action import HasAction, DropAction
 from src.components.autoexplore import AutoExploring
 from src.components.player import Player
 from src.components.position import Position
+from src.resources.spells import Spells
 
 MOVEMENT_DICT = {
     pygame.K_UP: (0, -1),
@@ -112,7 +113,8 @@ class InputProcessor(esper.Processor):
                     self.level.world.add_component(self.player, StartAutoexploreAction())
 
                 if event.key == pygame.K_v:
-                    pass
-                    # TODO CHANGE THIS
-                    # cast_buffstats(config.PLAYER, 10)
-                    # return ACTIONS.SPELL
+                    self.level.world.add_component(self.player, SpellcastAction(spell=Spells.Heal,
+                                                                                args={
+                                                                                    "target": self.player,
+                                                                                    "amount": 5
+                                                                                }))

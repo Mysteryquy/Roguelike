@@ -8,8 +8,6 @@ class StairProcessor(esper.Processor):
     def process(self):
         for ent, (pos, _) in self.level.world.get_components(Position, UseStairsAction):
             self.level.world.remove_component(ent, UseStairsAction)
-            ents = self.level.entities_at_coords(pos.x, pos.y, Stairs)
-            if len(ents) > 0:
-                stairs = self.level.world.component_for_entity(ents[0], Stairs)
+            stairs = self.level.first_component_at_coords(pos.x, pos.y, Stairs)
+            if stairs:
                 config.GAME.transition(stairs.leads_to)
-
