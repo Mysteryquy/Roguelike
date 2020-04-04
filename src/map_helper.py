@@ -4,6 +4,7 @@ from src import config, constants, generator
 import random
 
 from src.components.position import Position
+from src.components.render import Renderable
 
 
 def transition_reset():
@@ -200,3 +201,16 @@ def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int
             return x, y
 
     return None
+
+
+def place_map_specific(level):
+    if level.name is "WATER1":
+        for room in level.rooms:
+            for i in range(2):
+                x = tcod.random_get_int(None, room.left + 1, room.right - 1)
+                y = tcod.random_get_int(None, room.top + 1, room.bottom - 1)
+                ent = level.first_entity_at_position(Position(x, y))
+                if not ent:
+                   level.world.create_entity(Position(x, y),
+                                          Renderable(animation_key="DECOR_STATUE_01", depth=constants.DEPTH_STRUCTURES))
+

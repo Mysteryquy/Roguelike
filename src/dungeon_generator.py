@@ -18,9 +18,9 @@ See https://github.com/munificent/hauberk/ for his project and source code
 class DungeonGenerator:
     directions: List[Tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     level_tile_dict: Dict[str, Tuple[str, str]] = {
+        "WATER1": ("W_WALL", "W_FLOOR"),
         "DUNGEON1": ("S_WALL", "S_FLOOR"),
-        "DUNGEON2": ("S_FLOOR", "S_WALL"),
-        "DUNGEON3": ("S_WALL", "S_FLOOR")
+        "DUNGEON2": ("S_WALL", "S_FLOOR")
     }
 
     def __init__(self, level_name: str):

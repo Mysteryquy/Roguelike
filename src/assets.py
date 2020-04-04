@@ -2,6 +2,41 @@ import pygame
 
 from src import config, constants
 
+def colorize(image, newColor):
+    """
+    Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
+    original).
+    :param image: Surface to create a colorized copy of
+    :param newColor: RGB color to use (original alpha values are preserved)
+    :return: New colorized Surface instance
+    """
+    image = image.copy()
+
+    # zero out RGB values
+    #image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+    # add in new RGB values
+    image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGBA_SUB)
+
+    return image
+
+def colorize_add(image, newColor):
+    """
+    Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
+    original).
+    :param image: Surface to create a colorized copy of
+    :param newColor: RGB color to use (original alpha values are preserved)
+    :return: New colorized Surface instance
+    """
+    image = image.copy()
+
+    # zero out RGB values
+    #image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+    # add in new RGB values
+    image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGB_ADD)
+
+    return image
+
+
 
 # noinspection PyArgumentEqualDefault
 class Assets:
@@ -47,11 +82,26 @@ class Assets:
 
         self.tile_dict = {
             "S_WALL": pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
-            "S_WALL_EXPLORED": pygame.image.load("data/sprites/wallunseen2.png").convert_alpha(),
             "S_FLOOR": pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
-            "S_FLOOR_EXPLORED": pygame.image.load("data/sprites/floorunseen2.png").convert_alpha()
 
         }
+        #gute werte
+        #t1 = (0,60,90,0)
+        #t2 = (50,50,50,0)
+
+        #experimentell gute
+        #t1 = (0,50, 50,0)
+        #t2 = (100,60,60,0)
+
+        t1 = (0,50,90,0)
+        t2 = (100,60,60,0)
+        self.tile_dict["W_WALL"] = colorize(colorize_add(self.tile_dict["S_WALL"], t1), t2)
+        self.tile_dict["W_FLOOR"] = colorize(colorize_add(self.tile_dict["S_FLOOR"], t1), t2)
+
+        self.tile_dict_explored = { key:colorize(self.tile_dict[key], (50,50,50,0)) for key in self.tile_dict }
+
+
+
 
         self.MINIMAP_YELLOW_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                     constants.COLOR_YELLOW)
@@ -205,9 +255,16 @@ class Assets:
             "S_FLESH_EAT": self.flesh.get_image("c", 0, 16, 16, (32, 32)),
             "S_END_GAME_ITEM": self.S_END_GAME_ITEM,
             "S_END_GAME_PORTAL_OPENED": self.S_END_GAME_PORTAL_OPENED,
-            "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED
+            "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED,
+            "DECOR_STATUE_01": get_animation_from_files(3, 20, "data/tilesets/Objects/Decor", num_sprites=2),
 
         }
+
+        self.animation_dict_explored = {}
+        for key in self.animation_dict:
+            self.animation_dict_explored[key] = []
+            for img in self.animation_dict[key]:
+                self.animation_dict_explored[key].append(colorize(img, (70, 70, 70, 0)))
 
         ## AUDIO ##
 

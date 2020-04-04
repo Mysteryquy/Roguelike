@@ -26,7 +26,7 @@ def gen_weapon_longsword(level, coords):
     level.world.create_entity(AttackerBonus(attack=bonus),
                               Valuable(100), Item(weight=2, volume=2),
                               Equipment(equip_slot=EquipSlots.WEAPON),
-                              Renderable(animation_key="S_WEP_LONGSWORD_" + str(n), depth=constants.DEPTH_ITEM),
+                              Renderable(animation_key="S_WEP_LONGSWORD_" + str(n), depth=constants.DEPTH_ITEM, draw_explored=True),
                               Name(name=longsword_name_dict[n]), Position(x, y)
                               )
 

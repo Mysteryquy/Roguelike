@@ -77,7 +77,7 @@ COLOR_YELLOW_DARK_GOLD = (128, 128, 0)
 COLOR_DEFAULT_BG = COLOR_GREY
 
 # FOV SETTINGS Er hat anstelle der Null "libcod.FOV_BASIC" da stehen
-FOV_ALGO = libtcodpy.FOV_BASIC
+FOV_ALGO = libtcodpy.FOV_DIAMOND
 FOV_LIGHT_WALLS = True
 TORCH_RADIUS = 8
 
@@ -91,11 +91,10 @@ DEPTH_ITEM = 2
 DEPTH_CORPSE = 100
 DEPTH_STRUCTURES = 101
 
-EXPLORED_DRAW_FLAGS = pygame.BLEND_RGBA_SUB
 
 
 class LevelNames:
-    level_names: List[str] = ["DUNGEON1", "DUNGEON2", "DUNGEON3"]
+    level_names: List[str] = ["WATER1", "DUNGEON1", "DUNGEON2"]
 
     @classmethod
     def is_last_level(cls, level_name: str) -> bool:

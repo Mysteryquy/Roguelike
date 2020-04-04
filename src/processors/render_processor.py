@@ -38,14 +38,12 @@ class RenderProcessor(esper.Processor):
 
             is_visible = self.level.is_visible(pos.x, pos.y)
             explored_draw = render.draw_explored and self.level.is_explored(pos.x, pos.y) and not is_visible
-            special_flags = constants.EXPLORED_DRAW_FLAGS if explored_draw else 0
 
-            if render.draw and (is_visible or explored_draw):
+            if render.draw and is_visible:
                 animation = config.ASSETS.animation_dict[render.animation_key]
                 if len(animation) == 1:
                     config.SURFACE_MAP.blit(animation[0],
-                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT),
-                                            special_flags=special_flags)
+                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT))
 
                 else:
                     if config.CLOCK.get_fps() > 0.0:
@@ -56,8 +54,24 @@ class RenderProcessor(esper.Processor):
                         render.sprite_image = (render.sprite_image + 1) % len(animation)
 
                     config.SURFACE_MAP.blit(animation[render.sprite_image],
-                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT),
-                                            special_flags=special_flags)
+                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT))
+
+            if render.draw and explored_draw:
+                animation = config.ASSETS.animation_dict_explored[render.animation_key]
+                if len(animation) == 1:
+                    config.SURFACE_MAP.blit(animation[0],
+                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT))
+
+                else:
+                    if config.CLOCK.get_fps() > 0.0:
+                        render.flicker_timer += 1 / config.CLOCK.get_fps()
+
+                    if render.flicker_timer >= render.flicker_speed:
+                        render.flicker_timer = 0.0
+                        render.sprite_image = (render.sprite_image + 1) % len(animation)
+
+                    config.SURFACE_MAP.blit(animation[render.sprite_image],
+                                            (pos.x * constants.CELL_WIDTH, pos.y * constants.CELL_HEIGHT))
 
     def draw_map(self):
         cam_x, cam_y = config.CAMERA.x / constants.CELL_WIDTH, config.CAMERA.y / constants.CELL_HEIGHT
@@ -78,7 +92,7 @@ class RenderProcessor(esper.Processor):
                         config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture],
                                                 (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     elif map_to_draw[x][y].draw_on_screen:
-                        config.SURFACE_MAP.blit(config.ASSETS.tile_dict[map_to_draw[x][y].texture_explored],
+                        config.SURFACE_MAP.blit(config.ASSETS.tile_dict_explored[map_to_draw[x][y].texture],
                                                 (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                         map_to_draw[x][y].draw_on_screen = False
 

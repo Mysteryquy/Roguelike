@@ -209,3 +209,4 @@ class DungeonLevel:
                     generator.gen_stairs(self, room.center, leads_to=constants.LevelNames.next_level_name(self.name))
 
             map_helper.how_much_to_place(self, room_size, room)
+        map_helper.place_map_specific(self)

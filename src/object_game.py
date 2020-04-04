@@ -32,8 +32,9 @@ class Game:
         self.game_save = game_save
         self.game_load = game_load
         self.player_name = player_name
-        self.create_new_level("DUNGEON1", first_level=True, create_player=True)
-        self.current_level: Optional[DungeonLevel] = self.levels["DUNGEON1"]
+        first_level = constants.LevelNames.level_names[0]
+        self.create_new_level(first_level, first_level=True, create_player=True)
+        self.current_level: Optional[DungeonLevel] = self.levels[first_level]
         constants.CURRENT_LEVEL_NAME: str = self.current_level_name
 
     @property
