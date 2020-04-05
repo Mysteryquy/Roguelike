@@ -11,7 +11,6 @@ class DeathProcessor(esper.Processor):
     def process(self):
         for ent, (renderable, _, death, pos, name) in \
                 self.level.world.get_components(Renderable, Dead, Death, Position, Name):
-            print("DEAD")
             if death.animation_key:
                 self.level.world.create_entity(
                     Renderable(animation_key=death.animation_key, depth=constants.DEPTH_CORPSE),

@@ -2,6 +2,7 @@ import pygame
 
 from src import config, constants
 
+
 def colorize(image, newColor):
     """
     Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
@@ -13,11 +14,12 @@ def colorize(image, newColor):
     image = image.copy()
 
     # zero out RGB values
-    #image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+    # image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
     # add in new RGB values
     image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGBA_SUB)
 
     return image
+
 
 def colorize_add(image, newColor):
     """
@@ -30,12 +32,11 @@ def colorize_add(image, newColor):
     image = image.copy()
 
     # zero out RGB values
-    #image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+    # image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
     # add in new RGB values
     image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGB_ADD)
 
     return image
-
 
 
 # noinspection PyArgumentEqualDefault
@@ -73,7 +74,8 @@ class Assets:
         self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
-                                                           (constants.RECT_WHOLE_SCREEN.width, constants.RECT_WHOLE_SCREEN.height))
+                                                           (constants.RECT_WHOLE_SCREEN.width,
+                                                            constants.RECT_WHOLE_SCREEN.height))
         self.S_END_GAME_ITEM = self.tool.get_image("a", 0, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
         self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
@@ -85,23 +87,13 @@ class Assets:
             "S_FLOOR": pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
 
         }
-        #gute werte
-        #t1 = (0,60,90,0)
-        #t2 = (50,50,50,0)
+        t1 = (0, 50, 90, 0)
+        t2 = (100, 60, 60, 0)
 
-        #experimentell gute
-        #t1 = (0,50, 50,0)
-        #t2 = (100,60,60,0)
-
-        t1 = (0,50,90,0)
-        t2 = (100,60,60,0)
         self.tile_dict["W_WALL"] = colorize(colorize_add(self.tile_dict["S_WALL"], t1), t2)
         self.tile_dict["W_FLOOR"] = colorize(colorize_add(self.tile_dict["S_FLOOR"], t1), t2)
 
-        self.tile_dict_explored = { key:colorize(self.tile_dict[key], (50,50,50,0)) for key in self.tile_dict }
-
-
-
+        self.tile_dict_explored = {key: colorize(self.tile_dict[key], (50, 50, 50, 0)) for key in self.tile_dict}
 
         self.MINIMAP_YELLOW_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                     constants.COLOR_YELLOW)
@@ -189,8 +181,9 @@ class Assets:
             "A_ELEMENTAL_ICICLE": get_animation_from_files(2, 6, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_EARTH": get_animation_from_files(3, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_STEEL": get_animation_from_files(3, 1, "data/tilesets/Characters/Elemental", num_sprites=2),
-            "A_ELEMENTAL_LIGHTNING": get_animation_from_files(1, 3, "data/tilesets/Characters/Elemental", num_sprites=2),
-            "A_ELEMENTAL_PAPER": get_animation_from_files(1, 0, "data/tilesets/Characters/Elemental",num_sprites=2),
+            "A_ELEMENTAL_LIGHTNING": get_animation_from_files(1, 3, "data/tilesets/Characters/Elemental",
+                                                              num_sprites=2),
+            "A_ELEMENTAL_PAPER": get_animation_from_files(1, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_SLIME": get_animation_from_files(2, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_FLESH": get_animation_from_files(7, 0, "data/tilesets/Characters/Elemental", num_sprites=2),
             "A_ELEMENTAL_MIMIC": get_animation_from_files(0, 8, "data/tilesets/Characters/Elemental", num_sprites=1),
@@ -208,7 +201,6 @@ class Assets:
             "A_AQUATIC_SEA_DEVIL": get_animation_from_files(1, 4, "data/tilesets/Characters/Aquatic", num_sprites=2),
             "A_AQUATIC_FROG_HYPNO": get_animation_from_files(1, 5, "data/tilesets/Characters/Aquatic", num_sprites=2),
             "A_BOSS_AQUATIC_KRAKEN": get_animation_from_files(0, 4, "data/tilesets/Characters/Aquatic", num_sprites=2),
-
 
             ## ITEMS ##
             "S_SWORD": [pygame.transform.scale(pygame.image.load("data/sprites/sword.png"),
@@ -256,7 +248,7 @@ class Assets:
             "S_END_GAME_ITEM": self.S_END_GAME_ITEM,
             "S_END_GAME_PORTAL_OPENED": self.S_END_GAME_PORTAL_OPENED,
             "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED,
-            "DECOR_STATUE_01": get_animation_from_files(3, 20, "data/tilesets/Objects/Decor", num_sprites=2),
+            "DECOR_STATUE_01": get_animation_from_files(3, 20, "bubble", num_sprites=1),
 
         }
 

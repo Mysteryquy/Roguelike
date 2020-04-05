@@ -6,7 +6,6 @@ from typing import List, Tuple, Dict
 import numpy as np
 import pygame
 
-from src import map_helper as mp
 from src.tile import Tile
 
 """
@@ -44,7 +43,7 @@ class DungeonGenerator:
         self.wall_texture = w
 
     def generate(self, map_width: int, map_height: int) -> Tuple[List[List[Tile]], List[pygame.Rect]]:
-        self.current_map = [[mp.Tile(True, self.wall_texture) for y in range(0, map_height)] for x in
+        self.current_map = [[Tile(True, self.wall_texture) for y in range(0, map_height)] for x in
                             range(0, map_width)]
         self.regions = np.zeros((map_width, map_height))
         self.current_map_width = map_width

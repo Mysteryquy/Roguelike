@@ -20,8 +20,6 @@ for i in XP_NEEDED.keys():
     else:
         XP_NEEDED_FOR_NEXT[i] = math.inf
 
-print(XP_NEEDED_FOR_NEXT)
-
 
 @dataclass
 class Experience:

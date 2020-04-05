@@ -2,8 +2,11 @@ from abc import ABC
 
 import pygame
 from src import config, constants
+from src.components.experience import Experience
 from src.components.health import Health
+from src.components.level import Level
 from src.components.stats import Stats
+import src.components.experience as _experience
 
 from src.render_helper import draw_text
 
@@ -340,20 +343,21 @@ class GuiContainer(UiContainer):
         stats = config.GAME.current_level.world.component_for_player(Stats)
         self.items["health_bar"].update(
             (health.current_health, health.max_health))
-        """
-        self.items["mana_bar"].update(
-            (config.PLAYER.creature.current_mana, config.PLAYER.creature.max_mana))
-        if config.PLAYER.creature.level == constants.MAX_LEVEL:
+
+        # self.items["mana_bar"].update(
+        #   (config.PLAYER.creature.current_mana, config.PLAYER.creature.max_mana))
+
+        level = config.GAME.current_level.world.component_for_player(Level)
+        experience = config.GAME.current_level.world.component_for_player(Experience)
+        if level.level == _experience.MAX_LEVEL:
             self.items["xp_bar"].print_string_format = "{0}"
             self.items["xp_bar"].string = "MAX LEVEL"
         else:
             self.items["xp_bar"].update(
-                (config.PLAYER.creature.current_xp - (constants.XP_NEEDED[
-                                                          config.PLAYER.creature.level - 1] if config.PLAYER.creature.level != 1 else 0),
-                 constants.XP_NEEDED_FOR_NEXT[config.PLAYER.creature.level]))
+                (experience.current_experience - (_experience.XP_NEEDED[
+                                                          level.level - 1] if level.level != 1 else 0),
+                 _experience.XP_NEEDED_FOR_NEXT[level.level]))
 
-        """
         self.items["str"].update(stats.strength)
         self.items["dex"].update(stats.dexterity)
         self.items["int"].update(stats.intelligence)
-

@@ -81,6 +81,9 @@ def game_initialize():
         (rest_of_screen_w, screen_height)
     )
 
+    config.SURFACE_MESSAGES = pygame.Surface((constants.CAMERA_WIDTH / 2, constants.NUM_MESSAGES * 100),
+                                             pygame.SRCALPHA)
+
     render_helper.fill_surfaces()
 
     config.ASSETS = assets.Assets()

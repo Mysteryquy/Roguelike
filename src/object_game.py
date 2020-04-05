@@ -72,8 +72,7 @@ class Game:
     def create_new_level(self, level_name, first_level=False, create_player=False):
         level = DungeonLevel(level_name=level_name)
         if create_player:
-            generator.gen_player(level, (0,0), self.player_name)
-
+            generator.gen_player(level, (0, 0), self.player_name)
 
         level.init_processors(game_save=self.game_save, game_load=self.game_load)
         self.levels[level_name] = level

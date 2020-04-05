@@ -15,6 +15,7 @@ class Render(object):
 class PickUpProcessor(esper.Processor):
     def process(self):
         for ent, (pos, _, container, name) in self.level.world.get_components(Position, PickUpAction, Container, Name):
+            self.level.world.remove_component(ent, PickUpAction)
             for ent_gold, gold in self.level.get_entity_component_at_position(pos, Gold):
                 print(gold)
                 container.gold += gold.amount

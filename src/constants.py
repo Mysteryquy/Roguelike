@@ -92,7 +92,6 @@ DEPTH_CORPSE = 100
 DEPTH_STRUCTURES = 101
 
 
-
 class LevelNames:
     level_names: List[str] = ["WATER1", "DUNGEON1", "DUNGEON2"]
 

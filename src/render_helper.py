@@ -51,30 +51,29 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
 def draw_messages():
     history_length = len(config.GAME.message_history)
 
+    rect = pygame.Rect(0, constants.CAMERA_HEIGHT - 140, 400, 100)
+
     if history_length == config.GAME.message_history_old_length:
+        config.SURFACE_MAIN.blit(config.SURFACE_MESSAGES, rect)
         # nothing to draw here, just old stuff
         return
 
-    # fill_surfaces()
+    config.SURFACE_MESSAGES.fill((0, 0, 0))
+    config.SURFACE_MESSAGES.set_colorkey((0,0,0))
     map_helper.transition_reset()
+    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
     if history_length <= constants.NUM_MESSAGES:
         to_draw = config.GAME.message_history
     else:
         to_draw = config.GAME.message_history[-constants.NUM_MESSAGES:]
 
     _, text_height = config.ASSETS.FONT_MESSAGE_TEXT.size("A")
-    start_y = (constants.CAMERA_HEIGHT - (constants.NUM_MESSAGES * text_height)) - 50
-
-    max_length = 400
-    max_height = constants.NUM_MESSAGES * text_height
-    surf = assets.get_surface_rect(max_length, max_height, constants.COLOR_DARK_GREY)
-    rect = pygame.Rect((0, start_y + max_height), (max_length, max_height))
-    config.SURFACE_MAIN.blit(surf, rect)
 
     for i, (message, color) in enumerate(to_draw):
-        draw_text(config.SURFACE_MAIN, message, (0, start_y + i * text_height), color, constants.COLOR_BLACK)
+        draw_text(config.SURFACE_MESSAGES, message, (0, i * text_height), color)
 
     config.GAME.message_history_old_length = history_length
+    config.SURFACE_MAIN.blit(config.SURFACE_MESSAGES, rect)
 
 
 def draw_menu():

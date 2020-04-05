@@ -13,6 +13,7 @@ from src.components.death import Death
 from src.components.energy import Energy
 from src.components.experience import Experience
 from src.components.health import Health
+from src.components.level import Level
 from src.components.name import Name
 from src.components.persisent import Persistent
 from src.components.player import Player
@@ -54,5 +55,6 @@ def gen_player(level, coords, player_name):
                                          Alignment(CreatureAlignment.PLAYER),
                                          Experience(),
                                          Container(),
+                                         Level(1),
                                          Death(animation_key="S_DEAD_DEMON", custom_death=_death.death_player)
                                          )

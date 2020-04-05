@@ -11,6 +11,7 @@ from src.processors.attack_processor import AttackProcessor
 from src.processors.autoexplore_processor import AutoExploreProcessor
 from src.processors.death_processor import DeathProcessor
 from src.processors.energy_processor import EnergyProcessor
+from src.processors.experience_processor import ExperienceProcessor
 from src.processors.health_processor import HealthProcessor
 from src.processors.input_processor import InputProcessor
 from src.processors.movement_processor import MovementProcessor
@@ -61,8 +62,9 @@ class DungeonLevel:
         self.world.add_processor(self, PickUpProcessor(), priority=950)
         self.world.add_processor(self, AttackProcessor(), priority=900)
         self.world.add_processor(self, HealthProcessor(), priority=600)
-        self.world.add_processor(self, RoundCounterProcessor(), priority=11)
-        self.world.add_processor(self, DeathProcessor(), priority=6)
+        self.world.add_processor(self, RoundCounterProcessor(), priority=100)
+        self.world.add_processor(self, DeathProcessor(), priority=90)
+        self.world.add_processor(self, ExperienceProcessor(), priority=89)
         self.world.add_processor(self, self.render_processor, priority=5)
         self.world.add_processor(self, StairProcessor())
 
