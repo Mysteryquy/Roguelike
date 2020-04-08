@@ -1,4 +1,5 @@
 import pygame
+from bidict import bidict
 
 from src import config, constants
 
@@ -15,8 +16,16 @@ def colorize(image, new_color, flags=pygame.BLEND_RGBA_SUB):
     image = image.copy()
     # add in new RGB values
     image.fill(new_color[0:3] + (0,), None, flags)
-
     return image
+
+
+tile_name_bidict = bidict({
+    0: "S_WALL",
+    1: "S_FLOOR",
+    2: "W_WALL",
+    3: "W_FLOOR"
+})
+
 
 # noinspection PyArgumentEqualDefault
 class Assets:
@@ -62,15 +71,15 @@ class Assets:
         self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16, 112, 48, 48)
 
         self.tile_dict = {
-            "S_WALL": pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
-            "S_FLOOR": pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
+            0: pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
+            1: pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
 
         }
         t1 = (0, 50, 90, 0)
         t2 = (100, 60, 60, 0)
 
-        self.tile_dict["W_WALL"] = colorize(colorize(self.tile_dict["S_WALL"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
-        self.tile_dict["W_FLOOR"] = colorize(colorize(self.tile_dict["S_FLOOR"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
+        self.tile_dict[2] = colorize(colorize(self.tile_dict[0], t1, flags=pygame.BLEND_RGBA_ADD), t2)
+        self.tile_dict[3] = colorize(colorize(self.tile_dict[1], t1, flags=pygame.BLEND_RGBA_ADD), t2)
 
         self.tile_dict_explored = {key: colorize(self.tile_dict[key], (50, 50, 50, 0)) for key in self.tile_dict}
 

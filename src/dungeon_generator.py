@@ -6,6 +6,8 @@ from typing import List, Tuple, Dict
 import numpy as np
 import pygame
 
+from src import assets
+from src.assets import Assets
 from src.resources.levels import Levels
 from src.tile import Tile
 
@@ -23,7 +25,7 @@ class DungeonGenerator:
         Levels.DUNGEON2: ("S_WALL", "S_FLOOR")
     }
 
-    def __init__(self, level_name: str):
+    def __init__(self, level_name: Levels):
         self.num_room_tries: int = 50
         self.extra_connector_chance: int = 3
         self.room_extra_size: int = 0
@@ -34,8 +36,9 @@ class DungeonGenerator:
         self.current_map = None
         self.current_map_width: int = 0
         self.current_map_height: int = 0
-        print(level_name)
-        self.wall_texture, self.tile_texture = DungeonGenerator.level_tile_dict[level_name]
+        walls, floor = DungeonGenerator.level_tile_dict[level_name]
+        self.wall_texture: int = assets.tile_name_bidict.inverse[walls]
+        self.tile_texture: int = assets.tile_name_bidict.inverse[floor]
 
     def change_level(self, level):
         if level not in DungeonGenerator.level_tile_dict:
