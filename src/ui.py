@@ -349,14 +349,13 @@ class GuiContainer(UiContainer):
 
         level = config.GAME.current_level.world.component_for_player(Level)
         experience = config.GAME.current_level.world.component_for_player(Experience)
-        if level.level == _experience.MAX_LEVEL:
+        if level.level >= _experience.MAX_LEVEL:
             self.items["xp_bar"].print_string_format = "{0}"
             self.items["xp_bar"].string = "MAX LEVEL"
         else:
             self.items["xp_bar"].update(
-                (experience.current_experience - (_experience.XP_NEEDED[
-                                                          level.level - 1] if level.level != 1 else 0),
-                 _experience.XP_NEEDED_FOR_NEXT[level.level]))
+                (experience.current_experience,
+                 _experience.XP_NEEDED[level.level]))
 
         self.items["str"].update(stats.strength)
         self.items["dex"].update(stats.dexterity)

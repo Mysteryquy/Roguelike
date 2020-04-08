@@ -15,3 +15,4 @@ class Renderable:
     sprite_image: int = 0
     draw_explored: bool = False
     draw: bool = True
+    special_flags: int = 0

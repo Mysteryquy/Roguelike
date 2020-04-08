@@ -11,3 +11,6 @@ class Position:
         if type(other) != Position:
             return False
         return other.x == self.x and other.y == self.y
+
+    def __str__(self):
+        return "Position(x=" + str(self.x) + ", y=" + str(self.y) + ")"

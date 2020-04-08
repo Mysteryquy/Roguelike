@@ -12,6 +12,7 @@ from src.components.health import Health
 from src.components.name import Name
 from src.components.position import Position
 from src.components.render import Renderable
+from src.resources.levels import Levels
 
 
 def gen_demon_avin(level, coords):
@@ -239,13 +240,13 @@ def gen_boss_aquatic_kraken(level, coords):
 
 
 level_monster_dict = {
-    "DUNGEON1": [(gen_demon_avin, 100), (gen_aquatic_piranha, 100)],
-    "WATER1": [(gen_aquatic_eel, 100), (gen_aquatic_frog_hypno, 100), (gen_aquatic_jellyfish, 100),
+    Levels.DUNGEON1: [(gen_demon_avin, 100), (gen_aquatic_piranha, 100)],
+    Levels.WATER1: [(gen_aquatic_eel, 100), (gen_aquatic_frog_hypno, 100), (gen_aquatic_jellyfish, 100),
                  (gen_aquatic_jellyowar, 100), (gen_aquatic_kelpie, 100), (gen_aquatic_piranha, 100),
                  (gen_aquatic_sea_devil, 100), (gen_aquatic_shark, 100), (gen_aquatic_shark_gold, 100),
                  (gen_aquatic_shark_white, 100), (gen_aquatic_watersnake, 100), (gen_aquatic_whale, 100),
                  (gen_boss_aquatic_kraken, 50)],
-    "DUNGEON2": [(gen_demon_avin, 1)]
+    Levels.DUNGEON2: [(gen_demon_avin, 1)]
 }
 
 

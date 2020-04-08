@@ -2,7 +2,7 @@ import pygame
 import tcod as libtcodpy
 import math
 from enum import Enum
-from typing import List
+from typing import List, Dict
 
 pygame.init()
 
@@ -13,8 +13,8 @@ CELL_HEIGHT = 32
 SPRITE_WIDTH = 16
 SPRITE_HEIGHT = 16
 
-MAP_WIDTH = 19
-MAP_HEIGHT = 19
+MAP_WIDTH = 33
+MAP_HEIGHT = 33
 # Map limitations (must be odd number)
 assert MAP_WIDTH % 2 == 1
 assert MAP_HEIGHT % 2 == 1
@@ -33,8 +33,8 @@ ROOM_MIN_WIDTH = 3
 RECT_WHOLE_SCREEN = None
 
 # Mini Map stuff
-MINI_MAP_CELL_WIDTH = 4
-MINI_MAP_CELL_HEIGHT = 4
+MINI_MAP_CELL_WIDTH = 10
+MINI_MAP_CELL_HEIGHT = 10
 
 # FPS LIMIT
 GAME_FPS = 60
@@ -91,24 +91,3 @@ DEPTH_ITEM = 2
 DEPTH_CORPSE = 100
 DEPTH_STRUCTURES = 101
 
-
-class LevelNames:
-    level_names: List[str] = ["WATER1", "DUNGEON1", "DUNGEON2"]
-
-    @classmethod
-    def is_last_level(cls, level_name: str) -> bool:
-        return cls.level_names.index(level_name) == len(cls.level_names) - 1
-
-    @classmethod
-    def is_first_level(cls, level_name: str) -> bool:
-        return cls.level_names.index(level_name) == 0
-
-    @classmethod
-    def next_level_name(cls, level_name: str) -> str:
-        if not cls.is_last_level(level_name):
-            return cls.level_names[cls.level_names.index(level_name) + 1]
-
-    @classmethod
-    def previous_level_name(cls, level_name: str) -> str:
-        if not cls.is_first_level(level_name):
-            return cls.level_names[cls.level_names.index(level_name) - 1]

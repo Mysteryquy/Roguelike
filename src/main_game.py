@@ -69,10 +69,9 @@ def game_initialize():
     config.ROUND_COUNTER = 0
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
-    config.SURFACE_MAIN.set_alpha(None)
 
     config.SURFACE_MAP = pygame.Surface(
-        (constants.MAP_WIDTH * constants.CELL_WIDTH, constants.MAP_HEIGHT * constants.CELL_HEIGHT))
+        (constants.MAP_WIDTH * constants.CELL_WIDTH, max(screen_height, constants.MAP_HEIGHT * constants.CELL_HEIGHT)))
 
     config.SURFACE_MINI_MAP = pygame.Surface(
         (rest_of_screen_w, rest_of_screen_w))
@@ -81,23 +80,28 @@ def game_initialize():
         (rest_of_screen_w, screen_height)
     )
 
-    config.SURFACE_MESSAGES = pygame.Surface((constants.CAMERA_WIDTH / 2, constants.NUM_MESSAGES * 100),
-                                             pygame.SRCALPHA)
+    config.SURFACE_MESSAGES = pygame.Surface((int(constants.CAMERA_WIDTH / 2), constants.NUM_MESSAGES * 100))
 
     render_helper.fill_surfaces()
 
     config.ASSETS = assets.Assets()
-    config.CAMERA = camera.Camera()
+    config.CAMERA = camera.Camera(width=constants.CAMERA_WIDTH, height=constants.CAMERA_HEIGHT,
+                                  cell_width=constants.CELL_WIDTH, cell_height=constants.CELL_HEIGHT,
+                                  map_width=constants.MAP_WIDTH, map_height=constants.MAP_HEIGHT,
+                                  screen_topleft=(0, 0))
+
+    config.MINI_MAP_CAMERA = camera.Camera(width=rest_of_screen_w - 50, height=rest_of_screen_w - 50,
+                                           cell_width=constants.MINI_MAP_CELL_WIDTH,
+                                           cell_height=constants.MINI_MAP_CELL_HEIGHT,
+                                           map_width=constants.MAP_WIDTH, map_height=constants.MAP_HEIGHT,
+                                           screen_topleft=(constants.CAMERA_WIDTH, 0))
 
     config.CLOCK = pygame.time.Clock()
-
-    # Random Engine
-    config.RANDOM_ENGINE = random.SystemRandom()
 
     config.FOV_CALCULATE = True
 
     config.CONSOLE = Textfield(config.SURFACE_MAIN,
-                               pygame.Rect(5, constants.CAMERA_HEIGHT - 30, constants.CAMERA_WIDTH / 1.2, 25),
+                               pygame.Rect(5, constants.CAMERA_HEIGHT - 30, int(constants.CAMERA_WIDTH / 1.2), 25),
                                "console", constants.COLOR_GREY, constants.COLOR_WHITE, constants.COLOR_YELLOW_DARK_GOLD,
                                focus_key=pygame.K_o)
 
@@ -132,8 +136,6 @@ def setup_gui(rest_of_screen_w):
 def game_new(player_name):
     config.GAME = Game(game_load=game_load, game_save=game_save, player_name=player_name)
 
-    config.GAME.current_level.place_objects()
-
     config.FOV_CALCULATE = True
     config.GAME.current_level.calculate_fov()
 
@@ -149,19 +151,16 @@ def game_exit():
 def game_save(display_message=False):
     if display_message:
         config.GAME.game_message("Saved Game", constants.COLOR_WHITE)
-
     with gzip.open("data/userdata/savegame", "w+b") as file:
-        pickle.dump([config.GAME], file)
+        pickle.dump(config.GAME, file)
 
 
 def game_load():
     with gzip.open("data/userdata/savegame") as file:
-        config.GAME, config.PLAYER = pickle.load(file)
-
-    map_helper.make_fov(config.GAME.current_map)
+        config.GAME = pickle.load(file)
     config.FOV_CALCULATE = True
-    map_helper.calculate_fov()
-
+    config.GAME.current_level.calculate_fov()
+    map_helper.transition_reset()
 
 def preferences_save():
     with gzip.open("data/userdata/pref", "wb") as file:

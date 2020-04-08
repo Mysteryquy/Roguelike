@@ -10,4 +10,5 @@ class ExperienceProcessor(esper.Processor):
         for ent, (level, name, experience) in self.level.world.get_components(Level, Name, Experience):
             if experience.current_experience >= exp.XP_NEEDED[level.level]:
                 level.level += 1
+                experience.current_experience = 0
                 config.GAME.game_message(name.name + " levels up to level" + str(level.level), constants.COLOR_BLUE)

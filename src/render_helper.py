@@ -48,34 +48,6 @@ def helper_text_objects(incoming_text, incoming_color, incoming_bg, font):
     return text_surface, text_surface.get_rect()
 
 
-def draw_messages():
-    history_length = len(config.GAME.message_history)
-
-    rect = pygame.Rect(0, constants.CAMERA_HEIGHT - 140, 400, 100)
-
-    if history_length == config.GAME.message_history_old_length:
-        config.SURFACE_MAIN.blit(config.SURFACE_MESSAGES, rect)
-        # nothing to draw here, just old stuff
-        return
-
-    config.SURFACE_MESSAGES.fill((0, 0, 0))
-    config.SURFACE_MESSAGES.set_colorkey((0,0,0))
-    map_helper.transition_reset()
-    config.SURFACE_MAIN.blit(config.SURFACE_MAP, (0, 0), config.CAMERA.rect)
-    if history_length <= constants.NUM_MESSAGES:
-        to_draw = config.GAME.message_history
-    else:
-        to_draw = config.GAME.message_history[-constants.NUM_MESSAGES:]
-
-    _, text_height = config.ASSETS.FONT_MESSAGE_TEXT.size("A")
-
-    for i, (message, color) in enumerate(to_draw):
-        draw_text(config.SURFACE_MESSAGES, message, (0, i * text_height), color)
-
-    config.GAME.message_history_old_length = history_length
-    config.SURFACE_MAIN.blit(config.SURFACE_MESSAGES, rect)
-
-
 def draw_menu():
     # clear the surface
     config.SURFACE_INFO.fill(constants.COLOR_BLACK)
@@ -106,6 +78,9 @@ def draw_debug():
     draw_text(config.SURFACE_MAIN, "Turn: " + str(config.ROUND_COUNTER), (0, 20),
               constants.COLOR_WHITE,
               constants.COLOR_BLACK)
+
+    pos = config.GAME.current_level.world.component_for_player(Position)
+    draw_text(config.SURFACE_MAIN, str(pos), (0, 40), constants.COLOR_WHITE, constants.COLOR_BLACK)
 
 
 def helper_text_dimensions(font):

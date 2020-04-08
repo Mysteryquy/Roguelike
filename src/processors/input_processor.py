@@ -1,6 +1,6 @@
 import pygame
 
-from src import esper, config, constants, menu, casting
+from src import esper, config, constants, menu, casting, map_helper
 from src.components.action import MovementAction, UseStairsAction, StartAutoexploreAction, SpellcastAction
 from src.components.action import PickUpAction
 
@@ -42,13 +42,16 @@ class InputProcessor(esper.Processor):
         mod_key = (keys_pressed[pygame.K_RSHIFT] or keys_pressed[pygame.K_LSHIFT])
 
         for event in events:
-            """
+
             if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = pygame.mouse.get_pos()
-                x, y = config.CAMERA.coords_from_position(x, y)
-                if game_map.is_explored(x, y):
-                    config.GAME.auto_explore_path = iter(game_map.get_path_from_player(x, y))
-            """
+                mx, my = pygame.mouse.get_pos()
+                goal_x, goal_y = config.CAMERA.coords_from_position(mx, my)
+                if not map_helper.check_bounds(goal_x, goal_y):
+                    goal_x, goal_y = config.MINI_MAP_CAMERA.coords_from_position(mx, my)
+                if map_helper.check_bounds(goal_x, goal_y):
+                    path = iter(config.GAME.pathing.get_path(pos.x, pos.y, goal_x, goal_y))
+                    self.level.world.add_component(self.player, AutoExploring(path=path, continue_after_goal=False,
+                                                                              force_one_move=True))
             """
             if config.CONSOLE.active:
                 if config.CONSOLE.react(event):
@@ -88,9 +91,6 @@ class InputProcessor(esper.Processor):
                 if event.key == pygame.K_l:
                     menu.menu_tile_select(self.level)
 
-                if event.key == pygame.K_x:
-                    menu.debug_tile_select(self.level)
-
                 if event.key == pygame.K_s:
                     config.GAME.transition_next()
 
@@ -107,7 +107,7 @@ class InputProcessor(esper.Processor):
                 if mod_key and event.key == pygame.K_PERIOD:
                     self.level.world.add_component(self.player, UseStairsAction())
                     if self.level.world.has_component(self.player, AutoExploring):
-                        self.level.world.remove(self.player, AutoExploring)
+                        self.level.world.remove_component(self.player, AutoExploring)
 
                 if event.key == event.key == pygame.K_BACKQUOTE:
                     self.level.world.add_component(self.player, StartAutoexploreAction())

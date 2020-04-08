@@ -6,6 +6,7 @@ from typing import List, Tuple, Dict
 import numpy as np
 import pygame
 
+from src.resources.levels import Levels
 from src.tile import Tile
 
 """
@@ -16,10 +17,10 @@ See https://github.com/munificent/hauberk/ for his project and source code
 
 class DungeonGenerator:
     directions: List[Tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    level_tile_dict: Dict[str, Tuple[str, str]] = {
-        "WATER1": ("W_WALL", "W_FLOOR"),
-        "DUNGEON1": ("S_WALL", "S_FLOOR"),
-        "DUNGEON2": ("S_WALL", "S_FLOOR")
+    level_tile_dict: Dict[Levels, Tuple[str, str]] = {
+        Levels.WATER1: ("W_WALL", "W_FLOOR"),
+        Levels.DUNGEON1: ("S_WALL", "S_FLOOR"),
+        Levels.DUNGEON2: ("S_WALL", "S_FLOOR")
     }
 
     def __init__(self, level_name: str):
@@ -33,6 +34,7 @@ class DungeonGenerator:
         self.current_map = None
         self.current_map_width: int = 0
         self.current_map_height: int = 0
+        print(level_name)
         self.wall_texture, self.tile_texture = DungeonGenerator.level_tile_dict[level_name]
 
     def change_level(self, level):

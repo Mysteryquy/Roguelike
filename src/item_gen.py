@@ -51,5 +51,5 @@ def gen_and_append_gold(level, coords):
     else:
         pic = "S_MONEY_LARGE"
 
-    level.world.create_entity(Renderable(animation_key=pic, depth=constants.DEPTH_ITEM),
+    level.world.create_entity(Renderable(animation_key=pic, depth=constants.DEPTH_ITEM, draw_explored=True),
                               Gold(amount=value), Position(x, y))

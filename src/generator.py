@@ -1,7 +1,7 @@
 import random
 
 import numpy
-from tcod import tcod
+import tcod
 
 from src import monster_gen, item_gen
 from src import constants

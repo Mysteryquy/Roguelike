@@ -1,3 +1,4 @@
+import pygame
 import tcod
 
 from src import config, constants, generator
@@ -6,6 +7,7 @@ import random
 from src.components.name import Name
 from src.components.position import Position
 from src.components.render import Renderable
+from src.resources.levels import Levels
 
 
 def transition_reset():
@@ -15,6 +17,8 @@ def transition_reset():
                 config.GAME.current_map[x][y].draw_on_minimap = True
                 config.GAME.current_map[x][y].draw_on_screen = True
                 config.GAME.current_map[x][y].was_drawn = False
+
+
 
 def get_path(start_x, start_y, goal_x, goal_y):
     return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
@@ -96,25 +100,20 @@ def is_explored(x, y):
     return config.GAME.current_map[x][y].explored
 
 
-
-def search_empty_tile(origin_x: int, origin_y: int, radius_x: int, radius_y: int, exclude_origin: bool = False):
-    tiles = []
-    for i in list(range(-radius_x, radius_x + 1)):
-        for j in list(range(-radius_y, radius_y + 1)):
-            if not (exclude_origin and i == 0 and j == 0):
-                tiles.append((i, j))
+def search_empty_tile(level, origin_x: int, origin_y: int, radius_x: int, radius_y: int, exclude_origin: bool = False):
+    tiles = [(origin_x + dx, origin_y + dy) for dx in range(-radius_x, radius_x + 1)
+             for dy in range(-radius_y, radius_y + 1)]
     random.shuffle(tiles)
-    for i, j in tiles:
-        x, y = origin_x + i, origin_y + j
-        if x < constants.MAP_WIDTH and y < constants.MAP_HEIGHT and is_walkable(x, y) and is_visible(x, y) and len(
-                objects_at_coords(x, y)) == 0:
+    for x, y in tiles:
+        if x < constants.MAP_WIDTH and y < constants.MAP_HEIGHT and level.is_walkable(x, y) and level.is_visible(x, y) \
+                and not level.first_entity_at_coords(x, y):
             return x, y
 
     return None
 
 
 def place_map_specific(level):
-    if level.name == "WATER1":
+    if level.name == Levels.WATER1:
         for room in level.rooms:
             for i in range(2):
                 x = tcod.random_get_int(None, room.left + 1, room.right - 1)
@@ -123,4 +122,13 @@ def place_map_specific(level):
                 if not ent:
                     level.world.create_entity(Position(x, y), Name("Bubble"),
                                               Renderable(animation_key="DECOR_STATUE_01",
-                                                         depth=constants.DEPTH_STRUCTURES))
+                                                         depth=constants.DEPTH_STRUCTURES,
+                                                         special_flags=pygame.BLEND_RGBA_ADD))
+
+
+def random_point_in_rect(rect: pygame.Rect):
+    return random.choice(range(rect.left, rect.right)), random.choice(range(rect.top, rect.bottom))
+
+
+def check_bounds(x: int, y: int) -> bool:
+    return 0 <= x <= constants.MAP_WIDTH and 0 <= y <= constants.MAP_HEIGHT

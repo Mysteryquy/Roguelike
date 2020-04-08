@@ -3,41 +3,20 @@ import pygame
 from src import config, constants
 
 
-def colorize(image, newColor):
+def colorize(image, new_color, flags=pygame.BLEND_RGBA_SUB):
     """
     Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
     original).
+    :param flags:
     :param image: Surface to create a colorized copy of
-    :param newColor: RGB color to use (original alpha values are preserved)
+    :param new_color: RGB color to use (original alpha values are preserved)
     :return: New colorized Surface instance
     """
     image = image.copy()
-
-    # zero out RGB values
-    # image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
     # add in new RGB values
-    image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGBA_SUB)
+    image.fill(new_color[0:3] + (0,), None, flags)
 
     return image
-
-
-def colorize_add(image, newColor):
-    """
-    Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
-    original).
-    :param image: Surface to create a colorized copy of
-    :param newColor: RGB color to use (original alpha values are preserved)
-    :return: New colorized Surface instance
-    """
-    image = image.copy()
-
-    # zero out RGB values
-    # image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
-    # add in new RGB values
-    image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGB_ADD)
-
-    return image
-
 
 # noinspection PyArgumentEqualDefault
 class Assets:
@@ -90,8 +69,8 @@ class Assets:
         t1 = (0, 50, 90, 0)
         t2 = (100, 60, 60, 0)
 
-        self.tile_dict["W_WALL"] = colorize(colorize_add(self.tile_dict["S_WALL"], t1), t2)
-        self.tile_dict["W_FLOOR"] = colorize(colorize_add(self.tile_dict["S_FLOOR"], t1), t2)
+        self.tile_dict["W_WALL"] = colorize(colorize(self.tile_dict["S_WALL"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
+        self.tile_dict["W_FLOOR"] = colorize(colorize(self.tile_dict["S_FLOOR"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
 
         self.tile_dict_explored = {key: colorize(self.tile_dict[key], (50, 50, 50, 0)) for key in self.tile_dict}
 
@@ -248,16 +227,12 @@ class Assets:
             "S_END_GAME_ITEM": self.S_END_GAME_ITEM,
             "S_END_GAME_PORTAL_OPENED": self.S_END_GAME_PORTAL_OPENED,
             "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED,
-            "DECOR_STATUE_01": get_animation_from_files(3, 20, "bubble", num_sprites=1),
+            "DECOR_STATUE_01": get_animation_from_files(0, 0, "bubble_mult", num_sprites=1, opacity=50),
 
         }
 
-        self.animation_dict_explored = {}
-        for key in self.animation_dict:
-            self.animation_dict_explored[key] = []
-            for img in self.animation_dict[key]:
-                self.animation_dict_explored[key].append(colorize(img, (70, 70, 70, 0)))
-
+        self.animation_dict_explored = {key: [colorize(img, (70, 70, 70, 0)) for img in self.animation_dict[key]]
+                                        for key in self.animation_dict}
         ## AUDIO ##
 
         self.snd_list = []
@@ -297,19 +272,24 @@ def get_image_from_file(file, x, y, width, height):
 
 def get_animation_from_files(column, row, file_prefix,
                              width=constants.SPRITE_WIDTH, height=constants.SPRITE_HEIGHT, num_sprites=2,
-                             scale=(constants.CELL_WIDTH, constants.CELL_HEIGHT)):
+                             scale=(constants.CELL_WIDTH, constants.CELL_HEIGHT),
+                             opacity=None):
     image_list = []
 
     for i in range(num_sprites):
         # Create blank image
-        image = pygame.Surface([width, height]).convert()
+        image = pygame.Surface([width, height], pygame.SRCALPHA).convert()
 
         sprite_sheet = pygame.image.load(file_prefix + str(i) + ".png")
 
         image.blit(sprite_sheet, (0, 0), (column * width, row * height, width, height))
-
+        if opacity:
+            image.convert_alpha()
+            # image.set_colorkey(constants.COLOR_WHITE)
+        else:
+            image.convert()
+            image.set_colorkey(constants.COLOR_BLACK)
         # set transparency to black
-        image.set_colorkey(constants.COLOR_BLACK)
 
         if scale:
             (new_w, new_h) = scale

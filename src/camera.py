@@ -1,7 +1,7 @@
 import pygame
 
 from src import constants
-from typing import Tuple
+from typing import Tuple, Generator
 
 
 class Camera:
@@ -9,17 +9,45 @@ class Camera:
     Class for the camera
 
     """
-    map_cell_width = constants.MAP_WIDTH * constants.CELL_WIDTH
-    map_cell_height = constants.MAP_HEIGHT * constants.CELL_HEIGHT
 
-    def __init__(self):
-        self._rect = pygame.Rect(0, 0, constants.CAMERA_WIDTH, constants.CAMERA_HEIGHT)
+    def __init__(self, width: int, height: int, cell_width: int, cell_height: int, map_width: int, map_height: int,
+                 screen_topleft: Tuple[int, int]):
+        self._rect: pygame.Rect = pygame.Rect(0, 0, width, height)
+        self.cell_width: int = cell_width
+        self.cell_height: int = cell_height
+        self.map_width: int = map_width
+        self.map_height: int = map_height
+        self.display_map_w: int = int(self.width / self.cell_width)
+        self.display_map_h: int = int(self.height / self.cell_height)
+        self.render_rect: pygame.Rect = pygame.Rect(0, 0, self.map_width, self.map_height)
+        self.screen_topleft: Tuple[int, int] = screen_topleft
 
-    def update(self, player_x, player_y):
-        self.x = Camera.scrolling_map(player_x * constants.CELL_WIDTH, constants.CAMERA_WIDTH / 2,
-                                      constants.CAMERA_WIDTH, constants.MAP_WIDTH * constants.CELL_WIDTH)
-        self.y = Camera.scrolling_map(player_y* constants.CELL_HEIGHT, constants.CAMERA_HEIGHT / 2,
-                                      constants.CAMERA_HEIGHT, constants.MAP_HEIGHT * constants.CELL_HEIGHT)
+    def update(self, player_x: int, player_y: int):
+        self.x = Camera.scrolling_map(player_x * self.cell_width, self.width / 2,
+                                      self.width, self.map_width * self.cell_width)
+        self.y = Camera.scrolling_map(player_y * self.cell_height, self.height / 2,
+                                      self.height, self.map_height * self.cell_height)
+
+        self.render_rect.left = max(0, self.x - self.display_map_w)
+        self.render_rect.top = max(0, self.y - self.display_map_h)
+        self.render_rect.right = min(self.map_width, self.x + self.display_map_w)
+        self.render_rect.bottom = min(self.map_height, self.y + self.display_map_h)
+
+    @property
+    def render_range_w(self) -> range:
+        return range(self.render_rect.left, self.render_rect.right)
+
+    @property
+    def render_range_h(self) -> range:
+        return range(self.render_rect.top, self.render_rect.bottom)
+
+    @property
+    def width(self) -> int:
+        return self._rect.width
+
+    @property
+    def height(self) -> int:
+        return self._rect.height
 
     @property
     def pos(self) -> Tuple[int, int]:
@@ -39,8 +67,7 @@ class Camera:
     @property
     def y(self) -> int:
         """
-
-        :return: the y corrdinate of the position of the camera
+        :return: the y coordinate of the position of the camera
         """
         return self._rect.top
 
@@ -82,7 +109,7 @@ class Camera:
         gives the coordinate on the map of the topleft of the map
         :return: map coordinate of topleft
         """
-        return int(self.x / constants.CELL_WIDTH), int(self.y / constants.CELL_HEIGHT)
+        return int(self.x / self.cell_width), int(self.y / self.cell_height)
 
     def coords_from_position(self, x: int, y: int) -> Tuple[int, int]:
         """
@@ -91,8 +118,9 @@ class Camera:
         :param y: y part of position
         :return: corresponding coordinate on the map
         """
-        n_x, n_y = x + self.x, y + self.y
-        map_x, map_y = int(n_x / constants.CELL_WIDTH), int(n_y / constants.CELL_HEIGHT)
+        dx, dy = self.screen_topleft
+        n_x, n_y = x + self.x - dx, y + self.y - dy
+        map_x, map_y = int(n_x / self.cell_width), int(n_y / self.cell_height)
         return map_x, map_y
 
     def position_from_coords(self, x: int, y: int) -> Tuple[int, int]:
@@ -102,5 +130,6 @@ class Camera:
         :param y: y part of coordinate
         :return: topleft corner of corresponding position on the screen
         """
-        n_x, n_y = x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT
-        return n_x - self.x, n_y - self.y
+        dx, dy = self.screen_topleft
+        n_x, n_y = x * self.cell_width, y * self.cell_height
+        return n_x - self.x + dx, n_y - self.y + dy

@@ -5,20 +5,17 @@ import math
 
 XP_NEEDED = {
     1: 300,
-    2: 700,
-    3: 1200,
-    4: 1800,
-    5: 2500,
+    2: 400,
+    3: 500,
+    4: 600,
+    5: 700,
+    6: math.inf,
 }
 
 MAX_LEVEL = max(XP_NEEDED.keys())
 
-XP_NEEDED_FOR_NEXT = {}
-for i in XP_NEEDED.keys():
-    if i < MAX_LEVEL:
-        XP_NEEDED_FOR_NEXT[i] = XP_NEEDED[i + 1] - XP_NEEDED[i]
-    else:
-        XP_NEEDED_FOR_NEXT[i] = math.inf
+TOTAL_EXP = {level: sum((XP_NEEDED[lvl] for lvl in range(1, level))) for level in XP_NEEDED.keys()}
+print(TOTAL_EXP)
 
 
 @dataclass

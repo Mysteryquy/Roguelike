@@ -1,7 +1,9 @@
+import random
 from typing import List, Optional
 
 import pygame
-from tcod import path, tcod
+from tcod import path, map
+import src.resources.levels as _levels
 
 from src import constants, config, esper, generator, map_helper
 from src.components.position import Position
@@ -24,12 +26,12 @@ from src.processors.stair_processor import StairProcessor
 
 class DungeonLevel:
 
-    def __init__(self, level_name, entities=None):
+    def __init__(self, level_name: _levels.Levels, entities=None):
         self.player_x = -1
         self.player_y = -1
         gen = DungeonGenerator(level_name)
         self.map, self.rooms = gen.generate(constants.MAP_WIDTH, constants.MAP_HEIGHT)
-        self.fov_map = tcod.map.Map(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+        self.fov_map = map.Map(constants.MAP_WIDTH, constants.MAP_HEIGHT)
         for y in range(constants.MAP_HEIGHT):
             for x in range(constants.MAP_WIDTH):
                 self.fov_map.walkable[y, x] = not self.map[x][y].block_path
@@ -39,6 +41,7 @@ class DungeonLevel:
         self.auto_explore_path = None
         self.name = level_name
         self.world = esper.World()
+        self.render_processor = RenderProcessor(self)
 
         if entities:
             for cs in entities:
@@ -52,7 +55,6 @@ class DungeonLevel:
                                      constants.FOV_ALGO)
 
     def init_processors(self, game_load, game_save):
-        self.render_processor = RenderProcessor(self)
         self.world.add_processor(self, EnergyProcessor(), priority=1000)
         self.world.add_processor(self, InputProcessor(game_load=game_load, game_save=game_save), priority=999)
         self.world.add_processor(self, AutoExploreProcessor(), priority=997)
@@ -167,48 +169,23 @@ class DungeonLevel:
     def is_explored_position(self, pos: Position):
         return self.map[pos.x][pos.y].explored
 
-    def place_objects(self, first_level=False):
-        pos = self.world.component_for_player(Position)
-        top_level = constants.LevelNames.is_first_level(self.name) if not first_level else True
-        final_level = constants.LevelNames.is_last_level(self.name) if not first_level else False
-        room_list = self.rooms
+    def place_stairs(self, place_player=False):
+        if place_player:
+            room = random.choice(self.rooms)
+            pos = self.world.component_for_player(Position)
+            pos.x, pos.y = map_helper.random_point_in_rect(room)
 
-        for room in room_list:
+        for level_name in _levels.predecessor_levels[self.name]:
+            room = random.choice(self.rooms)
+            generator.gen_stairs(self, map_helper.random_point_in_rect(room),
+                                 leads_to=level_name, downwards=False)
 
-            # Tobias room tile calculation
-            cal_x = room.right - room.left
-            cal_y = room.bottom - room.top
+        for level_name in _levels.successor_levels[self.name]:
+            room = random.choice(self.rooms)
+            generator.gen_stairs(self, map_helper.random_point_in_rect(room),
+                                 leads_to=level_name)
 
-            room_size = cal_x * cal_y
-
-            first_room = (room == room_list[0])
-            last_room = (room == room_list[-1])
-
-            if first_room:
-                x, y = room.center
-                x, y = int(x), int(y)
-                pos = self.world.component_for_player(Position)
-                pos.x, pos.y = x, y
-                self.player_x, self.player_y = x, y
-                config.FOV_CALCULATE = True
-
-            if first_room and top_level:
-                x, y = room.center
-                # generator.gen_portal(self, room.center)
-
-            if first_room and not top_level:
-                generator.gen_stairs(self, (pos.x, pos.y), leads_to=constants.LevelNames.previous_level_name(self.name)
-                                     , downwards=False)
-
-            if last_room:
-
-                if final_level:
-                    print("KEK")
-                    # gen_END_GAME_ITEM(room.center)
-                    # gen_stairs(room.center,downwards=True)
-                    # generator.gen_end_game_item(self, room.center)
-                else:
-                    generator.gen_stairs(self, room.center, leads_to=constants.LevelNames.next_level_name(self.name))
-
-            map_helper.how_much_to_place(self, room_size, room)
+    def place_objects(self):
         map_helper.place_map_specific(self)
+        for room in self.rooms:
+            map_helper.how_much_to_place(self, room.width * room.height, room)
