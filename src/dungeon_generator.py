@@ -70,7 +70,7 @@ class DungeonGenerator:
         """
         self.current_region += 1
 
-    def carve_single(self, pos: Tuple[int, int], tile: str) -> None:
+    def carve_single(self, pos: Tuple[int, int], tile: int) -> None:
         """
         carves a single Tile
         :param pos: position where to carve
@@ -81,7 +81,7 @@ class DungeonGenerator:
         self.current_map[x][y].texture = tile
         self.regions[x][y] = self.current_region
 
-    def carve(self, rect: pygame.Rect, tile: str) -> None:
+    def carve(self, rect: pygame.Rect, tile: int) -> None:
         """
         Carves a whole rectangle
         :param rect: the rectangle that needs to be carved, Note that this rectangle has to
@@ -235,7 +235,7 @@ class DungeonGenerator:
                 if conn in connectors:
                     connectors.remove(conn)
 
-    def add_junction(self, pos: Tuple[int, int], new_tile: str) -> None:
+    def add_junction(self, pos: Tuple[int, int], new_tile: int) -> None:
         """
         adds a junction at a given position
         :param new_tile: what to replace the wall with

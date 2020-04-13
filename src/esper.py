@@ -2,12 +2,16 @@ import time as _time
 from abc import ABC
 
 from functools import lru_cache as _lru_cache
-from typing import List as _List, List
+from typing import List as _List, List, Optional, Set
 from typing import Type as _Type
 from typing import TypeVar as _TypeVar
 from typing import Any as _Any
 from typing import Tuple as _Tuple
 from typing import Iterable as _Iterable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.dungeonlevel import DungeonLevel
 
 import pygame
 
@@ -35,9 +39,9 @@ class Processor(ABC):
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
 
-    def __init__(self, level=None):
-        self.level = level
-        self.player = None
+    def __init__(self, level: Optional[DungeonLevel] = None):
+        self.level: DungeonLevel = level
+        self.player: Optional[int] = None
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
@@ -53,7 +57,7 @@ class World:
 
     def __init__(self, timed=False):
         self._processors = []
-        self._next_entity_id = 0
+        self._next_entity_id: int = 0
         self._components = {}
         self._entities = {}
         self._dead_entities = set()
@@ -172,8 +176,8 @@ class World:
         """
         return self._entities[entity][component_type]
 
-    def component_for_player(self, component):
-        return self.component_for_entity(self._player, component)
+    def component_for_player(self, component_type: _Type[C]) -> C:
+        return self.component_for_entity(self._player, component_type)
 
     def components_for_player(self, *component_types):
         return self.components_for_entity(self._player, *component_types)
@@ -239,11 +243,11 @@ class World:
         self._entities[entity][component_type] = component_instance
         self.clear_cache()
 
-    def add_components(self, entity: int, *components):
+    def add_components(self, entity: int, *components) -> None:
         for component in components:
             self.add_component(entity, component)
 
-    def add_components_to_player(self, *components):
+    def add_components_to_player(self, *components) -> None:
         self.add_components(self._player, *components)
 
     def remove_component(self, entity: int, component_type: _Any) -> int:
@@ -305,7 +309,6 @@ class World:
     @_lru_cache()
     def get_components(self, *component_types: _Type):
         return [query for query in self._get_components(*component_types)]
-
 
     def try_component(self, entity: int, component_type: _Type):
         """Try to get a single component type for an Entity.

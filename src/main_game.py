@@ -69,6 +69,7 @@ def game_initialize():
     config.ROUND_COUNTER = 0
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
+    
 
     config.SURFACE_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.CELL_WIDTH, max(screen_height, constants.MAP_HEIGHT * constants.CELL_HEIGHT)))
@@ -175,4 +176,4 @@ def preferences_load():
 if __name__ == '__main__':
     game_initialize()
     config.MAIN_MENU = menu.MainMenu(game_exit, game_load, game_new, game_main_loop, preferences_save)
-    config.MAIN_MENU.show_menu()
+    config.MAIN_MENU.show_main_menu()

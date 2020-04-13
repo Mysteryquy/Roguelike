@@ -61,7 +61,6 @@ class AutoExploreProcessor(esper.Processor):
                     self.level.world.remove_component(ent, HasAction)
 
     def new_goal(self, start_x: int, start_y: int) -> Optional[Tuple[Tuple[int, int], bool]]:
-        goal_x, goal_y = start_x, start_y
         # check room centers first
         for room in config.GAME.current_rooms:
             x, y = room.center

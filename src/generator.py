@@ -35,7 +35,6 @@ def gen_stairs(level, coords, leads_to, downwards=True):
 def what_to_gen(level, coords):
     # Change to 3 to see buggy gold
     rng = random.randint(1, 2)
-    x, y = coords
     if rng == 1:
         monster_gen.gen_and_append_enemy(level, coords)
     if rng == 2:

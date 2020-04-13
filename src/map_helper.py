@@ -1,3 +1,5 @@
+from typing import Tuple, Iterator
+
 import pygame
 import tcod
 
@@ -18,75 +20,27 @@ def transition_reset():
                 config.GAME.current_map[x][y].draw_on_screen = True
                 config.GAME.current_map[x][y].was_drawn = False
 
+    config.FOV_CALCULATE = True
 
 
-def get_path(start_x, start_y, goal_x, goal_y):
-    return config.GAME.pathing.get_path(start_x, start_y, goal_x, goal_y)
-
-
-def check_for_creature(x, y, exclude_object=None):
-    target = None
-
-    if exclude_object:
-        # ceck objectlist to find creature at that location that isnt excluded
-        for obj in config.GAME.current_objects:
-            if (obj is not exclude_object and
-                    obj.x == x and
-                    obj.y == y and
-                    obj.creature):
-                target = obj
-
-            if target:
-                return target
-
-    else:
-        # ceck objectlist to find any creature at that location
-        for obj in config.GAME.current_objects:
-            if (obj.x == x and
-                    obj.y == y and
-                    obj.creature):
-                target = obj
-
-            if target:
-                return target
-
-
-def find_line(coords1, coords2, include_origin=False):
+def find_line(coords1: Tuple[int, int], coords2: Tuple[int, int], include_origin: bool = False) -> Iterator[
+            Tuple[int, int]]:
     """Converts who x,y coords into a list of tiles. coords1 = (x1, y1) coords2 = (x2, y2)"""
-
     x1, y1 = coords1
     x2, y2 = coords2
+    rtn = tcod.line_iter(x1, y1, x2, y2)
+    if not include_origin:
+        next(rtn)
 
-    if x1 == x2 and y1 == y2:
-        return [(x1, y1)]
-
-    if include_origin:
-        return list(tcod.line_iter(x1, y1, x2, y2))
-    else:
-        tmp = tcod.line_iter(x1, y1, x2, y2)
-        tmp.__next__()
-        return list(tmp)
+    return rtn
 
 
-def find_radius(coords, radius):
-    center_x, center_y = coords
-
-    tile_list = []
-
-    start_x = (center_x - radius)
-    end_x = (center_x + radius + 1)
-
-    start_y = (center_y - radius)
-    end_y = (center_y + radius + 1)
-
-    for x in range(start_x, end_x):
-        for y in range(start_y, end_y):
-            tile_list.append((x, y))
-
-    return tile_list
+def find_radius(coords: Tuple[int, int], radius: int) -> Iterator[Tuple[int, int]]:
+    c_x, c_y = coords
+    return ((c_x + x, c_y + y) for x in range(-radius, radius + 1) for y in range(-radius, radius + 1))
 
 
-def how_much_to_place(level, room_size, room):
+def how_much_to_place(level, room_size: int, room: pygame.Rect) -> None:
     count = 2
     for i in range(0, count):
         x = tcod.random_get_int(None, room.left + 1, room.right - 1)
@@ -94,10 +48,6 @@ def how_much_to_place(level, room_size, room):
         ent = level.first_entity_at_position(Position(x, y))
         if not ent:
             generator.what_to_gen(level, (x, y))
-
-
-def is_explored(x, y):
-    return config.GAME.current_map[x][y].explored
 
 
 def search_empty_tile(level, origin_x: int, origin_y: int, radius_x: int, radius_y: int, exclude_origin: bool = False):

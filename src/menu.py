@@ -13,14 +13,14 @@ class MainMenu:
         self.game_main_loop = game_main_loop
         self.preferences_save = preferences_save
 
+
+
         self.menu_running = True
         print(str(constants.RECT_WHOLE_SCREEN))
         self.title_y = constants.RECT_WHOLE_SCREEN.height / 2 - 40
         self.title_x = constants.RECT_WHOLE_SCREEN.width / 2
 
         self.title_text = "Wer das liest ist doof"
-
-        # Button Adresses
         continue_game_button_y = self.title_y + 60
         new_game_button_y = continue_game_button_y + 60
         options_button_y = new_game_button_y + 60
@@ -51,8 +51,6 @@ class MainMenu:
         sound_effect_vol = 0.5
         music_effect_slider_y = sound_effect_slider_y + 70
 
-
-
         self.sound_effect_slider = ui.Slider(config.SURFACE_MAIN, (125, 25), "sound_effect_slider",
                                              (slider_x, sound_effect_slider_y),
                                              constants.COLOR_RED,
@@ -73,7 +71,7 @@ class MainMenu:
                                                elements=[self.sound_effect_slider, self.music_effect_slider],
                                                color=constants.COLOR_GREY)
 
-    def show_menu(self):
+    def show_main_menu(self):
         pygame.mixer.music.load(config.ASSETS.music_main_menu)
         pygame.mixer.music.play(-1)
         while self.menu_running:
@@ -91,7 +89,8 @@ class MainMenu:
 
             self.button_container.draw()
 
-            render_helper.draw_text(config.SURFACE_MAIN, self.title_text, (self.title_x, self.title_y), constants.COLOR_RED,
+            render_helper.draw_text(config.SURFACE_MAIN, self.title_text, (self.title_x, self.title_y),
+                                    constants.COLOR_RED,
                                     center=True)
 
             pygame.display.update()
@@ -109,11 +108,8 @@ class MainMenu:
 
         self.game_main_loop()
 
-    def choose_class_button_callback(self,id):
+    def choose_class_button_callback(self, id):
         self.choose_class
-
-
-
 
     def newgame_button_callback(self, id):
         config.SURFACE_MAIN.blit(pygame.Surface((constants.CAMERA_HEIGHT * 2, constants.CAMERA_WIDTH * 2)),
@@ -189,7 +185,6 @@ class MainMenu:
             config.PREFERENCES.vol_music = current_val
             config.ASSETS.volume_adjust()
 
-
     def menu_choose_class(self):
         menu_close = False
         while not menu_close:
@@ -255,13 +250,13 @@ def menu_inventory():
     window_width = constants.CAMERA_WIDTH
     window_height = constants.CAMERA_HEIGHT
 
-    # Menu characteristcs
+    # Menu characteristics
     menu_width = 500
     menu_height = 400
     menu_x = (window_width / 2) - (menu_width / 2)
     menu_y = (window_height / 2) - (menu_height / 2)
 
-    # Menu text characteristcs
+    # Menu text characteristics
     menu_text_font = config.ASSETS.FONT_MESSAGE_TEXT
 
     # Helper var
@@ -306,19 +301,20 @@ def menu_inventory():
                             menu_close = True
 
         ##Draw the list
-        for line, (name) in enumerate(print_list):
+        for line, name in enumerate(print_list):
 
             if int(line) == int(mouse_line_selection) and mouse_in_window:
-                render_helper.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                render_helper.draw_text(local_inventory_surface, name,
+                                        (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
                                         constants.COLOR_WHITE, constants.COLOR_GREY)
 
             else:
-                render_helper.draw_text(local_inventory_surface, name, (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
+                render_helper.draw_text(local_inventory_surface, name,
+                                        (0, 0 + (line * constants.INVENTORY_TEXT_HEIGHT)),
                                         constants.COLOR_WHITE)
 
         # Render Game
         render_helper.draw_menu()
-
 
         # Display Menu
         config.SURFACE_MAIN.blit(local_inventory_surface, (menu_x, menu_y))
@@ -331,23 +327,20 @@ def menu_inventory():
     map_helper.transition_reset()
 
 
-
-def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False, radius=None):
+def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=True, pierce_creature=False,
+                     radius=None):
     """
     """
     # This menu let the player select a tile.
     # It pauses the game and produces an on screen rectangle when the player presses the mb will return the map address
-
     menu_close = False
 
     previous = None
     previous_drawn = []
 
     while not menu_close:
-
         # Get mouse position
         mouse_x, mouse_y = pygame.mouse.get_pos()
-
         # Get button clicks
         events_list = pygame.event.get()
 
@@ -358,7 +351,6 @@ def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=
         if coords_origin:
             full_list_tiles = map_helper.find_line(coords_origin, (int_x, int_y))
             for i, (x, y) in enumerate(full_list_tiles):
-
                 valid_tiles.append((x, y))
 
                 if not penetrate_walls and not level.is_walkable(x, y):
@@ -394,11 +386,11 @@ def menu_tile_select(level, coords_origin=None, max_range=None, penetrate_walls=
                                                         (x * constants.CELL_WIDTH, y * constants.CELL_HEIGHT))
                     return valid_tiles[-1]
 
-        render_helper.draw_game()
+        level.render_processor.process()
 
         if previous:
             for x, y in previous_drawn:
-                if x >= constants.MAP_WIDTH+1 or y >= constants.MAP_HEIGHT+1:
+                if x >= constants.MAP_WIDTH + 1 or y >= constants.MAP_HEIGHT + 1:
                     continue
                 if config.GAME.current_map[x][y].was_drawn and not level.is_visible(x, y):
                     config.SURFACE_MAP.blit(config.ASSETS.tile_dict[config.GAME.current_map[x][y].texture_explored],

@@ -31,18 +31,6 @@ tile_name_bidict = bidict({
 class Assets:
 
     def __init__(self):
-        # Sprite sheets#
-        self.charspritesheet = Spritesheet("data/sprites/Reptiles.png")
-        self.enemyspritesheet = Spritesheet("data/sprites/ROFL.png")
-        self.scrollspritesheet = Spritesheet("data/sprites/Scroll.png")
-        self.reptile = Spritesheet("data/sprites/Reptile0.png")
-        self.flesh = Spritesheet("data/sprites/Flesh.png")
-        self.tile = Spritesheet("data/sprites/Tile.png")
-        self.rodent = Spritesheet("data/sprites/Rodent0.png")
-        self.tool = Spritesheet("data/sprites/Tool.png")
-        self.doors = Spritesheet("data/sprites/Door0.png")
-        self.demon1 = Spritesheet("data/sprites/Demon1.png")
-        self.ground0 = Spritesheet("data/sprites/Ground0.png")
 
         # FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
@@ -54,20 +42,11 @@ class Assets:
         self.FONT_RED1 = pygame.font.Font("data/red1.ttf", int(constants.CELL_HEIGHT * 1.5))
         self.FONT_RED2 = pygame.font.Font("data/red2.ttf", constants.CELL_HEIGHT)
 
-        ## ITEMS ##
 
-        ## SPECIAL ##
-
-        self.S_STAIRS_DOWN = self.tile.get_image("c", 1, 16, 16, (32, 32))
-        self.S_STAIRS_UP = self.tile.get_image("b", 1, 16, 16, (32, 32))
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
                                                            (constants.RECT_WHOLE_SCREEN.width,
                                                             constants.RECT_WHOLE_SCREEN.height))
-        self.S_END_GAME_ITEM = self.tool.get_image("a", 0, 16, 16, (32, 32))
-        self.S_END_GAME_PORTAL_CLOSED = self.doors.get_image("d", 5, 16, 16, (32, 32))
-        self.S_END_GAME_PORTAL_OPENED = self.doors.get_image("e", 5, 16, 16, (32, 32))
-
         self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16, 112, 48, 48)
 
         self.tile_dict = {
@@ -91,7 +70,6 @@ class Assets:
                                                  constants.COLOR_RED_DARK)
         self.MINIMAP_WHITE_RECT = get_surface_rect(constants.MINI_MAP_CELL_WIDTH, constants.MINI_MAP_CELL_HEIGHT,
                                                    constants.COLOR_WHITE)
-
         self.MAP_DARK_GREY_RECT = get_surface_rect(constants.CELL_WIDTH, constants.CELL_HEIGHT,
                                                    constants.COLOR_DARK_GREY)
 
@@ -230,19 +208,15 @@ class Assets:
             "S_DEAD_DEMON": get_animation_from_files(4, 13, "data/tilesets/Objects/Decor", num_sprites=1),
             "S_FLESH_FISH": get_animation_from_files(2, 4, "data/tilesets/Items/Flesh", num_sprites=1),
 
-            "S_STAIRS_DOWN": self.S_STAIRS_DOWN,
-            "S_STAIRS_UP": self.S_STAIRS_UP,
-            "S_FLESH_EAT": self.flesh.get_image("c", 0, 16, 16, (32, 32)),
-            "S_END_GAME_ITEM": self.S_END_GAME_ITEM,
-            "S_END_GAME_PORTAL_OPENED": self.S_END_GAME_PORTAL_OPENED,
-            "S_END_GAME_PORTAL_CLOSED": self.S_END_GAME_PORTAL_CLOSED,
+            "S_STAIRS_DOWN": get_animation_from_files(3, 1, "data/tilesets/Objects/Tile", num_sprites=1),
+            "S_STAIRS_UP": get_animation_from_files(2, 1, "data/tilesets/Objects/Tile", num_sprites=1),
+            "S_FLESH_EAT": get_animation_from_files(3, 0, "data/tilesets/Items/Flesh", num_sprites=1),
             "DECOR_STATUE_01": get_animation_from_files(0, 0, "bubble_mult", num_sprites=1, opacity=50),
 
         }
 
         self.animation_dict_explored = {key: [colorize(img, (70, 70, 70, 0)) for img in self.animation_dict[key]]
                                         for key in self.animation_dict}
-        ## AUDIO ##
 
         self.snd_list = []
 
@@ -307,61 +281,6 @@ def get_animation_from_files(column, row, file_prefix,
         image_list.append(image)
 
     return image_list
-
-
-class Spritesheet:  # Bilder von Spritesheets holen
-
-    tiledict = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10, "k": 11,
-                "l": 12, "m": 13, "n": 14, "o": 15, "p": 16, "z": 0}
-
-    def __init__(self, file_name):
-        # Den Sheet laden.
-        self.sprite_sheet = pygame.image.load(file_name).convert()
-
-        ###############
-
-    def get_image(self, column, row, width=constants.CELL_WIDTH, height=constants.CELL_HEIGHT, scale=None):
-
-        image_list = []
-
-        image = pygame.Surface([width, height]).convert_alpha()
-
-        image.blit(self.sprite_sheet, (0, 0), (Spritesheet.tiledict[column] * width, row * height, width, height))
-
-        image.set_colorkey(constants.COLOR_BLACK)
-
-        if scale:
-            (new_w, new_h) = scale
-            image = pygame.transform.scale(image, (new_w, new_h))
-
-        image_list.append(image)
-
-        return image_list
-
-    def get_animation(self, column, row, width=constants.CELL_WIDTH, height=constants.CELL_HEIGHT, num_sprites=1,
-                      scale=None):
-
-        image_list = []
-
-        for i in range(num_sprites):
-            # Create blank image
-            image = pygame.Surface([width, height]).convert()
-
-            # copy image from sheet onto blank
-            image.blit(self.sprite_sheet, (0, 0),
-                       (Spritesheet.tiledict[column] * width + (width * i), row * height, width, height))
-
-            # set transparency to black
-            image.set_colorkey(constants.COLOR_BLACK)
-
-            if scale:
-                (new_w, new_h) = scale
-                image = pygame.transform.scale(image, (new_w, new_h))
-
-            image_list.append(image)
-
-        return image_list
-
 
 def get_surface_rect(width, height, color):
     surf = pygame.Surface([width, height]).convert()

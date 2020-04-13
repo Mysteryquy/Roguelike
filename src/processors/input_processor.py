@@ -35,7 +35,6 @@ class InputProcessor(esper.Processor):
 
     def process(self):
         pos = self.level.world.component_for_player(Position)
-        x, y = pos.x, pos.y
         # there is only one player
         keys_pressed = pygame.key.get_pressed()
         events = pygame.event.get()
@@ -52,15 +51,7 @@ class InputProcessor(esper.Processor):
                     path = iter(config.GAME.pathing.get_path(pos.x, pos.y, goal_x, goal_y))
                     self.level.world.add_component(self.player, AutoExploring(path=path, continue_after_goal=False,
                                                                               force_one_move=True))
-            """
-            if config.CONSOLE.active:
-                if config.CONSOLE.react(event):
-                    command = config.CONSOLE.text_ready
-                    console.invoke_command(command)
-                    return
-            if event.type == pygame.QUIT:
-                return ACTIONS.QUIT
-            """
+
             if event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_ESCAPE:
@@ -90,15 +81,6 @@ class InputProcessor(esper.Processor):
 
                 if event.key == pygame.K_l:
                     menu.menu_tile_select(self.level)
-
-                if event.key == pygame.K_s:
-                    config.GAME.transition_next()
-
-                if event.key == pygame.K_1:
-                    config.GAME.game_message("Player position: " + str((x, y)))
-
-                if event.key == pygame.K_2:
-                    config.GAME.game_message("Camera position: " + str(config.CAMERA.cam_map_coord))
 
                 if event.key == pygame.K_b:
                     self.game_save(display_message=True)

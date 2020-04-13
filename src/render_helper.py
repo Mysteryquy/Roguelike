@@ -7,10 +7,8 @@ from src.components.position import Position
 
 
 def draw_text(display_surface, text_to_display, coords, text_color, back_color=None, center=False,
-              font=None):
+              font=config.ASSETS.FONT_DEBUG_MESSAGE):
     # This function takes in some text and display
-    if not font:
-        font = config.ASSETS.FONT_DEBUG_MESSAGE
     text_surf, text_rect = helper_text_objects(text_to_display, text_color, back_color, font)
     if center:
         text_rect.center = coords

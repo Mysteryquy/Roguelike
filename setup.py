@@ -9,5 +9,5 @@ setup(
     author='Markus',
     author_email='chin.wong1477@gmail.com',
     description='Setup script for Roguelike',
-    install_requires=['pygame']
+    install_requires=['pygame', 'tcod', 'bidict']
 )

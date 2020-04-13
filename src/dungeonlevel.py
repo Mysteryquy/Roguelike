@@ -151,7 +151,7 @@ class DungeonLevel:
         return ((ent, comp) for ent, (p, comp) in self.world.get_components(Position, component_type)
                 if p == pos and (not exclude_ent or ent != exclude_ent))
 
-    def is_visible(self, x, y):
+    def is_visible(self, x: int, y: int) -> bool:
         return self.fov_map.fov[y, x]
 
     def is_walkable(self, x, y):
