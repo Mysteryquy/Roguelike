@@ -21,8 +21,8 @@ class DungeonGenerator:
     directions: List[Tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     level_tile_dict: Dict[Levels, Tuple[str, str]] = {
         Levels.WATER1: ("W_WALL", "W_FLOOR"),
-        Levels.DUNGEON1: ("S_WALL", "S_FLOOR"),
-        Levels.DUNGEON2: ("S_WALL", "S_FLOOR")
+        Levels.HELL1: ("H_WALL", "H_FLOOR"),
+        Levels.DUNGEON1: ("S_WALL", "S_FLOOR")
     }
 
     def __init__(self, level_name: Levels):

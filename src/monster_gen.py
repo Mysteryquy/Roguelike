@@ -239,6 +239,159 @@ def gen_boss_aquatic_kraken(level, coords):
                               )
 
 
+def gen_demon_gronk(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Gronk"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_GRONK"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_sloosh(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Sloosh"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_SLOOSH"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_kolak(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Kolak"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_KOLAK"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_absodusx(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Absodux"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_ABSODUX"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_nergal(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Nergal"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_NERGAL"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_boomi(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Boomi"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_BOOMI"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+
+def gen_demon_flabsy(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Flabsi"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_FLABSY"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+
+def gen_demon_hulk(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Hulk"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_HULK"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+
+def gen_demon_pillus(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Pillus"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_PILLUS"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
+def gen_demon_buffla(level, coords):
+    pos = level.world.component_for_player(Position)
+    x, y = coords
+
+    level.world.create_entity(Health(100), Position(x, y),
+                              Attacker(attack=12, defense=4, hit_chance=75, evasion_chance=1),
+                              Name("Buffla"), AiChase(pos),
+                              Renderable(depth=constants.DEPTH_CREATURE, animation_key="A_DEMON_BUFFLA"),
+                              Energy(100),
+                              BlocksMovement(),
+                              Alignment(CreatureAlignment.FOE),
+                              Experience(on_death=1000),
+                              Death(animation_key="S_DEAD_DEMON")
+                              )
+
 level_monster_dict = {
     Levels.DUNGEON1: [(gen_demon_avin, 100), (gen_aquatic_piranha, 100)],
     Levels.WATER1: [(gen_aquatic_eel, 100), (gen_aquatic_frog_hypno, 100), (gen_aquatic_jellyfish, 100),
@@ -246,7 +399,9 @@ level_monster_dict = {
                  (gen_aquatic_sea_devil, 100), (gen_aquatic_shark, 100), (gen_aquatic_shark_gold, 100),
                  (gen_aquatic_shark_white, 100), (gen_aquatic_watersnake, 100), (gen_aquatic_whale, 100),
                  (gen_boss_aquatic_kraken, 50)],
-    Levels.DUNGEON2: [(gen_demon_avin, 1)]
+    Levels.HELL1: [(gen_demon_avin, 100), (gen_demon_gronk, 100), (gen_demon_sloosh, 100), (gen_demon_kolak, 100),
+                      (gen_demon_absodusx, 100), (gen_demon_nergal, 100), (gen_demon_boomi, 100), (gen_demon_flabsy, 100),
+                      (gen_demon_hulk, 100), (gen_demon_pillus, 100), (gen_demon_buffla, 100)]
 }
 
 
