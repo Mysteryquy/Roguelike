@@ -39,7 +39,7 @@ class Processor(ABC):
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
 
-    def __init__(self, level: Optional[DungeonLevel] = None):
+    def __init__(self, level = None):
         self.level: DungeonLevel = level
         self.player: Optional[int] = None
 

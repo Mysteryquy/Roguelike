@@ -37,8 +37,8 @@ class DungeonGenerator:
         self.current_map_width: int = 0
         self.current_map_height: int = 0
         walls, floor = DungeonGenerator.level_tile_dict[level_name]
-        self.wall_texture: int = assets.tile_name_bidict.inverse[walls]
-        self.tile_texture: int = assets.tile_name_bidict.inverse[floor]
+        self.wall_texture: int = assets.tile_names[walls]
+        self.tile_texture: int = assets.tile_names[floor]
 
     def change_level(self, level):
         if level not in DungeonGenerator.level_tile_dict:

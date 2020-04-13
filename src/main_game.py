@@ -69,7 +69,6 @@ def game_initialize():
     config.ROUND_COUNTER = 0
 
     config.SURFACE_MAIN = pygame.display.set_mode((screen_width, screen_height), pygame.NOFRAME | pygame.DOUBLEBUF)
-    
 
     config.SURFACE_MAP = pygame.Surface(
         (constants.MAP_WIDTH * constants.CELL_WIDTH, max(screen_height, constants.MAP_HEIGHT * constants.CELL_HEIGHT)))
@@ -162,6 +161,7 @@ def game_load():
     config.FOV_CALCULATE = True
     config.GAME.current_level.calculate_fov()
     map_helper.transition_reset()
+
 
 def preferences_save():
     with gzip.open("data/userdata/pref", "wb") as file:

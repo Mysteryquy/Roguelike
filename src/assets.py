@@ -19,11 +19,13 @@ def colorize(image, new_color, flags=pygame.BLEND_RGBA_SUB):
     return image
 
 
-tile_name_bidict = bidict({
-    0: "S_WALL",
-    1: "S_FLOOR",
-    2: "W_WALL",
-    3: "W_FLOOR"
+tile_names = bidict({
+    "S_WALL": 0,
+    "S_FLOOR": 1,
+    "W_WALL": 2,
+    "W_FLOOR": 3,
+    "H_WALL": 4,
+    "H_FLOOR": 5,
 })
 
 
@@ -31,7 +33,6 @@ tile_name_bidict = bidict({
 class Assets:
 
     def __init__(self):
-
         # FONTS#
         self.FONT_DEBUG_MESSAGE = pygame.font.Font("data/joystix.ttf", 20)
         self.FONT_MESSAGE_TEXT = pygame.font.Font("data/joystix.ttf", 20)
@@ -42,7 +43,6 @@ class Assets:
         self.FONT_RED1 = pygame.font.Font("data/red1.ttf", int(constants.CELL_HEIGHT * 1.5))
         self.FONT_RED2 = pygame.font.Font("data/red2.ttf", constants.CELL_HEIGHT)
 
-
         self.MAIN_MENU_BACKGROUND = pygame.image.load("data/sprites/mm.png")
         self.MAIN_MENU_BACKGROUND = pygame.transform.scale(self.MAIN_MENU_BACKGROUND,
                                                            (constants.RECT_WHOLE_SCREEN.width,
@@ -50,8 +50,8 @@ class Assets:
         self.HEALTH_BAR_BORDER = get_image_from_file("data/tilesets/GUI/CUTGUI0.png", 16, 112, 48, 48)
 
         self.tile_dict = {
-            0: pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
-            1: pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
+            tile_names["S_WALL"]: pygame.image.load("data/sprites/wall2.jpg").convert_alpha(),
+            tile_names["S_FLOOR"]: pygame.image.load("data/sprites/floor.jpg").convert_alpha(),
 
         }
         t1 = (0, 50, 90, 0)
@@ -59,11 +59,15 @@ class Assets:
         t3 = (90, 0, 0, 0)
         t4 = (0, 0, 0, 0)
 
-        self.tile_dict[2] = colorize(colorize(self.tile_dict[0], t1, flags=pygame.BLEND_RGBA_ADD), t2)
-        self.tile_dict[3] = colorize(colorize(self.tile_dict[1], t1, flags=pygame.BLEND_RGBA_ADD), t2)
+        self.tile_dict[tile_names["W_WALL"]] = colorize(colorize(self.tile_dict[tile_names["S_WALL"]],
+                                                     t1, flags=pygame.BLEND_RGBA_ADD), t2)
+        self.tile_dict[tile_names["W_FLOOR"]] = colorize(colorize(self.tile_dict[tile_names["S_FLOOR"]],
+                                                      t1, flags=pygame.BLEND_RGBA_ADD), t2)
 
-        self.tile_dict["H_WALL"] = colorize(colorize(self.tile_dict["S_WALL"], t3, flags=pygame.BLEND_RGBA_ADD), t4)
-        self.tile_dict["H_FLOOR"] = colorize(colorize(self.tile_dict["S_FLOOR"], t3, flags=pygame.BLEND_RGBA_ADD), t4)
+        self.tile_dict[tile_names["H_WALL"]] = colorize(colorize(self.tile_dict[tile_names["S_WALL"]],
+                                                                 t3, flags=pygame.BLEND_RGBA_ADD), t4)
+        self.tile_dict[tile_names["H_FLOOR"]] = colorize(colorize(self.tile_dict[tile_names["S_FLOOR"]],
+                                                                 t3, flags=pygame.BLEND_RGBA_ADD), t4)
 
         self.tile_dict_explored = {key: colorize(self.tile_dict[key], (50, 50, 50, 0)) for key in self.tile_dict}
 
@@ -286,6 +290,7 @@ def get_animation_from_files(column, row, file_prefix,
         image_list.append(image)
 
     return image_list
+
 
 def get_surface_rect(width, height, color):
     surf = pygame.Surface([width, height]).convert()
