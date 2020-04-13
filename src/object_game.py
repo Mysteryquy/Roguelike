@@ -34,7 +34,7 @@ class Game:
         self.game_save = game_save
         self.game_load = game_load
         self.player_name = player_name
-        first_level = Levels.WATER1
+        first_level = Levels.HELL1
         self.create_new_level(first_level, create_player=True)
         self.current_level: DungeonLevel = self.levels[first_level]
         config.FOV_CALCULATE = True

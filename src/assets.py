@@ -68,9 +68,14 @@ class Assets:
         }
         t1 = (0, 50, 90, 0)
         t2 = (100, 60, 60, 0)
+        t3 = (90, 0, 0, 0)
+        t4 = (0, 0, 0, 0)
 
         self.tile_dict["W_WALL"] = colorize(colorize(self.tile_dict["S_WALL"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
         self.tile_dict["W_FLOOR"] = colorize(colorize(self.tile_dict["S_FLOOR"], t1, flags=pygame.BLEND_RGBA_ADD), t2)
+
+        self.tile_dict["H_WALL"] = colorize(colorize(self.tile_dict["S_WALL"], t3, flags=pygame.BLEND_RGBA_ADD), t4)
+        self.tile_dict["H_FLOOR"] = colorize(colorize(self.tile_dict["S_FLOOR"], t3, flags=pygame.BLEND_RGBA_ADD), t4)
 
         self.tile_dict_explored = {key: colorize(self.tile_dict[key], (50, 50, 50, 0)) for key in self.tile_dict}
 
