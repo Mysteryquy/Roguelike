@@ -1,0 +1,106 @@
+
+from PyQt5.QtWidgets import *
+from PyQt5 import QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtCore import pyqtSlot
+import PyQt5.QtWidgets
+print(PyQt5.QtWidgets.QStyleFactory.keys())
+import page1
+import sys
+import PyQt5.QtGui
+
+
+#Zum testen immer die Seitenzahl auf der Seite zeigen
+
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # set the title
+        self.setWindowTitle("Das ist der Titel")
+        self.setStyleSheet("color: green ; background-color: black;")
+        #self.setWindowIcon(QtGui.QIcon("af.png"))
+
+        # setting  the geometry of window
+        self.setGeometry(0, 0, page1.WINDOW_WIDTH, page1.WINDOW_HEIGHT)
+
+        # creating a label widget
+        oben_text = "Du wachst auf. Vor deinem Bett steht der einzig wahre Markus M. "
+
+        self.label_1 = QPushButton(oben_text, self)
+
+        # moving position
+        self.label_1.move(10, 10)
+
+        # setting up border
+        self.label_1.setStyleSheet("border: 1px solid green;")
+
+
+
+        self.label_1.resize(page1.TEXTBOX_W, page1.TEXTBOX_H)
+        self.label_1.setFont(QFont("Arial",16))
+        #self.label_1.setWordWrap(True)
+
+        text1 = "Ein bisschen Trinkgeld geben"
+        self.button_1 = QPushButton(text1, self)
+        self.button_1.setToolTip("Das ist ein Toolip")
+        self.button_1.move(page1.BUTTON_1_POSITION_X, page1.BUTTON_1_POSITION_Y)
+        self.button_1.resize(page1.BUTTON_SIZE_W, page1.BUTTON_SIZE_H)
+        self.button_1.setStyleSheet("border: 1px solid green;")
+        self.button_1.clicked.connect(self.on_click)
+
+        text2 = "Ihn anbeten"
+        self.button_2 = QPushButton(text2, self)
+        self.button_2.setToolTip("Das ist ein Toolip")
+        self.button_2.move(page1.BUTTON_2_POSITION_X, page1.BUTTON_2_POSITION_Y)
+        self.button_2.resize(page1.BUTTON_SIZE_W, page1.BUTTON_SIZE_H)
+
+
+        text3 = "Laufen"
+        self.button_3 = QPushButton(text3, self)
+        self.button_3.move(page1.BUTTON_3_POSITION_X, page1.BUTTON_3_POSITION_Y)
+        self.button_3.resize(page1.BUTTON_SIZE_W, page1.BUTTON_SIZE_H)
+
+
+        text4 = "Mit dem Messer abstechen"
+        self.button_4 = QPushButton(text4, self)
+        self.button_4.move(page1.BUTTON_4_POSITION_X, page1.BUTTON_4_POSITION_Y)
+        self.button_4.resize(page1.BUTTON_SIZE_W, page1.BUTTON_SIZE_H)
+        self.button_4.clicked.connect(self.on_click_4)
+
+
+
+
+
+
+
+
+
+        # show all the widgets
+        self.show()
+
+
+    @pyqtSlot()
+    def on_click(self):
+        alert = QMessageBox()
+        alert.setText("Markus dankt dir")
+        alert.exec()
+
+    @pyqtSlot()
+    def on_click_4(self):
+        alert = QMessageBox()
+        alert.setText("Niemand kann einen Gott töten. Du stirbst.")
+        alert.exec()
+
+
+
+
+    # create pyqt5 app
+App = QApplication(sys.argv)
+App.setStyle('Fusion')
+# create the instance of our Window
+window = Window()
+
+# start the app
+sys.exit(App.exec())
