@@ -11,7 +11,7 @@ from item import Item
 import effect
 from creature import Status
 
-def gen_demon_pillus(coords):
+def gen_demon_pillus(level, coords):
     x, y = coords
 
     max_health = 200
@@ -38,7 +38,7 @@ def gen_demon_pillus(coords):
     return demon_pillus
 
 
-def gen_demon_buffla(coords):
+def gen_demon_buffla(level, coords):
     x, y = coords
 
     max_health = 20
@@ -65,7 +65,7 @@ def gen_demon_buffla(coords):
     return demon_buffla
 
 
-def gen_demon_avin(coords):
+def gen_demon_avin(level, coords):
     x, y = coords
 
     max_health = 20
@@ -92,7 +92,7 @@ def gen_demon_avin(coords):
     return demon_avin
 
 
-def gen_demon_gronk(coords):
+def gen_demon_gronk(level, coords):
     x, y = coords
 
     max_health = 20
@@ -119,7 +119,7 @@ def gen_demon_gronk(coords):
     return demon_gronk
 
 
-def gen_demon_sloosh(coords):
+def gen_demon_sloosh(level, coords):
     x, y = coords
 
     max_health = 20
@@ -146,7 +146,7 @@ def gen_demon_sloosh(coords):
     return demon_sloosh
 
 
-def gen_demon_kolak(coords):
+def gen_demon_kolak(level, coords):
     x, y = coords
 
     max_health = 20
@@ -173,7 +173,7 @@ def gen_demon_kolak(coords):
     return demon_kolak
 
 
-def gen_demon_absodux(coords):
+def gen_demon_absodux(level, coords):
     x, y = coords
 
     max_health = 20
@@ -200,7 +200,7 @@ def gen_demon_absodux(coords):
     return demon_absodux
 
 
-def gen_demon_nergal(coords):
+def gen_demon_nergal(level, coords):
     x, y = coords
 
     max_health = 20
@@ -226,7 +226,7 @@ def gen_demon_nergal(coords):
 
     return demon_nergal
 
-def gen_demon_boomi(coords):
+def gen_demon_boomi(level, coords):
     x, y = coords
 
     max_health = 30
@@ -253,7 +253,7 @@ def gen_demon_boomi(coords):
     return demon_boomi
 
 
-def gen_demon_flabsy(coords):
+def gen_demon_flabsy(level, coords):
     x, y = coords
 
     max_health = 30
@@ -280,7 +280,7 @@ def gen_demon_flabsy(coords):
     return demon_flabsy
 
 
-def gen_demon_hulk(coords):
+def gen_demon_hulk(level, coords):
     x, y = coords
 
     max_health = 30
@@ -307,7 +307,7 @@ def gen_demon_hulk(coords):
     return demon_hulk
 
 
-def gen_demon_hulk_hulk(coords):
+def gen_demon_hulk_hulk(level, coords):
     x, y = coords
 
     max_health = 30
@@ -334,7 +334,7 @@ def gen_demon_hulk_hulk(coords):
     return demon_hulk
 
 
-def gen_reptile_anaconda(coords):
+def gen_reptile_anaconda(level, coords):
     x, y = coords
 
     max_health = tcod.random_get_int(None, 15, 20)
@@ -361,7 +361,7 @@ def gen_reptile_anaconda(coords):
     return snake
 
 
-def gen_reptile_cobra(coords):
+def gen_reptile_cobra(level, coords):
     x, y = coords
 
     max_health = tcod.random_get_int(None, 5, 10)
@@ -380,7 +380,7 @@ def gen_reptile_cobra(coords):
     return snake
 
 
-def gen_rodent_mouse(coords):
+def gen_rodent_mouse(level, coords):
     x, y = coords
 
     max_health = 1
@@ -401,7 +401,7 @@ def gen_rodent_mouse(coords):
     return mouse
 
 
-def gen_slime_small(coords):
+def gen_slime_small(level, coords):
     x, y = coords
 
     max_health = 4
@@ -424,7 +424,7 @@ def gen_slime_small(coords):
     return small_slime
 
 
-def gen_slime_small_blue(coords):
+def gen_slime_small_blue(level, coords):
     x, y = coords
 
     max_health = 4
@@ -447,7 +447,7 @@ def gen_slime_small_blue(coords):
     return small_slime_blue
 
 
-def gen_slime_ice(coords):
+def gen_slime_ice(level, coords):
     x, y = coords
 
     max_health = 4
@@ -470,7 +470,7 @@ def gen_slime_ice(coords):
     return ice_slime
 
 
-def gen_slime_abomination(coords):
+def gen_slime_abomination(level, coords):
     x, y = coords
 
     max_health = 4
@@ -493,7 +493,7 @@ def gen_slime_abomination(coords):
     return abomination_slime
 
 
-def gen_cat_cat(coords):
+def gen_cat_cat(level, coords):
     x, y = coords
 
     max_health = 4
@@ -516,7 +516,7 @@ def gen_cat_cat(coords):
     return cat_cat
 
 
-def gen_cat_leopard(coords):
+def gen_cat_leopard(level, coords):
     x, y = coords
 
     max_health = 4
@@ -539,7 +539,7 @@ def gen_cat_leopard(coords):
     return cat_leopard
 
 
-def gen_cat_panther(coords):
+def gen_cat_panther(level, coords):
     x, y = coords
 
     max_health = 4
@@ -562,7 +562,7 @@ def gen_cat_panther(coords):
     return cat_panther
 
 
-def gen_cat_tiger(coords):
+def gen_cat_tiger(level, coords):
     x, y = coords
 
     max_health = 4
@@ -585,7 +585,7 @@ def gen_cat_tiger(coords):
     return cat_tiger
 
 
-def gen_cat_lion(coords):
+def gen_cat_lion(level, coords):
     x, y = coords
 
     max_health = 4
@@ -608,7 +608,7 @@ def gen_cat_lion(coords):
     return cat_lion
 
 
-def gen_cat_mountain(coords):
+def gen_cat_mountain(level, coords):
     x, y = coords
 
     max_health = 4
@@ -631,7 +631,7 @@ def gen_cat_mountain(coords):
     return cat_mountain
 
 
-def gen_cat_snow(coords):
+def gen_cat_snow(level, coords):
     x, y = coords
 
     max_health = 4
@@ -654,7 +654,7 @@ def gen_cat_snow(coords):
     return cat_snow
 
 
-def gen_cat_shadow(coords):
+def gen_cat_shadow(level, coords):
     x, y = coords
 
     max_health = 4
@@ -677,7 +677,7 @@ def gen_cat_shadow(coords):
     return cat_shadow
 
 
-def gen_cat_walking(coords):
+def gen_cat_walking(level, coords):
     x, y = coords
 
     max_health = 4
@@ -700,7 +700,7 @@ def gen_cat_walking(coords):
     return cat_walking
 
 
-def gen_slime_blob(coords):
+def gen_slime_blob(level, coords):
     x, y = coords
 
     max_health = 4
@@ -723,7 +723,7 @@ def gen_slime_blob(coords):
     return blob_slime
 
 
-def gen_slime_cube(coords):
+def gen_slime_cube(level, coords):
     x, y = coords
 
     max_health = 4
@@ -746,7 +746,7 @@ def gen_slime_cube(coords):
     return cube_slime
 
 
-def gen_slime_ring(coords):
+def gen_slime_ring(level, coords):
     x, y = coords
 
     max_health = 4
@@ -769,7 +769,7 @@ def gen_slime_ring(coords):
     return ring_slime
 
 
-def gen_slime_snatcher(coords):
+def gen_slime_snatcher(level, coords):
     x, y = coords
 
     max_health = 4
@@ -792,7 +792,7 @@ def gen_slime_snatcher(coords):
     return snatcher_slime
 
 
-def gen_slime_sack(coords):
+def gen_slime_sack(level, coords):
     x, y = coords
 
     max_health = 4
@@ -815,7 +815,7 @@ def gen_slime_sack(coords):
     return sack_slime
 
 
-def gen_slime_mold_yellow(coords):
+def gen_slime_mold_yellow(level, coords):
     x, y = coords
 
     max_health = 4
@@ -838,7 +838,7 @@ def gen_slime_mold_yellow(coords):
     return yellow_mold
 
 
-def gen_slime_mold_brown(coords):
+def gen_slime_mold_brown(level, coords):
     x, y = coords
 
     max_health = 4
@@ -861,7 +861,7 @@ def gen_slime_mold_brown(coords):
     return brown_mold
 
 
-def gen_slime_mold_green(coords):
+def gen_slime_mold_green(level, coords):
     x, y = coords
 
     max_health = 4
@@ -884,7 +884,7 @@ def gen_slime_mold_green(coords):
     return green_mold
 
 
-def gen_slime_mold_red(coords):
+def gen_slime_mold_red(level, coords):
     x, y = coords
 
     max_health = 4
@@ -907,7 +907,7 @@ def gen_slime_mold_red(coords):
     return red_mold
 
 
-def gen_slime_mold_blue(coords):
+def gen_slime_mold_blue(level, coords):
     x, y = coords
 
     max_health = 4
@@ -930,7 +930,7 @@ def gen_slime_mold_blue(coords):
     return blue_mold
 
 
-def gen_slime_mold_purple(coords):
+def gen_slime_mold_purple(level, coords):
     x, y = coords
 
     max_health = 4
@@ -953,7 +953,7 @@ def gen_slime_mold_purple(coords):
     return purple_mold
 
 
-def gen_slime_fire(coords):
+def gen_slime_fire(level, coords):
     x, y = coords
 
     max_health = 4
@@ -976,7 +976,7 @@ def gen_slime_fire(coords):
     return small_slime
 
 
-def gen_slime_ice_fire(coords):
+def gen_slime_ice_fire(level, coords):
     x, y = coords
 
     max_health = 4
@@ -999,7 +999,7 @@ def gen_slime_ice_fire(coords):
     return ice_fire_slime
 
 
-def gen_dog_dog(coords):
+def gen_dog_dog(level, coords):
     x, y = coords
 
     max_health = 8
@@ -1024,7 +1024,7 @@ def gen_dog_dog(coords):
     return dog
 
 
-def gen_pest_snail(coords):
+def gen_pest_snail(level, coords):
     x, y = coords
 
     max_health = 5
@@ -1049,7 +1049,7 @@ def gen_pest_snail(coords):
     return snail
 
 
-def gen_pest_small_spider(coords):
+def gen_pest_small_spider(level, coords):
     x, y = coords
 
     max_health = 10
@@ -1073,7 +1073,7 @@ def gen_pest_small_spider(coords):
     return small_spider
 
 
-def gen_pest_small_scorpion(coords):
+def gen_pest_small_scorpion(level, coords):
     x, y = coords
 
     max_health = 10
@@ -1123,7 +1123,7 @@ def gen_pest_worm(coords, name=None):
     return worm
 
 
-def gen_humanoid_goblin(coords):
+def gen_humanoid_goblin(level, coords):
     x, y = coords
 
     max_health = 13
@@ -1173,7 +1173,7 @@ def gen_undead_ghost(coords, duration):
     return ghost
 
 
-def gen_elemental_potato(coords):
+def gen_elemental_potato(level, coords):
     x, y = coords
 
     max_health = 25
@@ -1198,7 +1198,7 @@ def gen_elemental_potato(coords):
     return elemental
 
 
-def gen_elemental_fire(coords):
+def gen_elemental_fire(level, coords):
     x, y = coords
 
     max_health = 30
@@ -1229,7 +1229,7 @@ def gen_elemental_fire(coords):
     return elemental
 
 
-def gen_elemental_ice(coords):
+def gen_elemental_ice(level, coords):
     x, y = coords
 
     max_health = 30
@@ -1255,7 +1255,7 @@ def gen_elemental_ice(coords):
     return elemental
 
 
-def gen_elemental_icicle(coords):
+def gen_elemental_icicle(level, coords):
     x, y = coords
 
     max_health = 30
@@ -1281,7 +1281,7 @@ def gen_elemental_icicle(coords):
     return elemental
 
 
-def gen_elemental_earth(coords):
+def gen_elemental_earth(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1307,7 +1307,7 @@ def gen_elemental_earth(coords):
     return elemental
 
 
-def gen_elemental_lightning(coords):
+def gen_elemental_lightning(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1334,7 +1334,7 @@ def gen_elemental_lightning(coords):
     return elemental
 
 
-def gen_elemental_paper(coords):
+def gen_elemental_paper(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1361,7 +1361,7 @@ def gen_elemental_paper(coords):
     return elemental
 
 
-def gen_elemental_slime(coords):
+def gen_elemental_slime(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1388,7 +1388,7 @@ def gen_elemental_slime(coords):
     return elemental
 
 
-def gen_elemental_flesh(coords):
+def gen_elemental_flesh(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1415,7 +1415,7 @@ def gen_elemental_flesh(coords):
     return elemental
 
 
-def gen_elemental_gold(coords):
+def gen_elemental_gold(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1442,7 +1442,7 @@ def gen_elemental_gold(coords):
     return elemental
 
 
-def gen_elemental_mimic(coords):
+def gen_elemental_mimic(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1470,7 +1470,7 @@ def gen_elemental_mimic(coords):
     return elemental
 
 
-def gen_elemental_steel(coords):
+def gen_elemental_steel(level, coords):
     x, y = coords
 
     max_health = 20
@@ -1495,7 +1495,7 @@ def gen_elemental_steel(coords):
     return elemental
 
 
-def gen_boss_beholder(coords):
+def gen_boss_beholder(level, coords):
     x, y = coords
 
     max_health = 200
